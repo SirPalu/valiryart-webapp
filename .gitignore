@@ -44,3 +44,6 @@ coverage/
 
 # --- FRONTEND HIDDEN .git FOLDER FIX ---
 frontend/.git/
+
+package-lock.json
+
