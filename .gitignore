@@ -1,0 +1,46 @@
+# --- BACKEND / FRONTEND NODE MODULES ---
+node_modules/
+**/node_modules/
+
+# --- BUILD ---
+dist/
+build/
+
+# --- ENV FILES ---
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+
+# --- LOGS ---
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- OS FILES ---
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# --- EDITOR FILES ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- DOCKER VOLUMES ---
+postgres-data/
+**/postgres-data/
+
+# --- UPLOADS (BACKEND) ---
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# --- TEST COVERAGE ---
+coverage/
+.nyc_output/
+
+# --- FRONTEND HIDDEN .git FOLDER FIX ---
+frontend/.git/

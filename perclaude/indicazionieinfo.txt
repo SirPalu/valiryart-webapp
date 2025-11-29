@@ -1,0 +1,245 @@
+Valiryart-webapp è un'evoluzione del mio primo sito costruito in wordpress dedicato a Valeria e la sua creatività artigianale, funziona come una vetrina espositiva con form abbastanza complessi e completi da permettere la generazione di una richiesta per un opera da realizzare su commissione estremamente personalizzabile.
+
+ti invio il contenuto delle principali pagine che compongono il sito:
+
+HOME:
+nello stesso path di questo file trovi immagini in jpg per darti riferimenti allo stile , pattern di colori, e sopratutto il logo centrale fatto in corteccia con la scritta Valiryart con il gatto che vorrei mantenessimo (per il logo vedremo dopo come inserirlo)
+
+la nuova home dovrebbe contenere una prima vista alle opere più accattivanti divise nelle tre tipologie principali
+- Incisioni su Legno (pirografo)
+- Torte decorative (torte finte)
+- Allestimento decori per eventi 
+___________________________________________
+
+INCISIONI LEGNO:
+
+Incisioni su Legno
+Ogni oggetto in legno inciso a mano racconta una storia. Può essere un’idea regalo unica, un ricordo speciale o un pezzo d’arredamento personalizzato che parla di te.
+
+Scegli ciò a cui sei interessato ed inviami la tua Richiesta per iniziare a creare qualcosa di speciale.
+
+Scegli oggetto *
+
+Portafoto
+
+Tronco
+
+Foglio di Legno
+
+Cofanetto
+
+Portapenne
+
+Porta Vino
+
+Tagliere
+Scegli l'oggetto che desideri
+Edit form
+Come funziona?
+🪵 Personalizzare un Oggetto in Legno
+Personalizzare un oggetto in legno è semplicissimo! Tramite il nostro form puoi scegliere con facilità:
+🔹 Il tipo di oggetto
+🔹 La dimensione
+🔹 L’immagine da incidere
+Una volta inviata la tua richiesta, riceverai una conferma via email e sarai ricontattato per definire insieme i dettagli finali ed il prezzo definitivo (il prezzo indicato sul form è considerato prezzo di partenza, che verrà poi adeguato alla complessità dell’incisione da riportare) comprensivo di spese di spedizione (9 € circa, gratuite per ordini superiori ai 65 €. Potrai confermare il progetto e procedere al pagamento, oppure discuterne eventuali modifiche. Ogni creazione viene realizzata su misura e spedita in tutta Italia.
+🎨 Il valore di un’incisione artigianale
+Le nostre creazioni su legno non sono prodotte in serie, né incise con macchinari: ogni pezzo è realizzato a mano libera con pirografo, seguendo con precisione il disegno scelto e valorizzando le naturali venature del legno. A differenza delle comuni stampe laser, questo tipo di lavorazione conferisce profondità, calore e unicità ad ogni oggetto. Un’idea perfetta per un regalo di compleanno, un anniversario, una nascita o semplicemente per dare valore a un ricordo, trasformandolo in un oggetto concreto, realizzato su misura.
+default-logo
+Dubbi o richieste? Siamo a portata di messaggio! -->
+
+___________________________________________
+TORTE DECORATIVE:
+
+Torte Decorative
+Le torte finte sono una soluzione creativa e scenografica per feste ed eventi di ogni tipo. Scegli se realizzarla con l’applicazione di dolci e bevande di vario genere, o se utilizzare decori prettamente sintetici, compila il form per descrivere la tua idea e riponderò fornendo un preventivo dettagliato della torta.
+
+Tipo Evento
+Compleanno, battesimo, matrimonio...
+Tipo di Torta *
+
+con Dolci
+
+solo Finta
+Numero strati
+Numero di strati della torta
+Dimensioni
+
+Piccola - Diametro base 20 cm
+
+Media - Diametro base 30 cm
+
+Grande - Diametro base 40 cm
+Edit form
+🎨 Come Funziona
+Utilizza il form per descrivere la tua idea ed invia la Richiesta, risponderò in tempi brevi ed insieme daremo forma alla tua idea. Le possibilità sono davvero innumerevoli, puoi lasciarti ispirare dalla Galleria sulla Home per fornire i dettagli nel form e ti fornirò un preventivo contenente:
+
+🔹 Prezzo definitivo: il costo finale dipende dai materiali scelti, dalla dimensione e dalla complessità del progetto.
+🔹 Tempi di realizzazione e modalità di consegna: la torta sarà pronta nei tempi concordati, ma ricorda che la consegna è disponibile solo nella zona di Roma e provincia. Puoi scegliere la consegna a domicilio (con supplemento) o il ritiro presso la Galleria Commerciale PortaDiRoma.
+Se la proposta ti piace, potrai confermare il progetto e procedere al pagamento. La torta verrà realizzata con cura, pronta per rallegrare il tuo evento!
+
+🍰 Personalizzare una Torta Decorativa
+Personalizzare una torta decorativa è un’esperienza unica! Con il nostro form dedicato, puoi scegliere:
+🔹 Il tipo di torta
+🔹 Il tema e i colori
+🔹 Gli elementi decorativi o le immagini da caricare
+Una volta inviata la tua richiesta, riceverai una conferma via email e sarai ricontattato per definire insieme i dettagli finali. Potrai confermare il progetto e procedere al pagamento, oppure discuterne eventuali modifiche. Ogni torta viene preparata su misura per l’occasione e consegnata con la massima cura. La cura nella preparazione e l’attenzione ai dettagli fanno di ogni torta un’esperienza indimenticabile, che arricchirà il tuo evento con un tocco personale e delizioso.
+default-logo
+Dubbi o richieste? Siamo a portata di messaggio! -->
+
+
+
+___________________________________________
+
+EVENTI:
+
+Organizza Evento
+Ogni evento ha una storia da raccontare, un’atmosfera da creare e un ricordo da lasciare. Che sia una festa di compleanno, un matrimonio o anniversario, ogni dettaglio contribuisce a rendere l’esperienza indimenticabile.
+
+Attraverso questo form puoi personalizzare il tuo evento scegliendo il tema, i colori e gli elementi decorativi che meglio rappresentano l’occasione. Puoi anche richiedere il servizio catering offerto in collaborazione con il Forno Novelli e, se necessario, l’affitto di una sala per rendere l’evento ancora più speciale.
+
+Compila il form e raccontaci la tua idea: saremo felici di trasformarla in realtà!
+
+Tipo Evento
+compleanno, anniversario, battesimo ...
+Data Evento
+Giorno
+
+Mese
+
+Anno
+
+Tema
+musica, sport, film ...
+Indica se hai un tema in mente a cui ispirarsi
+Colore 1
+Rosso, verde, blu ...
+Colore 2
+Rosso, verde, blu ...
+Colore 3
+Rosso, verde, blu ...
+Elementi decorativi
+
+Arco Palloncini
+
+Porta Spumante
+
+Mongolfiera
+
+Dono per gli invitati
+
+Torta
+
+Centro Tavola
+
+Tableau Segnaposti
+
+Pedana in legno
+
+Segnaposti
+Edit form
+🎉 Come Funziona?
+Dopo aver inviato la tua richiesta tramite il form, verrai ricontattato per definire ogni dettaglio e ricevere un preventivo personalizzato. Ogni decorazione viene realizzata artigianalmente con materiali di alta qualità e uno studio accurato dell’allestimento. Se scegli di includere il catering, ci occuperemo di coordinare il servizio per garantirti un’esperienza completa e senza stress.
+
+💡 Perché scegliere un evento personalizzato?
+Un allestimento su misura trasforma qualsiasi occasione in un momento unico. Non si tratta solo di decorare uno spazio, ma di creare un ambiente che racconti la tua storia e lasci un’impressione indelebile sui tuoi ospiti. Dai classici archi di palloncini ai tableau per gli invitati, dai porta spumante personalizzati ai piccoli regali per gli ospiti, ogni elemento è pensato per esprimere la tua personalità e rendere l’evento memorabile.
+
+Che tu abbia già un’idea chiara o cerchi ispirazione, ValiryArt ti guiderà nella scelta degli elementi decorativi più adatti per realizzare un evento su misura per te.
+default-logo
+Dubbi o richieste? Siamo a portata di messaggio! -->
+
+
+___________________________________________
+
+
+RICHIESTA APERTA:
+
+
+Hai un’idea che non rientra nelle categorie in elenco sul sito, descrivimi apertamente il tuo progetto e ti aiuterò a realizzarlo. 
+
+Nome
+Indirizzo email *
+Telefono
+Descrivi la tua richiesta *
+Raccontami la tua idea, ciò che vuoi realizzare
+Carica file
+se desideri puoi inviarmi un immagine di riferimento
+Nessun file selezionato
+No file chosen
+Edit form
+default-logo
+Dubbi o richieste? Siamo a portata di messaggio! -->
+
+
+
+___________________________________________
+
+
+CHI SONO:
+
+
+
+Chi sono
+Ciao, sono Valeria — la persona dietro Valiryart.
+La creatività ha sempre fatto parte di me, fin da quando, da ragazzina, ho deciso di studiare come orafa al liceo, imparando l’arte di trasformare la materia grezza in qualcosa di unico e personale.
+
+La mia strada è poi proseguita all’Accademia di Belle Arti, dove ho approfondito non solo le tecniche artistiche, ma anche la ricerca del bello nelle piccole cose di ogni giorno. Ho voluto completare il mio percorso con i 24 CFU per l’insegnamento, perché credo che condividere le proprie passioni sia una delle forme più pure di creatività.
+
+Negli anni, ho avuto anche l’opportunità di lavorare come orafa in un contesto prestigioso: un’esperienza preziosa, che mi ha insegnato l’importanza dei dettagli e del rispetto per ogni fase di creazione, ma che non ha mai cambiato il mio modo di vedere il mestiere: con semplicità, rispetto e grande amore per il lavoro artigianale.
+
+Valiryart nasce proprio da questo desiderio: creare oggetti personalizzati, pensati su misura per chi li desidera. Ogni incisione, ogni torta scenografica, ogni allestimento nasce da un ascolto attento delle idee dei clienti e da una lavorazione paziente e curata.
+
+Lavoro con le mani, ma prima ancora con il cuore: per me non esistono richieste troppo piccole o troppo grandi, esiste solo la voglia di trasformare un’idea in qualcosa di concreto e speciale.
+
+Se deciderai di affidarmi il tuo progetto, sappi che ogni creazione sarà trattata con la stessa dedizione con cui la creerei per le persone a me più care.
+E se hai bisogno di ispirazione, le gallerie sul sito sono sempre aggiornate con le mie realizzazioni: dai un’occhiata, magari sarà il primo passo verso la tua idea personalizzata!
+
+A presto!
+Valeria
+
+default-logo
+Dubbi o richieste? Siamo a portata di messaggio! -->
+
+
+
+___________________________________________
+
+
+COME FUNZIONA:
+
+
+
+Come funziona
+🌿 Benvenuti su Valiryart!
+Qui tutto è pensato per rendere il vostro progetto unico, semplice da richiedere e sempre personalizzato. Vi spiego come funziona il sito e come lavoriamo insieme per creare qualcosa di speciale.
+📸 1. Lasciati ispirare dalle nostre gallerie
+Prima di inviare la tua richiesta, puoi visitare le gallerie fotografiche presenti sul sito: una raccolta di realizzazioni firmate Valiryart. Le troverai facilmente scorrendo la home o all’interno delle singole sezioni. Sono un ottimo punto di partenza per farti un’idea di cosa possiamo creare insieme e per trovare spunti creativi per il tuo progetto.
+📝 2. Invia la tua Richiesta di ingaggio
+Puoi scegliere tra due modalità:
+📂 Richieste tramite form dedicati
+🪵 Incisioni in Legno
+🍰 Torte Decorative
+🎉 Eventi
+Ogni form ti guida passo passo nella descrizione del tuo progetto: tema, colori, elementi decorativi, eventuali preferenze di materiali o dettagli da personalizzare.
+💡 Richiesta Aperta
+Se hai un’idea che non rientra perfettamente nelle categorie oppure desideri lasciarti ispirare, usa la Richiesta Aperta. Qui puoi descrivere liberamente il tuo progetto e caricare anche immagini di riferimento, così posso comprendere al meglio la tua visione.
+💌 3. Riceverai una proposta personalizzata
+Ogni richiesta viene valutata con attenzione; entro breve tempo ti risponderò personalmente, indicandoti:
+🎨 Possibilità di personalizzazione e varianti
+💰 Prezzo definitivo (il prezzo indicato nel form è solo orientativo: dipende dai materiali scelti, dalla complessità del progetto o, per esempio, dalla marca dei cioccolatini per le torte scenografiche!)
+⏳ Tempi di realizzazione e modalità di consegna
+📞 Modalità di contatto: mail o, se preferisci, una telefonata diretta per definire ogni dettaglio
+La tua richiesta non comporta alcun obbligo di acquisto fino a quando non confermerai.
+💳 4. Conferma e pagamento
+Se la proposta ti piace e vuoi procedere:
+🔗 Riceverai un link per il pagamento tramite PayPal con la modalità “Beni e Servizi”, per la massima sicurezza.
+🧾 Insieme al pagamento riceverai una fattura completa, con la descrizione dell’articolo artigianale realizzato su commissione.
+🚚 5. Realizzazione e consegna
+Una volta confermato il pagamento, inizierò la realizzazione del tuo progetto secondo le tempistiche concordate.
+🪵 Incisioni in legno: Spedizione in tutta Italia tramite corriere. Ti fornirò il codice di tracking non appena il pacco sarà stato affidato al corriere.
+🍰 Torte decorative: Consegna a mano, preferibilmente in zona, per garantire la massima cura e integrità del prodotto.
+default-logo
+Dubbi o richieste? Siamo a portata di messaggio! -->
+
+
+
+
