@@ -1,0 +1,201 @@
+/* ============================================
+   VALIRYART FOOTER
+   ============================================ */
+
+.valiryart-footer {
+  background: linear-gradient(135deg, rgba(44, 24, 16, 0.95) 0%, rgba(26, 13, 8, 0.95) 100%);
+  border-top: 1px solid rgba(250, 233, 199, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: auto;
+}
+
+.footer-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+/* ============================================
+   FOOTER COLUMNS
+   ============================================ */
+
+.footer-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Logo */
+.footer-logo {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+}
+
+.footer-logo-text {
+  font-family: 'Amatic SC', cursive;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #FAE9C7;
+  line-height: 1;
+}
+
+.footer-tagline {
+  font-size: 0.75rem;
+  color: rgba(250, 233, 199, 0.7);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 0.25rem;
+}
+
+.footer-description {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+/* Titoli Colonne */
+.footer-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #FAE9C7;
+  margin: 0 0 1rem 0;
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+/* ============================================
+   LINKS
+   ============================================ */
+
+.footer-links,
+.footer-contacts {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.footer-links a:hover {
+  color: #FAE9C7;
+  padding-left: 0.5rem;
+}
+
+/* ============================================
+   CONTACTS
+   ============================================ */
+
+.footer-contact-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  padding: 0.5rem;
+  border-radius: 8px;
+}
+
+.footer-contact-link:hover {
+  color: #FAE9C7;
+  background: rgba(250, 233, 199, 0.1);
+  transform: translateX(4px);
+}
+
+.footer-contact-link .icon {
+  font-size: 1.5rem;
+  filter: grayscale(100%);
+  transition: filter 0.3s ease;
+}
+
+.footer-contact-link:hover .icon {
+  filter: grayscale(0%);
+}
+
+/* ============================================
+   FOOTER BOTTOM
+   ============================================ */
+
+.footer-bottom {
+  border-top: 1px solid rgba(250, 233, 199, 0.1);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.footer-bottom .footer-container {
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footer-copyright,
+.footer-credits {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+.footer-credits strong {
+  color: #FAE9C7;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+  .footer-container {
+    grid-template-columns: 1fr;
+    padding: 2rem 1rem;
+    text-align: center;
+  }
+  
+  .footer-column {
+    align-items: center;
+  }
+  
+  .footer-logo {
+    align-items: center;
+  }
+  
+  .footer-links a:hover,
+  .footer-contact-link:hover {
+    padding-left: 0;
+    transform: none;
+  }
+  
+  .footer-bottom .footer-container {
+    flex-direction: column;
+    text-align: center;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-logo-text {
+    font-size: 1.75rem;
+  }
+  
+  .footer-tagline {
+    font-size: 0.65rem;
+  }
+  
+  .footer-title {
+    font-size: 1rem;
+  }
+}

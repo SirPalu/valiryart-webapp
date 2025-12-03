@@ -1,0 +1,267 @@
+/* ============================================
+   CHI SIAMO PAGE
+   ============================================ */
+
+.chi-siamo-page {
+  min-height: 100vh;
+}
+
+/* Hero */
+.chi-siamo-hero {
+  background: linear-gradient(135deg, rgba(44, 24, 16, 0.95) 0%, rgba(26, 13, 8, 0.95) 100%);
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.page-title {
+  font-family: 'Amatic SC', cursive;
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  color: #FAE9C7;
+  margin-bottom: 1rem;
+}
+
+.page-subtitle {
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Content */
+.chi-siamo-content {
+  padding: 4rem 0;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 3rem;
+  margin-bottom: 4rem;
+}
+
+.valeria-image {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.image-placeholder {
+  width: 100%;
+  max-width: 350px;
+  aspect-ratio: 3/4;
+  background: linear-gradient(135deg, rgba(58, 40, 23, 0.6) 0%, rgba(44, 24, 16, 0.7) 100%);
+  border-radius: 20px;
+  border: 2px dashed rgba(250, 233, 199, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.image-placeholder span {
+  font-size: 4rem;
+}
+
+.image-placeholder p {
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+}
+
+.valeria-bio h2 {
+  font-size: 2.5rem;
+  color: #FAE9C7;
+  margin-bottom: 2rem;
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+.bio-text {
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.8;
+  font-size: 1.05rem;
+}
+
+.bio-text p {
+  margin-bottom: 1.5rem;
+}
+
+.bio-text strong {
+  color: #FAE9C7;
+  font-weight: 600;
+}
+
+.closing-text {
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.signature {
+  margin-top: 2rem;
+  font-size: 1.2rem;
+  color: #FAE9C7;
+}
+
+.signature strong {
+  font-family: 'Amatic SC', cursive;
+  font-size: 1.8rem;
+  display: block;
+  margin-top: 0.5rem;
+}
+
+/* Competenze */
+.competenze-section {
+  margin-top: 5rem;
+  padding-top: 3rem;
+  border-top: 1px solid rgba(250, 233, 199, 0.2);
+}
+
+.competenze-section h3 {
+  font-size: 2rem;
+  color: #FAE9C7;
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.competenze-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.competenza-card {
+  background: linear-gradient(135deg, rgba(58, 40, 23, 0.6) 0%, rgba(44, 24, 16, 0.7) 100%);
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  border: 1px solid rgba(250, 233, 199, 0.1);
+  transition: all 0.3s ease;
+}
+
+.competenza-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(250, 233, 199, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.competenza-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.competenza-card h4 {
+  font-size: 1.25rem;
+  color: #FAE9C7;
+  margin-bottom: 0.75rem;
+}
+
+.competenza-card p {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* CTA Section */
+.chi-siamo-cta {
+  background: linear-gradient(135deg, rgba(26, 77, 2, 0.3) 0%, rgba(26, 13, 8, 0.5) 100%);
+  padding: 4rem 2rem;
+  text-align: center;
+  margin-top: 4rem;
+}
+
+.chi-siamo-cta h3 {
+  font-size: 2rem;
+  color: #FAE9C7;
+  margin-bottom: 1rem;
+}
+
+.chi-siamo-cta p {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 2rem;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-cta {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.btn-cta.primary {
+  background: #7E4622;
+  color: #FFFFFF;
+}
+
+.btn-cta.primary:hover {
+  background: #6a3a1c;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.btn-cta.secondary {
+  background: #1A4D02;
+  color: #FFFFFF;
+}
+
+.btn-cta.secondary:hover {
+  background: #154001;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .valeria-image {
+    order: -1;
+  }
+  
+  .image-placeholder {
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .chi-siamo-hero {
+    padding: 3rem 1rem;
+  }
+  
+  .chi-siamo-content {
+    padding: 2rem 0;
+  }
+  
+  .valeria-bio h2 {
+    font-size: 2rem;
+  }
+  
+  .bio-text {
+    font-size: 1rem;
+  }
+  
+  .competenze-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .cta-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .btn-cta {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}

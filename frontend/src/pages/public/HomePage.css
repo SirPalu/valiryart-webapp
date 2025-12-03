@@ -1,0 +1,85 @@
+
+.homepage {
+  min-height: 100vh;
+}
+
+.hero-section {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(44, 24, 16, 0.9) 0%, rgba(26, 13, 8, 0.9) 100%);
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.hero-content {
+  max-width: 800px;
+}
+
+.hero-title {
+  font-family: 'Amatic SC', cursive;
+  font-size: clamp(3rem, 8vw, 5rem);
+  color: #FAE9C7;
+  margin-bottom: 1rem;
+}
+
+.hero-subtitle {
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 1.5rem;
+}
+
+.hero-description {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.8;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.categories-preview {
+  padding: 4rem 0;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #FAE9C7;
+  margin-bottom: 3rem;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.category-card {
+  background: linear-gradient(135deg, rgba(58, 40, 23, 0.7) 0%, rgba(44, 24, 16, 0.8) 100%);
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  border: 1px solid rgba(250, 233, 199, 0.1);
+  transition: all 0.3s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(250, 233, 199, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.category-card h3 {
+  font-size: 1.5rem;
+  color: #FAE9C7;
+  margin-bottom: 1rem;
+}
+
+.category-card p {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+}

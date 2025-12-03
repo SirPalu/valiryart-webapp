@@ -1,0 +1,254 @@
+/* ============================================
+   EVENTI PAGE
+   ============================================ */
+
+.eventi-page {
+  min-height: 100vh;
+}
+
+.eventi-hero {
+  background: linear-gradient(135deg, rgba(44, 24, 16, 0.95) 0%, rgba(26, 13, 8, 0.95) 100%);
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.eventi-hero h1 {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  color: #FAE9C7;
+  margin-bottom: 0.5rem;
+}
+
+/* Info Section */
+.eventi-info {
+  padding: 3rem 0;
+  background: linear-gradient(135deg, rgba(26, 77, 2, 0.15) 0%, rgba(26, 13, 8, 0.3) 100%);
+}
+
+.info-card {
+  background: linear-gradient(135deg, rgba(58, 40, 23, 0.7) 0%, rgba(44, 24, 16, 0.8) 100%);
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid rgba(250, 233, 199, 0.2);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.info-card h3 {
+  color: #FAE9C7;
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+}
+
+.info-card p {
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.7;
+  font-size: 1.05rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.info-card strong {
+  color: #FAE9C7;
+}
+
+/* Services Extra */
+.services-extra {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.service-card {
+  background: rgba(58, 40, 23, 0.6);
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid rgba(250, 233, 199, 0.1);
+  transition: all 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(250, 233, 199, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.service-card h4 {
+  color: #FAE9C7;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.service-card p {
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.service-link {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: rgba(26, 77, 2, 0.3);
+  color: #FAE9C7;
+  text-decoration: none;
+  border-radius: 10px;
+  border: 1px solid rgba(250, 233, 199, 0.2);
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.service-link:hover {
+  background: rgba(26, 77, 2, 0.5);
+  border-color: rgba(250, 233, 199, 0.4);
+  transform: translateY(-2px);
+}
+
+.info-notice {
+  background: rgba(250, 233, 199, 0.1);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(250, 233, 199, 0.3);
+  text-align: center;
+}
+
+.info-notice p {
+  color: #FAE9C7;
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+/* Form Section */
+.eventi-form-section {
+  padding: 3rem 0;
+}
+
+.eventi-form {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Elementi Decorativi Grid */
+.elementi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.elemento-card {
+  display: block;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1.25rem;
+  border-radius: 12px;
+  border: 2px solid rgba(250, 233, 199, 0.1);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.elemento-card:hover {
+  border-color: rgba(250, 233, 199, 0.3);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+.elemento-card input[type="checkbox"] {
+  display: none;
+}
+
+.elemento-card.selected {
+  background: rgba(26, 77, 2, 0.3);
+  border-color: #1A4D02;
+  box-shadow: 0 0 15px rgba(26, 77, 2, 0.4);
+}
+
+.elemento-label {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.elemento-card.selected .elemento-label {
+  color: #FAE9C7;
+}
+
+/* Servizi Aggiuntivi */
+.servizi-aggiuntivi {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.checkbox-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 2px solid rgba(250, 233, 199, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.checkbox-card:hover {
+  border-color: rgba(250, 233, 199, 0.3);
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.checkbox-card input[type="checkbox"] {
+  margin-top: 0.25rem;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #1A4D02;
+}
+
+.checkbox-content h4 {
+  color: #FAE9C7;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.checkbox-content p {
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.6;
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+/* Summary Elementi List */
+.elementi-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.elementi-list li {
+  background: rgba(26, 77, 2, 0.2);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(250, 233, 199, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .services-extra {
+    grid-template-columns: 1fr;
+  }
+  
+  .elementi-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  
+  .service-card {
+    padding: 1.5rem;
+  }
+  
+  .elementi-list {
+    grid-template-columns: 1fr;
+  }
+}

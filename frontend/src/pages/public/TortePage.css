@@ -1,0 +1,312 @@
+/* ============================================
+   TORTE PAGE
+   ============================================ */
+
+.torte-page {
+  min-height: 100vh;
+}
+
+.torte-hero {
+  background: linear-gradient(135deg, rgba(44, 24, 16, 0.95) 0%, rgba(26, 13, 8, 0.95) 100%);
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.torte-hero h1 {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  color: #FAE9C7;
+  margin-bottom: 0.5rem;
+}
+
+.hero-notice {
+  max-width: 600px;
+  margin: 2rem auto 0;
+  background: rgba(26, 77, 2, 0.3);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(250, 233, 199, 0.3);
+}
+
+.hero-notice p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.hero-notice a {
+  color: #FAE9C7;
+  font-weight: 600;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.hero-notice a:hover {
+  border-bottom-color: #FAE9C7;
+}
+
+/* Form Section */
+.torte-form-section {
+  padding: 3rem 0;
+}
+
+.torte-form {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Torta Type Selector */
+.torta-type-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.type-card {
+  display: block;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2rem;
+  border-radius: 16px;
+  border: 2px solid rgba(250, 233, 199, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.type-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(250, 233, 199, 0.3);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.type-card input[type="radio"] {
+  display: none;
+}
+
+.type-card.selected {
+  border-color: #1A4D02;
+  background: rgba(26, 77, 2, 0.2);
+  box-shadow: 0 0 20px rgba(26, 77, 2, 0.4);
+}
+
+.type-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.type-icon {
+  font-size: 3rem;
+  display: block;
+}
+
+.type-content h3 {
+  font-size: 1.25rem;
+  color: #FAE9C7;
+  margin: 0;
+}
+
+.type-content p {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+}
+
+/* Form Row */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+/* Colors Grid */
+.colors-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+/* Upload Area (riusa da IncisioniPage) */
+.upload-area {
+  margin-top: 1rem;
+}
+
+/* Delivery Options */
+.delivery-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.delivery-card {
+  display: block;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 2px solid rgba(250, 233, 199, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.delivery-card:hover {
+  border-color: rgba(250, 233, 199, 0.3);
+}
+
+.delivery-card input[type="radio"] {
+  display: none;
+}
+
+.delivery-card.selected {
+  border-color: #1A4D02;
+  background: rgba(26, 77, 2, 0.2);
+}
+
+.delivery-content h4 {
+  color: #FAE9C7;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.delivery-address {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.delivery-address a {
+  color: #FAE9C7;
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding: 0.25rem 0.75rem;
+  background: rgba(26, 77, 2, 0.3);
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.delivery-address a:hover {
+  background: rgba(26, 77, 2, 0.5);
+}
+
+.delivery-note {
+  display: block;
+  color: rgba(255, 255, 255, 0.6);
+  font-style: italic;
+  margin-top: 0.5rem;
+}
+
+/* Delivery Address Form */
+.delivery-address-form {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  border: 1px solid rgba(250, 233, 199, 0.1);
+}
+
+.delivery-address-form h4 {
+  color: #FAE9C7;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+/* Price Disclaimer */
+.price-disclaimer {
+  background: linear-gradient(135deg, rgba(250, 233, 199, 0.15) 0%, rgba(26, 77, 2, 0.2) 100%);
+  padding: 2rem;
+  border-radius: 16px;
+  border: 1px solid rgba(250, 233, 199, 0.3);
+  margin-top: 2rem;
+}
+
+.price-disclaimer h3 {
+  color: #FAE9C7;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.price-disclaimer p {
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+.price-disclaimer ul {
+  color: rgba(255, 255, 255, 0.85);
+  margin: 1rem 0 1rem 1.5rem;
+  line-height: 1.8;
+}
+
+.price-disclaimer li {
+  margin-bottom: 0.5rem;
+}
+
+.disclaimer-note {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 1rem;
+  border-radius: 10px;
+  border-left: 3px solid #FAE9C7;
+  font-style: italic;
+}
+
+.disclaimer-note strong {
+  color: #FAE9C7;
+}
+
+/* Contact Grid */
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Summary Page */
+.summary-section {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid rgba(250, 233, 199, 0.1);
+}
+
+.summary-section:last-child {
+  border-bottom: none;
+}
+
+.summary-section h3 {
+  color: #FAE9C7;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.summary-section p {
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .torta-type-selector {
+    grid-template-columns: 1fr;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .colors-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .type-card {
+    padding: 1.5rem;
+  }
+  
+  .delivery-address {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+}

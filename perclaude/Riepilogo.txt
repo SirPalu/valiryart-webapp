@@ -1,0 +1,502 @@
+# ValiryArt - Specifica Completa Progetto Web App
+
+## 📋 PANORAMICA PROGETTO
+
+**Obiettivo**: Modernizzare il sito WordPress esistente di ValiryArt in una web app completa con gestione interna delle richieste e area amministrativa.
+
+**Sito Attuale**: https://valiryart.great-site.net/
+
+**Tipo di Business**: Portfolio artistico + raccolta richieste personalizzate (NO ecommerce diretto)
+
+---
+
+## 🛠 STACK TECNOLOGICO
+
+### Architettura
+- **Frontend**: React (container Docker)
+- **Backend**: Node.js (container Docker)
+- **Database**: PostgreSQL (container Docker)
+- **Reverse Proxy**: Nginx (container Docker)
+- **Ambiente Sviluppo**: Windows 11 con Docker Desktop
+
+### Tool di Sviluppo
+- Visual Studio Code
+- Git Bash
+- Node.js installato localmente
+
+---
+
+## 🎨 DESIGN E BRANDING
+
+### Palette Colori
+- **Background principale**: Scuro con texture venature legno
+- **Logo/Header**: Corteccia marrone chiara
+- **Accenti/Bottoni**: Verde foglie
+- **Icona**: Gatto di legno (da recuperare dal sito attuale)
+- Colori di sistema
+Principale
+#7E4622
+
+Secondario
+#1A4D02
+
+Testo
+#FFFFFF
+
+In risalto
+#FAE9C7
+
+Colori personalizzati
+Colore Chiaro 1
+#757E68
+
+Colore Chiaro 2
+#FAE9C7
+
+Testo chiaro
+#FFFFFF
+
+FONT:
+
+Principale:
+Open Sans
+
+Secondario
+Nunito Sans
+ 
+Testo:
+Amatic SC
+
+### Principi Design
+- Stile moderno ma artistico/naturale
+- **Mobile-first** per navigazione utente
+- **Desktop-optimized** per console amministrativa
+- Responsive su tutti i dispositivi
+
+---
+
+## 👥 TIPOLOGIE UTENTI E AUTENTICAZIONE
+
+### 1. Utenti Guest (Non Registrati)
+- **Permessi**: Navigare portfolio, inviare richieste fornendo solo email
+- **Limitazioni**: No storico richieste, no profilo salvato
+
+### 2. Utenti Registrati
+- **Registrazione**: Email/password + Google OAuth
+- **Dati raccolti**: Nome, Cognome, Email, Telefono (opzionale), Indirizzo (opzionale, per spedizioni)
+- **Vantaggi**: 
+  - Storico completo richieste
+  - Thread conversazioni con Valeria
+  - Dati salvati per richieste future
+  - Notifiche personalizzate
+
+### 3. Admin (Valeria)
+- **Ruolo unico**: Nessun altro collaboratore
+- **Accesso**: Area amministrativa completa
+- **Funzionalità**: Gestione totale piattaforma
+
+---
+
+## 📦 CATEGORIE PRODOTTI/SERVIZI
+
+### 1. Incisioni su Legno 🪵
+- **Tecnica**: Pirografo (manuale)
+- **Opzioni**: Con o senza colore (tempera)
+- **Spedizione**: Nazionale tramite corriere (€10 tariffa base)
+- **Personalizzazione**: Upload immagine cliente o scelta da galleria disegni
+
+### 2. Torte Decorative 🎂
+- **Materiale**: Polistirolo + decorazioni varie
+- **Tipologie decori**: Cioccolatini, dolci finti, cartonati, fiori
+- **Servizio**: Solo Roma e provincia
+- **Nota**: NO spedizione
+
+### 3. Allestimento Eventi 🎉
+- **Servizi**: Decori personalizzati cerimonie, compleanni, feste
+- **Elementi**: Archi palloncini, regalini ospiti, centri tavola, tableau
+- **Extra**: Mediazione catering (fornitore esterno) e affitto sala (fornitore esterno)
+- **Servizio**: Solo Roma e provincia
+- **Prenotazione**: Richiesta con data, conferma disponibilità da Valeria
+
+---
+
+## 🖼 STRUTTURA CONTENUTI
+
+### Pagine Pubbliche
+
+#### Homepage
+- Hero section con presentazione ValiryArt
+- Preview 3 categorie principali
+- CTA "Richiedi il tuo progetto"
+- Sezione "Opere recenti"
+- Link social (WhatsApp, Instagram)
+
+#### Incisioni su Legno
+- Galleria opere realizzate (~100 foto previste)
+- Video processo lavorazione (pirografo)
+- Form richiesta personalizzata
+- Galleria disegni selezionabili per incisione
+
+#### Torte Decorative
+- Galleria torte realizzate
+- Descrizione servizio e limitazioni geografiche
+- Form richiesta personalizzata
+
+#### Eventi
+- Galleria allestimenti realizzati
+- Descrizione servizi (decori, mediazione catering/sala)
+- Form richiesta con data evento
+- Note su limitazioni geografiche
+
+#### Chi Sono
+- Bio Valeria
+- Filosofia artistica
+- Contatti
+
+#### Come Funziona
+- Processo step-by-step
+- Dalle richiesta alla consegna
+- Tempi e modalità
+
+#### Richiesta Aperta (Form Generico)
+- Form multifunzione per richieste non specifiche
+
+---
+
+## 💰 SISTEMA PREZZI E PREVENTIVI
+
+### Logica Pricing
+- **Prezzi base**: Definiti per dimensioni/complessità (catalogo da fornire)
+- **Calcolatore automatico**: Preventivo orientativo in base a parametri utente
+- **Preventivo finale**: Sempre da Valeria dopo valutazione dettagliata
+
+### Spedizioni
+- **Incisioni su legno**: €10 tariffa base nazionale
+- **Calcolo automatico**: Da implementare in base a dimensioni/peso/destinazione (fase successiva)
+
+### Parametri Preventivo (Incisioni)
+- Dimensioni (cm)
+- Complessità disegno (semplice/media/complessa)
+- Con/senza colore
+- Urgenza (standard/express)
+
+---
+
+## 🔄 SISTEMA GESTIONE RICHIESTE
+
+### Workflow Richiesta
+
+```
+1. NUOVA 
+   ↓
+2. IN VALUTAZIONE (Valeria visualizza)
+   ↓
+3. PREVENTIVO INVIATO (Valeria invia proposta)
+   ↓
+4. ACCETTATA (Cliente conferma)
+   ↓
+5. IN LAVORAZIONE (Valeria inizia lavoro)
+   ↓
+6. COMPLETATA (Consegna/spedizione effettuata)
+
+Stati alternativi:
+- RIFIUTATA (Cliente non accetta preventivo)
+- ANNULLATA (Richiesta cancellata)
+```
+
+### Thread Conversazioni
+- Ogni richiesta = thread unico
+- Chat interna piattaforma tra cliente e Valeria
+- Storico completo messaggi
+- Allegati supportati (immagini, documenti)
+- Notifiche email ad ogni nuovo messaggio
+
+### Notifiche Email Automatiche
+- **Cliente**: Conferma ricezione richiesta, cambio stato, nuovo messaggio Valeria
+- **Valeria**: Nuova richiesta, risposta cliente, cambio stato da cliente
+
+---
+
+## 🎛 AREA AMMINISTRATIVA (Valeria)
+
+### Dashboard Principale
+- Overview richieste per stato (widget contatori)
+- Ultime richieste in ordine cronologico
+- Grafici statistiche (richieste/mese, categorie più richieste)
+
+### Gestione Richieste
+- Visualizzazione tutte richieste (filtri per stato/categoria/data)
+- Dettaglio singola richiesta con thread conversazione
+- Cambio stato richiesta
+- Invio preventivi
+- Upload allegati/immagini
+- Note private interne
+
+### Gestione Portfolio
+- **Upload immagini**: Massivo o singolo
+- **Organizzazione**: Per categoria (Incisioni, Torte, Eventi)
+- **Modifica**: Titolo, descrizione, categoria, ordine visualizzazione
+- **Cancellazione**: Rimozione immagini
+- **Galleria disegni**: Gestione disegni selezionabili per incisioni
+
+### Gestione Contenuti Statici
+- Modifica testi pagine: Chi Sono, Come Funziona, Homepage
+- Editor WYSIWYG per formattazione
+
+### Gestione Prezzi/Listini
+- CRUD tabella prezzi per dimensioni/opzioni
+- Impostazione tariffe spedizione
+- Sconti/promozioni (opzionale, fase successiva)
+
+### Gestione Video
+- Upload/modifica link video lavorazione
+- Embedding YouTube/Vimeo o hosting diretto
+
+### Statistiche e Analytics
+- Visualizzazioni pagine per categoria
+- Numero richieste per periodo
+- Tasso conversione richieste → lavori accettati
+- Opere più visualizzate
+
+---
+
+## 📱 FUNZIONALITÀ UTENTE
+
+### Navigazione Portfolio
+- Galleria responsive con lazy loading
+- Lightbox per visualizzazione immagini
+- Filtri base per categoria
+- Ricerca (opzionale, fase successiva)
+
+### Form Richiesta Personalizzata
+
+#### Dati Comuni Tutti Form
+- Nome/Cognome
+- Email*
+- Telefono (opzionale)
+- Categoria servizio*
+- Descrizione richiesta*
+- Upload immagini (max 5)
+
+#### Specifici Incisioni
+- Dimensioni desiderate (dropdown)
+- Tipo legno (se scelta disponibile)
+- Con/senza colore
+- Selezione disegno da galleria O upload immagine
+- Urgenza (standard/express)
+- Indirizzo spedizione
+
+#### Specifici Torte
+- Dimensioni/numero piani
+- Tema/occasione
+- Colori preferiti
+- Data necessità
+- Luogo consegna (Roma/provincia)
+
+#### Specifici Eventi
+- Tipo evento (compleanno, matrimonio, altro)
+- Data evento*
+- Numero partecipanti stimati
+- Luogo evento
+- Servizi richiesti (decori, catering, sala)
+- Budget orientativo (opzionale)
+
+### Profilo Utente Registrato
+- Visualizzazione dati personali
+- Modifica dati account
+- Storico richieste con stati
+- Thread conversazioni attive
+
+---
+
+## 🔗 INTEGRAZIONI ESTERNE
+
+### Social Media
+- Link diretto WhatsApp (numero Valeria)
+- Link profilo Instagram
+- Pulsanti condivisione social (opzionale)
+
+### Email
+- SMTP per invio notifiche automatiche
+- Template email branded
+- Gestione coda invii
+
+### Google OAuth
+- Login/registrazione con account Google
+- Recupero dati base (nome, email, foto profilo)
+
+### Storage Immagini
+- Upload locale su server O servizio cloud (da decidere)
+- Ottimizzazione automatica immagini (resize, compressione)
+- Backup automatico
+
+---
+
+## 🗄 SCHEMA DATABASE (Bozza Tabelle Principali)
+
+### Users
+- id, email, password_hash, nome, cognome, telefono, indirizzo, google_id, ruolo (user/admin), created_at
+
+### Requests (Richieste)
+- id, user_id (nullable per guest), categoria, stato, email_contatto, dati_form (JSON), preventivo_valeria, data_evento (nullable), created_at, updated_at
+
+### Messages (Thread Conversazioni)
+- id, request_id, sender_id (user o admin), messaggio, allegati (JSON array), read_status, created_at
+
+### Portfolio (Opere)
+- id, categoria, titolo, descrizione, immagine_url, ordine, created_at
+
+### DesignGallery (Disegni Selezionabili)
+- id, titolo, immagine_url, categoria, created_at
+
+### Prices (Listino)
+- id, categoria, dimensione, complessita, con_colore, prezzo_base, created_at
+
+### Content (Pagine Statiche)
+- id, pagina (chi_sono, come_funziona, etc), contenuto, updated_at
+
+---
+
+## 🚀 DEPLOYMENT E HOSTING
+
+### Ambiente Attuale
+- Sviluppo locale: Windows 11 + Docker Desktop
+- Test: Quick tunnel Cloudflare
+
+### Prossimi Step (Da Pianificare)
+1. Acquisto dominio personalizzato
+2. Scelta hosting professionale (VPS, Cloud provider)
+3. Setup CI/CD per deployment automatico
+4. Configurazione HTTPS con certificato SSL
+5. Backup automatici database
+
+---
+
+## 🔍 SEO E MARKETING
+
+### Ottimizzazione SEO
+- Meta tag personalizzati per ogni pagina
+- Sitemap XML automatica
+- URL SEO-friendly
+- Alt text immagini
+- Schema.org markup per opere artistiche
+- Performance ottimizzate (Lighthouse score target: >90)
+
+### Analytics
+- Google Analytics 4
+- Tracking conversioni (richieste inviate)
+- Heatmap (opzionale, Hotjar/Clarity)
+
+### Newsletter (Opzionale, Fase Successiva)
+- Raccolta email interessati
+- Invio novità/promozioni
+
+---
+
+## 📝 FASI SVILUPPO SUGGERITE
+
+### Fase 1: Setup Infrastruttura (COMPLETATA ✅)
+- Docker setup con 4 container
+- Configurazione base React + Node.js + PostgreSQL + Nginx
+
+### Fase 2: Database e Backend API
+- Design schema database PostgreSQL
+- API REST Node.js per tutte le funzionalità
+- Autenticazione JWT + Google OAuth
+- Sistema upload immagini
+
+### Fase 3: Frontend Base Utente
+- Setup React Router
+- Componenti UI base (header, footer, cards)
+- Homepage e navigazione categorie
+- Gallerie portfolio responsive
+
+### Fase 4: Sistema Richieste
+- Form richiesta multi-step
+- Thread conversazioni frontend
+- Sistema notifiche
+- Gestione stati richieste
+
+### Fase 5: Area Admin
+- Dashboard amministrativa
+- Gestione richieste e conversazioni
+- Upload e gestione portfolio
+- Editor contenuti statici
+
+### Fase 6: Funzionalità Avanzate
+- Calcolatore preventivi automatico
+- Sistema pricing completo
+- Statistiche e analytics
+- Ottimizzazioni performance
+
+### Fase 7: Testing e Deployment
+- Testing completo funzionalità
+- Ottimizzazione SEO
+- Acquisto dominio e setup hosting
+- Deploy produzione
+
+---
+
+## 📋 CHECKLIST INFORMAZIONI DA FORNIRE
+
+### Contenuti
+- [ ] Catalogo prezzi completo con dimensioni/opzioni
+- [ ] Testo biografia "Chi Sono"
+- [ ] Testo pagina "Come Funziona"
+- [ ] ~100 foto opere esistenti (divise per categoria)
+- [ ] Galleria disegni selezionabili per incisioni
+- [ ] Video lavorazione (link o file)
+- [ ] Logo gatto di legno (file alta risoluzione)
+- [ ] Palette colori esatta (codici HEX se disponibili)
+
+### Configurazioni
+- [ ] Email per SMTP (invio notifiche)
+- [ ] Numero WhatsApp da linkare
+- [ ] Username Instagram
+- [ ] Google OAuth credentials (fase sviluppo)
+- [ ] Indirizzo completo per eventi Roma/provincia
+
+---
+
+## 🎯 OBIETTIVI DI SUCCESSO
+
+### Utente Finale
+- Navigazione fluida e intuitiva da mobile
+- Invio richiesta in <3 minuti
+- Chiara visualizzazione portfolio opere
+- Comunicazione trasparente con Valeria
+
+### Valeria (Admin)
+- Gestione richieste in 50% tempo rispetto email tradizionali
+- Storico completo clienti e conversazioni
+- Upload contenuti autonomo senza competenze tecniche
+- Visibilità statistiche business
+
+### Tecnici
+- Performance: <2s caricamento pagine
+- SEO: Posizionamento top 3 ricerche locali entro 6 mesi
+- Scalabilità: Gestione fino 1000 richieste/mese senza degrado
+- Uptime: >99.5%
+
+---
+
+## 📞 CONTATTI E RISORSE
+
+- **Sito Attuale**: https://valiryart.great-site.net/
+- **Instagram**: (da fornire)
+- **WhatsApp**: (da fornire)
+
+---
+
+**Documento Versione**: 1.0  
+**Data Creazione**: 23 Novembre 2025  
+**Ultimo Aggiornamento**: 23 Novembre 2025  
+
+---
+
+## 💡 NOTE AGGIUNTIVE
+
+- Priorità sviluppo: Sistema richieste e conversazioni (core business)
+- Nice-to-have: Newsletter, filtri avanzati portfolio, recensioni clienti
+- Mantenere sempre backup sito WordPress fino a completo rilascio nuova versione
+- Considerare soft-launch con utenti selezionati prima di pubblico generale
