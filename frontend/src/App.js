@@ -31,6 +31,7 @@ import CreateRequestPage from './pages/user/CreateRequestPage';
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminRequestsPage from './pages/admin/AdminRequestsPage';
+import AdminRequestDetailPage from './pages/admin/RequestDetailPage';
 import AdminPortfolioPage from './pages/admin/AdminPortfolioPage';
 import AdminDesignsPage from './pages/admin/AdminDesignsPage';
 import AdminUsersPage from './pages/admin/AdminUsersPage';
@@ -49,7 +50,7 @@ const LoadingScreen = () => (
 
 // Protected Route Component
 const ProtectedRoute = ({ children, adminOnly = false }) => {
-  const { isAuthenticated, isAdmin, loading } = useAuth();
+  const { isAuthenticated, user, loading } = useAuth();
 
   if (loading) {
     return <LoadingScreen />;
@@ -59,7 +60,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (adminOnly && !isAdmin()) {
+  if (adminOnly && user?.ruolo !== 'admin') {
     return <Navigate to="/" replace />;
   }
 
@@ -70,7 +71,9 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Public Routes */}
+      {/* ============================================
+          PUBLIC ROUTES
+          ============================================ */}
       <Route path="/" element={<MainLayout />}>
         <Route index element={<HomePage />} />
         <Route path="incisioni" element={<IncisioniPage />} />
@@ -86,7 +89,9 @@ const AppRoutes = () => {
         <Route path="richiesta" element={<CreateRequestPage />} />
       </Route>
 
-      {/* User Routes */}
+      {/* ============================================
+          USER ROUTES (Protected)
+          ============================================ */}
       <Route
         path="/user"
         element={
@@ -101,7 +106,9 @@ const AppRoutes = () => {
         <Route path="profile" element={<ProfilePage />} />
       </Route>
 
-      {/* Admin Routes */}
+      {/* ============================================
+          ADMIN ROUTES (Protected - Admin Only)
+          ============================================ */}
       <Route
         path="/admin"
         element={
@@ -111,16 +118,31 @@ const AppRoutes = () => {
         }
       >
         <Route index element={<AdminDashboard />} />
+        <Route path="dashboard" element={<AdminDashboard />} />
+        
+        {/* Richieste */}
         <Route path="requests" element={<AdminRequestsPage />} />
-        <Route path="requests/:id" element={<RequestDetailPage />} />
+        <Route path="requests/:id" element={<AdminRequestDetailPage />} />
+        
+        {/* Portfolio */}
         <Route path="portfolio" element={<AdminPortfolioPage />} />
+        
+        {/* Galleria Disegni */}
         <Route path="designs" element={<AdminDesignsPage />} />
+        
+        {/* Utenti */}
         <Route path="users" element={<AdminUsersPage />} />
+        
+        {/* Contenuti */}
         <Route path="content" element={<AdminContentPage />} />
+        
+        {/* Impostazioni */}
         <Route path="settings" element={<AdminSettingsPage />} />
       </Route>
 
-      {/* 404 */}
+      {/* ============================================
+          404 - Not Found
+          ============================================ */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

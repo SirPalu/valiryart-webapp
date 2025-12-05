@@ -2,9 +2,6 @@
 
 import axios from 'axios';
 
-// ============================================
-// AXIOS INSTANCE CONFIGURATION
-// ============================================
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8081/api';
 
 const api = axios.create({
@@ -16,14 +13,23 @@ const api = axios.create({
 });
 
 // ============================================
-// REQUEST INTERCEPTOR - Aggiungi token JWT
+// REQUEST INTERCEPTOR - DEBUG VERSION
 // ============================================
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('valiryart_token');
+    
+    // 🐛 DEBUG - RIMUOVI DOPO IL TEST
+    console.log('🔑 Token from localStorage:', token ? 'EXISTS' : 'MISSING');
+    console.log('📍 Request URL:', config.url);
+    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log('✅ Authorization header added');
+    } else {
+      console.warn('⚠️ NO TOKEN FOUND!');
     }
+    
     return config;
   },
   (error) => {
@@ -32,13 +38,20 @@ api.interceptors.request.use(
 );
 
 // ============================================
-// RESPONSE INTERCEPTOR - Gestione errori globale
+// RESPONSE INTERCEPTOR
 // ============================================
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    // 🐛 DEBUG
+    console.error('❌ API Error:', {
+      status: error.response?.status,
+      url: error.config?.url,
+      message: error.response?.data?.message
+    });
+    
     if (error.response?.status === 401) {
-      // Token scaduto o non valido
+      console.warn('🚨 401 Unauthorized - Clearing auth data');
       localStorage.removeItem('valiryart_token');
       localStorage.removeItem('valiryart_user');
       window.location.href = '/login';
@@ -53,10 +66,7 @@ api.interceptors.response.use(
 export const authAPI = {
   register: (data) => api.post('/auth/register', data),
   login: (data) => api.post('/auth/login', data),
-  
-  // ✅ CORREZIONE: Endpoint corretto con /auth/google
   googleAuth: (credential) => api.post('/auth/google', { credential }),
-  
   logout: () => api.post('/auth/logout'),
   getCurrentUser: () => api.get('/auth/me'),
   updateProfile: (data) => api.put('/auth/me', data),
@@ -66,7 +76,29 @@ export const authAPI = {
 };
 
 // ============================================
-// REQUESTS API (Richieste Lavori)
+// ADMIN API
+// ============================================
+export const adminAPI = {
+  getDashboardStats: () => api.get('/admin/dashboard'),
+  getRecentActivity: (limit) => api.get('/admin/activity', { params: { limit } }),
+  getRevenueChart: (months) => api.get('/admin/revenue-chart', { params: { months } }),
+  getTopCustomers: (limit) => api.get('/admin/top-customers', { params: { limit } }),
+  exportRequests: (filters) => api.get('/admin/export-requests', { 
+    params: filters,
+    responseType: 'blob' 
+  }),
+  getAllUsers: (filters) => api.get('/admin/users', { params: filters }),
+  updateUserStatus: (userId, attivo) => api.put(`/admin/users/${userId}/status`, { attivo }),
+  
+  // 🆕 AGGIUNTI - Per le richieste admin
+  getRequestById: (id) => api.get(`/admin/requests/${id}`),
+  getRequestMessages: (requestId) => api.get(`/admin/requests/${requestId}/messages`),
+  sendMessage: (requestId, data) => api.post(`/admin/requests/${requestId}/messages`, data),
+  updateRequestStatus: (id, data) => api.put(`/admin/requests/${id}/status`, data),
+};
+
+// ============================================
+// REQUESTS API
 // ============================================
 export const requestsAPI = {
   create: (data) => api.post('/requests', data),
@@ -81,7 +113,7 @@ export const requestsAPI = {
 };
 
 // ============================================
-// MESSAGES API (Chat Richieste)
+// MESSAGES API
 // ============================================
 export const messagesAPI = {
   getMessages: (requestId) => api.get(`/messages/${requestId}`),
@@ -136,26 +168,5 @@ export const contentAPI = {
   getAllSettings: () => api.get('/content/settings'),
   updateSetting: (key, value) => api.put(`/content/settings/${key}`, { valore: value }),
 };
-
-// ============================================
-// ADMIN API
-// ============================================
-export const adminAPI = {
-  getDashboardStats: () => api.get('/admin/dashboard'),
-  getRecentActivity: (limit) => api.get('/admin/activity', { params: { limit } }),
-  getRevenueChart: (months) => api.get('/admin/revenue-chart', { params: { months } }),
-  getTopCustomers: (limit) => api.get('/admin/top-customers', { params: { limit } }),
-  exportRequests: (filters) => api.get('/admin/export-requests', { 
-    params: filters,
-    responseType: 'blob' 
-  }),
-  getAllUsers: (filters) => api.get('/admin/users', { params: filters }),
-  updateUserStatus: (userId, attivo) => api.put(`/admin/users/${userId}/status`, { attivo }),
-};
-
-// ============================================
-// HEALTH CHECK
-// ============================================
-export const healthCheck = () => axios.get('http://localhost:8081/health');
 
 export default api;

@@ -1,6 +1,6 @@
 // frontend/src/components/chat/Chat.js
 import React, { useState, useEffect, useRef } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import './Chat.css';
 
 const Chat = ({ requestId, recipientId, recipientName }) => {
