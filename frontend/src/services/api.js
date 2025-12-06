@@ -12,14 +12,11 @@ const api = axios.create({
   },
 });
 
-// ============================================
-// REQUEST INTERCEPTOR - DEBUG VERSION
-// ============================================
+// REQUEST INTERCEPTOR
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('valiryart_token');
     
-    // 🐛 DEBUG - RIMUOVI DOPO IL TEST
     console.log('🔑 Token from localStorage:', token ? 'EXISTS' : 'MISSING');
     console.log('📍 Request URL:', config.url);
     
@@ -29,6 +26,12 @@ api.interceptors.request.use(
     } else {
       console.warn('⚠️ NO TOKEN FOUND!');
     }
+
+    // ✅ IMPORTANTE: Non sovrascrivere Content-Type se è già impostato (per FormData)
+    if (config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+      console.log('📎 FormData detected - Content-Type removed (browser will set it)');
+    }
     
     return config;
   },
@@ -37,13 +40,10 @@ api.interceptors.request.use(
   }
 );
 
-// ============================================
 // RESPONSE INTERCEPTOR
-// ============================================
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // 🐛 DEBUG
     console.error('❌ API Error:', {
       status: error.response?.status,
       url: error.config?.url,
@@ -59,6 +59,8 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// ... resto del codice rimane uguale
 
 // ============================================
 // AUTH API
@@ -101,17 +103,24 @@ export const adminAPI = {
 // REQUESTS API
 // ============================================
 export const requestsAPI = {
-  create: (data) => api.post('/requests', data),
+  create: (data) => {
+    const isFormData = data instanceof FormData;
+    return api.post('/requests', data, {
+      headers: isFormData ? { 'Content-Type': 'multipart/form-data' } : undefined,
+    });
+  },
+
   getMyRequests: () => api.get('/requests/my-requests'),
   getById: (id) => api.get(`/requests/${id}`),
   getAll: (filters) => api.get('/requests', { params: filters }),
   updateStatus: (id, data) => api.put(`/requests/${id}/status`, data),
   delete: (id) => api.delete(`/requests/${id}`),
-  uploadAttachment: (id, formData) => api.post(`/requests/${id}/attachments`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  }),
-};
 
+  uploadAttachment: (id, formData) =>
+    api.post(`/requests/${id}/attachments`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
+};
 // ============================================
 // MESSAGES API
 // ============================================

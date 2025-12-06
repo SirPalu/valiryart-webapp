@@ -223,6 +223,10 @@ const IncisioniPage = () => {
           }
         });
         formDataToSend.append('image', formData.uploadedImage);
+        // DEBUG TEMPORANEO — controlla cosa c’è in FormData
+for (let pair of formDataToSend.entries()) {
+  console.log(pair[0] + ':', pair[1]);
+}
         
         await requestsAPI.create(formDataToSend);
       } else {

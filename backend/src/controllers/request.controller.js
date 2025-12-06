@@ -30,34 +30,63 @@ const createRequest = async (req, res) => {
     // User ID se autenticato, altrimenti NULL per guest
     const userId = req.user ? req.user.id : null;
 
-    const result = await query(
-      `INSERT INTO requests (
-        user_id, categoria, email_contatto, nome_contatto, telefono_contatto,
-        descrizione, dati_specifici, data_evento, citta, indirizzo_consegna, stato
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'nuova')
-      RETURNING *`,
-      [
-        userId,
-        categoria,
-        email_contatto,
-        nome_contatto,
-        telefono_contatto,
-        descrizione,
-        typeof dati_specifici === 'string' ? dati_specifici : JSON.stringify(dati_specifici),
-        data_evento,
-        citta,
-        indirizzo_consegna
-      ]
-    );
+    // ✅ Usa transaction per salvare richiesta + attachments insieme
+    const result = await transaction(async (client) => {
+      // Inserisci richiesta
+      const requestResult = await client.query(
+        `INSERT INTO requests (
+          user_id, categoria, email_contatto, nome_contatto, telefono_contatto,
+          descrizione, dati_specifici, data_evento, citta, indirizzo_consegna, stato
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'nuova')
+        RETURNING *`,
+        [
+          userId,
+          categoria,
+          email_contatto,
+          nome_contatto,
+          telefono_contatto,
+          descrizione,
+          typeof dati_specifici === 'string' ? dati_specifici : JSON.stringify(dati_specifici),
+          data_evento,
+          citta,
+          indirizzo_consegna
+        ]
+      );
 
-    const request = result.rows[0];
+      const request = requestResult.rows[0];
+
+      // ✅ Salva file allegati se presenti
+      if (req.files && req.files.length > 0) {
+        for (let i = 0; i < req.files.length; i++) {
+          const file = req.files[i];
+          await client.query(
+            `INSERT INTO request_attachments (
+              request_id, filename, original_filename, file_path, 
+              file_size, mime_type, ordine
+            )
+            VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+            [
+              request.id,
+              file.filename,
+              file.originalname,
+              `/uploads/requests/${file.filename}`,
+              file.size,
+              file.mimetype,
+              i
+            ]
+          );
+        }
+      }
+
+      return request;
+    });
 
     // ✅ INVIO EMAIL: Conferma al cliente
-    await emailService.sendConfirmationEmail(request);
+    await emailService.sendConfirmationEmail(result);
 
     // ✅ INVIO EMAIL: Notifica a Valeria
-    await emailService.sendNewRequestAdminEmail(request, req.user);
+    await emailService.sendNewRequestAdminEmail(result, req.user);
 
     // ✅ SALVA LOG NOTIFICHE
     await query(
@@ -66,12 +95,12 @@ const createRequest = async (req, res) => {
        ($1, $2, 'conferma_richiesta', $3, $4, true),
        ($1, $5, 'nuova_richiesta_admin', $6, $7, true)`,
       [
-        request.id,
+        result.id,
         email_contatto,
-        `Richiesta Ricevuta #${request.id.substring(0, 8).toUpperCase()}`,
+        `Richiesta Ricevuta #${result.id.substring(0, 8).toUpperCase()}`,
         'Conferma ricezione richiesta',
         'valiryart93@gmail.com',
-        `Nuova Richiesta #${request.id.substring(0, 8).toUpperCase()}`,
+        `Nuova Richiesta #${result.id.substring(0, 8).toUpperCase()}`,
         'Notifica nuova richiesta amministratore'
       ]
     );
@@ -79,7 +108,7 @@ const createRequest = async (req, res) => {
     res.status(201).json({
       success: true,
       message: 'Richiesta inviata con successo! Riceverai una conferma via email.',
-      data: { request }
+      data: { request: result }
     });
   } catch (error) {
     console.error('Create request error:', error);

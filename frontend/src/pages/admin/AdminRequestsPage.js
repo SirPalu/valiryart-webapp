@@ -1,6 +1,7 @@
 // frontend/src/pages/admin/AdminRequestsPage.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { requestsAPI } from '../../services/api'; // ✅ Importa API service
 import './AdminRequestsPage.css';
 
 const AdminRequestsPage = () => {
@@ -19,10 +20,8 @@ const AdminRequestsPage = () => {
     dateTo: ''
   });
 
-  // Ordinamento
   const [sortBy, setSortBy] = useState('date_desc');
 
-  // Stats
   const [stats, setStats] = useState({
     total: 0,
     pending: 0,
@@ -31,81 +30,68 @@ const AdminRequestsPage = () => {
     completed: 0
   });
 
-  // Carica richieste
   useEffect(() => {
     fetchRequests();
   }, []);
 
-  // Applica filtri quando cambiano
   useEffect(() => {
     applyFilters();
   }, [requests, filters, sortBy]);
 
+  // ✅ USA requestsAPI invece di fetch()
   const fetchRequests = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/admin/requests`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      );
-
-      if (!response.ok) throw new Error('Errore nel caricamento richieste');
-
-      const data = await response.json();
-      setRequests(data.data || []);
-      calculateStats(data.data || []);
+      console.log('🔍 Fetching admin requests...');
+      
+      const response = await requestsAPI.getAll(); // ✅ Usa API service
+      
+      console.log('✅ Requests loaded:', response.data);
+      
+      const data = response.data.data.requests || [];
+      setRequests(data);
+      calculateStats(data);
       setError(null);
     } catch (err) {
-      console.error('Errore:', err);
+      console.error('❌ Fetch requests error:', err);
+      console.error('❌ Error response:', err.response?.data);
       setError('Impossibile caricare le richieste');
     } finally {
       setLoading(false);
     }
   };
 
-  // Calcola statistiche
   const calculateStats = (data) => {
     const stats = {
       total: data.length,
-      pending: data.filter(r => r.status === 'pending').length,
-      approved: data.filter(r => r.status === 'approved').length,
-      rejected: data.filter(r => r.status === 'rejected').length,
-      completed: data.filter(r => r.status === 'completed').length
+      pending: data.filter(r => r.stato === 'nuova').length,
+      approved: data.filter(r => r.stato === 'in_valutazione').length,
+      rejected: data.filter(r => r.stato === 'rifiutata').length,
+      completed: data.filter(r => r.stato === 'completata').length
     };
     setStats(stats);
   };
 
-  // Applica filtri e ordinamento
   const applyFilters = () => {
     let filtered = [...requests];
 
-    // Filtro stato
     if (filters.status !== 'all') {
-      filtered = filtered.filter(r => r.status === filters.status);
+      filtered = filtered.filter(r => r.stato === filters.status);
     }
 
-    // Filtro tipo
     if (filters.type !== 'all') {
-      filtered = filtered.filter(r => r.type === filters.type);
+      filtered = filtered.filter(r => r.categoria === filters.type);
     }
 
-    // Filtro ricerca (nome cliente, email, titolo)
     if (filters.search) {
       const search = filters.search.toLowerCase();
       filtered = filtered.filter(r => 
-        r.customer_name?.toLowerCase().includes(search) ||
-        r.customer_email?.toLowerCase().includes(search) ||
-        r.title?.toLowerCase().includes(search) ||
-        r.description?.toLowerCase().includes(search)
+        r.nome_contatto?.toLowerCase().includes(search) ||
+        r.email_contatto?.toLowerCase().includes(search) ||
+        r.descrizione?.toLowerCase().includes(search)
       );
     }
 
-    // Filtro data
     if (filters.dateFrom) {
       filtered = filtered.filter(r => 
         new Date(r.created_at) >= new Date(filters.dateFrom)
@@ -117,7 +103,6 @@ const AdminRequestsPage = () => {
       );
     }
 
-    // Ordinamento
     filtered.sort((a, b) => {
       switch (sortBy) {
         case 'date_desc':
@@ -125,13 +110,9 @@ const AdminRequestsPage = () => {
         case 'date_asc':
           return new Date(a.created_at) - new Date(b.created_at);
         case 'name_asc':
-          return (a.customer_name || '').localeCompare(b.customer_name || '');
+          return (a.nome_contatto || '').localeCompare(b.nome_contatto || '');
         case 'name_desc':
-          return (b.customer_name || '').localeCompare(a.customer_name || '');
-        case 'price_desc':
-          return (b.estimated_price || 0) - (a.estimated_price || 0);
-        case 'price_asc':
-          return (a.estimated_price || 0) - (b.estimated_price || 0);
+          return (b.nome_contatto || '').localeCompare(a.nome_contatto || '');
         default:
           return 0;
       }
@@ -140,7 +121,6 @@ const AdminRequestsPage = () => {
     setFilteredRequests(filtered);
   };
 
-  // Reset filtri
   const resetFilters = () => {
     setFilters({
       status: 'all',
@@ -152,33 +132,18 @@ const AdminRequestsPage = () => {
     setSortBy('date_desc');
   };
 
-  // Aggiorna stato richiesta
+  // ✅ USA adminAPI per update status
   const updateRequestStatus = async (requestId, newStatus) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/admin/requests/${requestId}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ status: newStatus })
-        }
-      );
-
-      if (!response.ok) throw new Error('Errore aggiornamento stato');
-
-      // Ricarica richieste
+      const { adminAPI } = require('../../services/api');
+      await adminAPI.updateRequestStatus(requestId, { stato: newStatus });
       fetchRequests();
     } catch (err) {
-      console.error('Errore:', err);
+      console.error('❌ Update status error:', err);
       alert('Errore nell\'aggiornamento dello stato');
     }
   };
 
-  // Formatta data
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('it-IT', {
       day: '2-digit',
@@ -189,7 +154,6 @@ const AdminRequestsPage = () => {
     });
   };
 
-  // Formatta prezzo
   const formatPrice = (price) => {
     if (!price) return 'Da definire';
     return `€ ${parseFloat(price).toFixed(2)}`;
@@ -232,7 +196,7 @@ const AdminRequestsPage = () => {
         </button>
       </div>
 
-      {/* Statistics Cards */}
+      {/* Stats Cards */}
       <div className="stats-cards">
         <div className="stat-card">
           <div className="stat-icon total">📊</div>
@@ -244,14 +208,14 @@ const AdminRequestsPage = () => {
         <div className="stat-card">
           <div className="stat-icon pending">⏳</div>
           <div className="stat-info">
-            <span className="stat-label">In Attesa</span>
+            <span className="stat-label">Nuove</span>
             <span className="stat-value">{stats.pending}</span>
           </div>
         </div>
         <div className="stat-card">
           <div className="stat-icon approved">✅</div>
           <div className="stat-info">
-            <span className="stat-label">Approvate</span>
+            <span className="stat-label">In Valutazione</span>
             <span className="stat-value">{stats.approved}</span>
           </div>
         </div>
@@ -267,7 +231,6 @@ const AdminRequestsPage = () => {
       {/* Filtri */}
       <div className="filters-section">
         <div className="filters-row">
-          {/* Ricerca */}
           <div className="filter-group">
             <label>🔍 Cerca</label>
             <input
@@ -279,7 +242,6 @@ const AdminRequestsPage = () => {
             />
           </div>
 
-          {/* Stato */}
           <div className="filter-group">
             <label>Stato</label>
             <select
@@ -288,30 +250,29 @@ const AdminRequestsPage = () => {
               className="filter-select"
             >
               <option value="all">Tutti</option>
-              <option value="pending">In Attesa</option>
-              <option value="approved">Approvate</option>
-              <option value="rejected">Rifiutate</option>
-              <option value="completed">Completate</option>
+              <option value="nuova">Nuova</option>
+              <option value="in_valutazione">In Valutazione</option>
+              <option value="preventivo_inviato">Preventivo Inviato</option>
+              <option value="in_lavorazione">In Lavorazione</option>
+              <option value="completata">Completata</option>
             </select>
           </div>
 
-          {/* Tipo */}
           <div className="filter-group">
-            <label>Tipo</label>
+            <label>Categoria</label>
             <select
               value={filters.type}
               onChange={(e) => setFilters({ ...filters, type: e.target.value })}
               className="filter-select"
             >
               <option value="all">Tutti</option>
-              <option value="engraving">Incisione</option>
-              <option value="cake">Torta</option>
-              <option value="event">Evento</option>
-              <option value="other">Altro</option>
+              <option value="incisioni">Incisioni</option>
+              <option value="torte">Torte</option>
+              <option value="eventi">Eventi</option>
+              <option value="altro">Altro</option>
             </select>
           </div>
 
-          {/* Ordinamento */}
           <div className="filter-group">
             <label>Ordina per</label>
             <select
@@ -323,13 +284,10 @@ const AdminRequestsPage = () => {
               <option value="date_asc">Data (meno recenti)</option>
               <option value="name_asc">Nome A-Z</option>
               <option value="name_desc">Nome Z-A</option>
-              <option value="price_desc">Prezzo (alto)</option>
-              <option value="price_asc">Prezzo (basso)</option>
             </select>
           </div>
         </div>
 
-        {/* Data Range */}
         <div className="filters-row">
           <div className="filter-group">
             <label>Da Data</label>
@@ -374,47 +332,35 @@ const AdminRequestsPage = () => {
             <div key={request.id} className="request-card">
               <div className="request-card-header">
                 <div className="request-main-info">
-                  <h3>{request.title || 'Richiesta senza titolo'}</h3>
+                  <h3>{request.descrizione?.substring(0, 100) || 'Richiesta'}</h3>
                   <div className="request-meta">
-                    <span>👤 {request.customer_name || 'N/A'}</span>
-                    <span>📧 {request.customer_email}</span>
+                    <span>👤 {request.nome_contatto || 'N/A'}</span>
+                    <span>📧 {request.email_contatto}</span>
                     <span>📅 {formatDate(request.created_at)}</span>
-                    <span className={`type-badge ${request.type}`}>
-                      {request.type === 'engraving' && '🪵 Incisione'}
-                      {request.type === 'cake' && '🍰 Torta'}
-                      {request.type === 'event' && '🎉 Evento'}
-                      {request.type === 'other' && '📝 Altro'}
+                    <span className={`type-badge ${request.categoria}`}>
+                      {request.categoria}
                     </span>
                   </div>
                 </div>
-                <span className={`status-badge ${request.status}`}>
-                  {request.status === 'pending' && '⏳ In Attesa'}
-                  {request.status === 'approved' && '✅ Approvata'}
-                  {request.status === 'rejected' && '❌ Rifiutata'}
-                  {request.status === 'completed' && '🎉 Completata'}
+                <span className={`status-badge ${request.stato}`}>
+                  {request.stato}
                 </span>
               </div>
 
               <div className="request-card-body">
                 <p className="request-description">
-                  {request.description || 'Nessuna descrizione'}
+                  {request.descrizione?.substring(0, 150)}...
                 </p>
 
-                {request.event_date && (
+                {request.data_evento && (
                   <div className="request-detail">
-                    <strong>📅 Data Evento:</strong> {formatDate(request.event_date)}
+                    <strong>📅 Data Evento:</strong> {formatDate(request.data_evento)}
                   </div>
                 )}
 
-                {request.estimated_price && (
+                {request.preventivo_importo && (
                   <div className="request-detail">
-                    <strong>💰 Prezzo Stimato:</strong> {formatPrice(request.estimated_price)}
-                  </div>
-                )}
-
-                {request.notes && (
-                  <div className="request-detail">
-                    <strong>📝 Note:</strong> {request.notes}
+                    <strong>💰 Preventivo:</strong> {formatPrice(request.preventivo_importo)}
                   </div>
                 )}
               </div>
@@ -427,16 +373,16 @@ const AdminRequestsPage = () => {
                   👁️ Dettagli
                 </button>
 
-                {request.status === 'pending' && (
+                {request.stato === 'nuova' && (
                   <>
                     <button
-                      onClick={() => updateRequestStatus(request.id, 'approved')}
+                      onClick={() => updateRequestStatus(request.id, 'in_valutazione')}
                       className="action-btn approve"
                     >
-                      ✅ Approva
+                      ✅ Prendi in Carico
                     </button>
                     <button
-                      onClick={() => updateRequestStatus(request.id, 'rejected')}
+                      onClick={() => updateRequestStatus(request.id, 'rifiutata')}
                       className="action-btn reject"
                     >
                       ❌ Rifiuta
@@ -444,17 +390,8 @@ const AdminRequestsPage = () => {
                   </>
                 )}
 
-                {request.status === 'approved' && (
-                  <button
-                    onClick={() => updateRequestStatus(request.id, 'completed')}
-                    className="action-btn complete"
-                  >
-                    🎉 Completa
-                  </button>
-                )}
-
                 <button
-                  onClick={() => navigate(`/admin/requests/${request.id}/chat`)}
+                  onClick={() => navigate(`/admin/requests/${request.id}`)}
                   className="action-btn chat"
                 >
                   💬 Chat

@@ -1,6 +1,8 @@
 // frontend/src/components/chat/Chat.js
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { messagesAPI } from '../../services/api';
+import toast from 'react-hot-toast';
 import './Chat.css';
 
 const Chat = ({ requestId, recipientId, recipientName }) => {
@@ -18,26 +20,19 @@ const Chat = ({ requestId, recipientId, recipientName }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Carica messaggi
+  // ✅ Carica messaggi usando API service
   const fetchMessages = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/messages?requestId=${requestId}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      );
-
-      if (!response.ok) throw new Error('Errore nel caricamento messaggi');
-
-      const data = await response.json();
-      setMessages(data.data || []);
+      console.log('📬 Fetching messages for request:', requestId);
+      
+      const response = await messagesAPI.getMessages(requestId);
+      
+      console.log('✅ Messages loaded:', response.data);
+      
+      setMessages(response.data.data.messages || []);
       setError(null);
     } catch (err) {
-      console.error('Errore caricamento messaggi:', err);
+      console.error('❌ Fetch messages error:', err);
       setError('Impossibile caricare i messaggi');
     } finally {
       setLoading(false);
@@ -66,44 +61,36 @@ const Chat = ({ requestId, recipientId, recipientName }) => {
     scrollToBottom();
   }, [messages]);
 
-  // Invia messaggio
+  // ✅ Invia messaggio usando API service
   const handleSendMessage = async (e) => {
     e.preventDefault();
     
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim()) {
+      toast.error('Scrivi un messaggio');
+      return;
+    }
 
     setSending(true);
     setError(null);
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/messages`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({
-            requestId: requestId,
-            recipientId: recipientId,
-            message: newMessage.trim()
-          })
-        }
-      );
-
-      if (!response.ok) throw new Error('Errore invio messaggio');
-
-      const data = await response.json();
+      console.log('📤 Sending message:', newMessage);
       
-      // Aggiungi messaggio immediatamente (ottimistic update)
-      setMessages(prev => [...prev, data.data]);
+      const response = await messagesAPI.sendMessage(requestId, {
+        messaggio: newMessage.trim()
+      });
+      
+      console.log('✅ Message sent:', response.data);
+      
+      // Aggiungi messaggio immediatamente (optimistic update)
+      setMessages(prev => [...prev, response.data.data.message]);
       setNewMessage('');
       scrollToBottom();
+      toast.success('Messaggio inviato!');
     } catch (err) {
-      console.error('Errore invio messaggio:', err);
+      console.error('❌ Send message error:', err);
       setError('Impossibile inviare il messaggio');
+      toast.error('Errore nell\'invio del messaggio');
     } finally {
       setSending(false);
     }
@@ -178,20 +165,38 @@ const Chat = ({ requestId, recipientId, recipientName }) => {
             <p className="empty-subtitle">Inizia la conversazione!</p>
           </div>
         ) : (
-          messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`message ${msg.sender_id === user.id ? 'message-sent' : 'message-received'}`}
-            >
-              <div className="message-content">
-                <p>{msg.message}</p>
-                <span className="message-time">{formatDate(msg.created_at)}</span>
+          messages.map((msg) => {
+            // Determina se è un messaggio dell'admin o dell'utente
+            const isAdmin = user?.ruolo === 'admin';
+            const isMyMessage = isAdmin 
+              ? msg.sender_type === 'admin' 
+              : msg.sender_type === 'user';
+
+            return (
+              <div
+                key={msg.id}
+                className={`message ${isMyMessage ? 'message-sent' : 'message-received'}`}
+              >
+                <div className="message-avatar">
+                  {msg.sender_type === 'admin' ? '👩‍🎨' : '👤'}
+                </div>
+                <div className="message-content">
+                  <div className="message-header">
+                    <span className="message-sender">
+                      {msg.sender_type === 'admin' 
+                        ? 'Valeria' 
+                        : msg.nome || recipientName || 'Cliente'}
+                    </span>
+                  </div>
+                  <p>{msg.messaggio}</p>
+                  <span className="message-time">{formatDate(msg.created_at)}</span>
+                </div>
+                {msg.read_at && isMyMessage && (
+                  <span className="message-read">✓✓</span>
+                )}
               </div>
-              {msg.read_at && msg.sender_id === user.id && (
-                <span className="message-read">✓✓</span>
-              )}
-            </div>
-          ))
+            );
+          })
         )}
         <div ref={messagesEndRef} />
       </div>
@@ -204,13 +209,21 @@ const Chat = ({ requestId, recipientId, recipientName }) => {
           </div>
         )}
         <form onSubmit={handleSendMessage} className="chat-input-form">
-          <input
-            type="text"
+          <textarea
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
-            placeholder="Scrivi un messaggio..."
+            placeholder={user?.ruolo === 'admin' 
+              ? `Rispondi a ${recipientName}...` 
+              : 'Scrivi un messaggio a Valeria...'}
             disabled={sending}
             className="chat-input"
+            rows={2}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage(e);
+              }
+            }}
           />
           <button
             type="submit"

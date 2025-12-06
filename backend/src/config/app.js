@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
+const path = require('path');
 
 const app = express();
 app.set('trust proxy', 1);
@@ -30,6 +31,12 @@ app.use(cors(corsOptions));
 // ============================================
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// ============================================
+// ✅ SERVE STATIC UPLOADS
+// ============================================
+app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
+console.log('📁 Serving static files from:', path.join(__dirname, '../../uploads'));
 
 // ============================================
 // COMPRESSION

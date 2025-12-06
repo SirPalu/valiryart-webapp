@@ -1,7 +1,9 @@
 // frontend/src/pages/admin/RequestDetailPage.js
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { adminAPI } from '../../services/api';
 import Chat from '../../components/chat/Chat';
+import toast from 'react-hot-toast';
 import './RequestDetailPage.css';
 
 const RequestDetailPage = () => {
@@ -10,12 +12,12 @@ const RequestDetailPage = () => {
   const [request, setRequest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('details'); // details, timeline, chat
+  const [activeTab, setActiveTab] = useState('details');
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
-    estimated_price: '',
-    event_date: '',
-    notes: ''
+    preventivo_importo: '',
+    data_consegna_prevista: '',
+    note_admin: ''
   });
 
   useEffect(() => {
@@ -25,29 +27,23 @@ const RequestDetailPage = () => {
   const fetchRequestDetail = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/admin/requests/${id}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        }
-      );
-
-      if (!response.ok) throw new Error('Errore nel caricamento richiesta');
-
-      const data = await response.json();
-      setRequest(data.data);
+      console.log('🔍 Fetching request:', id);
+      
+      const response = await adminAPI.getRequestById(id);
+      console.log('✅ Response:', response.data);
+      
+      const requestData = response.data.data.request;
+      setRequest(requestData);
       setEditForm({
-        estimated_price: data.data.estimated_price || '',
-        event_date: data.data.event_date ? data.data.event_date.split('T')[0] : '',
-        notes: data.data.notes || ''
+        preventivo_importo: requestData.preventivo_importo || '',
+        data_consegna_prevista: requestData.data_consegna_prevista ? requestData.data_consegna_prevista.split('T')[0] : '',
+        note_admin: requestData.note_admin || ''
       });
       setError(null);
     } catch (err) {
-      console.error('Errore:', err);
+      console.error('❌ Fetch error:', err);
       setError('Impossibile caricare i dettagli della richiesta');
+      toast.error('Errore nel caricamento della richiesta');
     } finally {
       setLoading(false);
     }
@@ -55,52 +51,27 @@ const RequestDetailPage = () => {
 
   const updateRequestStatus = async (newStatus) => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/admin/requests/${id}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify({ status: newStatus })
-        }
-      );
-
-      if (!response.ok) throw new Error('Errore aggiornamento stato');
-
+      console.log('🔄 Updating status to:', newStatus);
+      await adminAPI.updateRequestStatus(id, { stato: newStatus });
+      toast.success('Stato aggiornato!');
       fetchRequestDetail();
     } catch (err) {
-      console.error('Errore:', err);
-      alert('Errore nell\'aggiornamento dello stato');
+      console.error('❌ Update error:', err);
+      toast.error('Errore nell\'aggiornamento dello stato');
     }
   };
 
   const updateRequestDetails = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/admin/requests/${id}`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(editForm)
-        }
-      );
-
-      if (!response.ok) throw new Error('Errore aggiornamento dettagli');
-
+      console.log('💾 Saving details:', editForm);
+      await adminAPI.updateRequestStatus(id, editForm);
       fetchRequestDetail();
       setIsEditing(false);
-      alert('Dettagli aggiornati con successo!');
+      toast.success('Dettagli aggiornati!');
     } catch (err) {
-      console.error('Errore:', err);
-      alert('Errore nell\'aggiornamento dei dettagli');
+      console.error('❌ Save error:', err);
+      toast.error('Errore nel salvataggio');
     }
   };
 
@@ -118,6 +89,54 @@ const RequestDetailPage = () => {
   const formatPrice = (price) => {
     if (!price) return 'Da definire';
     return `€ ${parseFloat(price).toFixed(2)}`;
+  };
+
+  const getCategoriaIcon = (categoria) => {
+    const icons = {
+      incisioni: '🪵',
+      torte: '🎂',
+      eventi: '🎉',
+      altro: '💡'
+    };
+    return icons[categoria] || '📋';
+  };
+
+  const getCategoriaLabel = (categoria) => {
+    const labels = {
+      incisioni: 'Incisioni su Legno',
+      torte: 'Torte Decorative',
+      eventi: 'Allestimento Eventi',
+      altro: 'Altro'
+    };
+    return labels[categoria] || categoria;
+  };
+
+  const getStatusBadge = (stato) => {
+    const statusConfig = {
+      nuova: { label: '🆕 Nuova', color: 'blue' },
+      in_valutazione: { label: '🔍 In Valutazione', color: 'yellow' },
+      preventivo_inviato: { label: '💰 Preventivo Inviato', color: 'purple' },
+      accettata: { label: '✅ Accettata', color: 'green' },
+      in_lavorazione: { label: '🔨 In Lavorazione', color: 'orange' },
+      completata: { label: '🎉 Completata', color: 'success' },
+      rifiutata: { label: '❌ Rifiutata', color: 'red' },
+      annullata: { label: '🚫 Annullata', color: 'gray' }
+    };
+    const config = statusConfig[stato] || { label: stato, color: 'gray' };
+    return <span className={`status-badge ${config.color}`}>{config.label}</span>;
+  };
+
+  // Parse dati specifici
+  const getDatiSpecifici = () => {
+    if (!request.dati_specifici) return null;
+    try {
+      return typeof request.dati_specifici === 'string' 
+        ? JSON.parse(request.dati_specifici) 
+        : request.dati_specifici;
+    } catch (e) {
+      console.error('Error parsing dati_specifici:', e);
+      return null;
+    }
   };
 
   if (loading) {
@@ -144,33 +163,43 @@ const RequestDetailPage = () => {
     );
   }
 
+  const datiSpecifici = getDatiSpecifici();
+
   return (
     <div className="request-detail-page">
-      {/* Header con Breadcrumb */}
+      {/* Header */}
       <div className="page-header">
         <button onClick={() => navigate('/admin/requests')} className="back-btn">
           ← Torna alle richieste
         </button>
         <div className="header-actions">
-          {request.status === 'pending' && (
+          {request.stato === 'nuova' && (
             <>
               <button
-                onClick={() => updateRequestStatus('approved')}
+                onClick={() => updateRequestStatus('in_valutazione')}
                 className="action-btn approve"
               >
-                ✅ Approva
+                ✅ Prendi in Carico
               </button>
               <button
-                onClick={() => updateRequestStatus('rejected')}
+                onClick={() => updateRequestStatus('rifiutata')}
                 className="action-btn reject"
               >
                 ❌ Rifiuta
               </button>
             </>
           )}
-          {request.status === 'approved' && (
+          {request.stato === 'in_valutazione' && (
             <button
-              onClick={() => updateRequestStatus('completed')}
+              onClick={() => updateRequestStatus('preventivo_inviato')}
+              className="action-btn approve"
+            >
+              💰 Invia Preventivo
+            </button>
+          )}
+          {request.stato === 'in_lavorazione' && (
+            <button
+              onClick={() => updateRequestStatus('completata')}
               className="action-btn complete"
             >
               🎉 Segna come Completata
@@ -182,22 +211,19 @@ const RequestDetailPage = () => {
       {/* Info Card Principale */}
       <div className="request-info-card">
         <div className="card-header">
-          <div>
-            <h1>{request.title || 'Richiesta senza titolo'}</h1>
-            <div className="request-meta">
-              <span className={`status-badge ${request.status}`}>
-                {request.status === 'pending' && '⏳ In Attesa'}
-                {request.status === 'approved' && '✅ Approvata'}
-                {request.status === 'rejected' && '❌ Rifiutata'}
-                {request.status === 'completed' && '🎉 Completata'}
+          <div className="header-left">
+            <div className="request-icon-big">
+              {getCategoriaIcon(request.categoria)}
+            </div>
+            <div>
+              <span className="request-id-badge">
+                #{request.id.substring(0, 8).toUpperCase()}
               </span>
-              <span className={`type-badge ${request.type}`}>
-                {request.type === 'engraving' && '🪵 Incisione'}
-                {request.type === 'cake' && '🍰 Torta'}
-                {request.type === 'event' && '🎉 Evento'}
-                {request.type === 'other' && '📝 Altro'}
-              </span>
-              <span>📅 {formatDate(request.created_at)}</span>
+              <h1>{getCategoriaLabel(request.categoria)}</h1>
+              <div className="request-meta">
+                {getStatusBadge(request.stato)}
+                <span>📅 {formatDate(request.created_at)}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -207,35 +233,39 @@ const RequestDetailPage = () => {
           <h3>👤 Informazioni Cliente</h3>
           <div className="info-grid">
             <div className="info-item">
-              <label>Nome</label>
-              <p>{request.customer_name || 'N/A'}</p>
+              <label>Nome Completo</label>
+              <p>{request.nome_contatto || 'N/A'}</p>
             </div>
             <div className="info-item">
               <label>Email</label>
-              <p>{request.customer_email}</p>
+              <p>{request.email_contatto}</p>
             </div>
-            {request.customer_phone && (
-              <div className="info-item">
-                <label>Telefono</label>
-                <p>{request.customer_phone}</p>
-              </div>
-            )}
             <div className="info-item">
-              <label>ID Utente</label>
-              <p>#{request.user_id}</p>
+              <label>Telefono</label>
+              <p>{request.telefono_contatto || 'Non fornito'}</p>
+            </div>
+            <div className="info-item">
+              <label>Utente Registrato</label>
+              <p>{request.user_id ? `Sì (ID: ${request.user_id})` : 'No (Guest)'}</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Tabs Navigation */}
+      {/* Tabs */}
       <div className="tabs-container">
         <div className="tabs-nav">
           <button
             className={`tab ${activeTab === 'details' ? 'active' : ''}`}
             onClick={() => setActiveTab('details')}
           >
-            📋 Dettagli
+            📋 Dettagli Completi
+          </button>
+          <button
+            className={`tab ${activeTab === 'admin' ? 'active' : ''}`}
+            onClick={() => setActiveTab('admin')}
+          >
+            ⚙️ Gestione Admin
           </button>
           <button
             className={`tab ${activeTab === 'timeline' ? 'active' : ''}`}
@@ -252,123 +282,193 @@ const RequestDetailPage = () => {
         </div>
 
         <div className="tab-content">
-          {/* TAB: DETTAGLI */}
+          {/* TAB: DETTAGLI COMPLETI */}
           {activeTab === 'details' && (
             <div className="details-tab">
+              {/* Descrizione */}
+              <div className="section">
+                <h3>📝 Descrizione Richiesta</h3>
+                <div className="description-box">
+                  {request.descrizione || 'Nessuna descrizione fornita'}
+                </div>
+              </div>
+
+              {/* Dati Specifici per Categoria */}
+              {datiSpecifici && (
+                <div className="section">
+                  <h3>🔧 Dettagli Specifici - {getCategoriaLabel(request.categoria)}</h3>
+                  <div className="details-grid-full">
+                    {Object.entries(datiSpecifici).map(([key, value]) => {
+                      if (!value || (Array.isArray(value) && value.length === 0)) return null;
+                      
+                      return (
+                        <div key={key} className="detail-card-full">
+                          <div className="detail-label-full">
+                            {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:
+                          </div>
+                          <div className="detail-value-full">
+                            {Array.isArray(value) ? value.join(', ') : String(value)}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Immagini Caricate */}
+              {request.attachments && request.attachments.length > 0 && (
+                <div className="section">
+                  <h3>🖼️ Immagini / File Allegati</h3>
+                  <div className="attachments-grid">
+                    {request.attachments.map((attachment, index) => (
+                      <div key={attachment.id || index} className="attachment-card">
+                        {attachment.mime_type?.startsWith('image/') ? (
+                          <img 
+                            src={`${process.env.REACT_APP_API_URL.replace('/api', '')}${attachment.file_path}`}
+                            alt={attachment.original_filename}
+                            className="attachment-image"
+                          />
+                        ) : (
+                          <div className="attachment-file">
+                            <span className="file-icon">📄</span>
+                            <span className="file-name">{attachment.original_filename}</span>
+                          </div>
+                        )}
+                        <div className="attachment-info">
+                          <p className="attachment-name">{attachment.original_filename}</p>
+                          <span className="attachment-size">
+                            {(attachment.file_size / 1024).toFixed(1)} KB
+                          </span>
+                        </div>
+                        <a 
+                          href={`${process.env.REACT_APP_API_URL.replace('/api', '')}${attachment.file_path}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="attachment-download"
+                        >
+                          📥 Scarica
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Info Consegna/Evento */}
+              {(request.citta || request.indirizzo_consegna || request.data_evento) && (
+                <div className="section">
+                  <h3>📍 Informazioni Consegna/Evento</h3>
+                  <div className="info-grid">
+                    {request.citta && (
+                      <div className="info-item">
+                        <label>Città</label>
+                        <p>{request.citta}</p>
+                      </div>
+                    )}
+                    {request.indirizzo_consegna && (
+                      <div className="info-item">
+                        <label>Indirizzo Consegna</label>
+                        <p>{request.indirizzo_consegna}</p>
+                      </div>
+                    )}
+                    {request.data_evento && (
+                      <div className="info-item">
+                        <label>Data Evento</label>
+                        <p>{formatDate(request.data_evento)}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB: GESTIONE ADMIN */}
+          {activeTab === 'admin' && (
+            <div className="admin-tab">
               {!isEditing ? (
                 <>
                   <div className="section">
                     <div className="section-header">
-                      <h3>📝 Descrizione Richiesta</h3>
-                      <button
-                        onClick={() => setIsEditing(true)}
-                        className="edit-btn"
-                      >
+                      <h3>💰 Preventivo e Note Admin</h3>
+                      <button onClick={() => setIsEditing(true)} className="edit-btn">
                         ✏️ Modifica
                       </button>
                     </div>
-                    <p className="description-text">
-                      {request.description || 'Nessuna descrizione fornita'}
-                    </p>
-                  </div>
-
-                  <div className="details-grid">
-                    <div className="detail-card">
-                      <div className="detail-icon">💰</div>
-                      <div className="detail-info">
-                        <label>Prezzo Stimato</label>
-                        <p>{formatPrice(request.estimated_price)}</p>
+                    
+                    <div className="details-grid">
+                      <div className="detail-card">
+                        <div className="detail-icon">💰</div>
+                        <div className="detail-info">
+                          <label>Preventivo</label>
+                          <p className="price-big">{formatPrice(request.preventivo_importo)}</p>
+                        </div>
                       </div>
+
+                      {request.data_consegna_prevista && (
+                        <div className="detail-card">
+                          <div className="detail-icon">📅</div>
+                          <div className="detail-info">
+                            <label>Consegna Prevista</label>
+                            <p>{formatDate(request.data_consegna_prevista)}</p>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
-                    {request.event_date && (
-                      <div className="detail-card">
-                        <div className="detail-icon">📅</div>
-                        <div className="detail-info">
-                          <label>Data Evento</label>
-                          <p>{formatDate(request.event_date)}</p>
-                        </div>
+                    {request.note_admin && (
+                      <div className="notes-box">
+                        <strong>📌 Note Admin:</strong>
+                        <p>{request.note_admin}</p>
                       </div>
                     )}
 
-                    <div className="detail-card">
-                      <div className="detail-icon">📊</div>
-                      <div className="detail-info">
-                        <label>ID Richiesta</label>
-                        <p>#{request.id}</p>
-                      </div>
-                    </div>
-
-                    <div className="detail-card">
-                      <div className="detail-icon">🕐</div>
-                      <div className="detail-info">
-                        <label>Creata il</label>
-                        <p>{formatDate(request.created_at)}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {request.notes && (
-                    <div className="section">
-                      <h3>📌 Note Admin</h3>
+                    {request.preventivo_note && (
                       <div className="notes-box">
-                        {request.notes}
+                        <strong>💬 Note Preventivo:</strong>
+                        <p>{request.preventivo_note}</p>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </>
               ) : (
                 <form onSubmit={updateRequestDetails} className="edit-form">
-                  <h3>✏️ Modifica Dettagli</h3>
+                  <h3>✏️ Modifica Dettagli Admin</h3>
                   
                   <div className="form-group">
-                    <label>💰 Prezzo Stimato (€)</label>
+                    <label>💰 Preventivo (€)</label>
                     <input
                       type="number"
                       step="0.01"
-                      value={editForm.estimated_price}
-                      onChange={(e) => setEditForm({
-                        ...editForm,
-                        estimated_price: e.target.value
-                      })}
+                      value={editForm.preventivo_importo}
+                      onChange={(e) => setEditForm({ ...editForm, preventivo_importo: e.target.value })}
                       placeholder="Es: 150.00"
                     />
                   </div>
 
                   <div className="form-group">
-                    <label>📅 Data Evento</label>
+                    <label>📅 Data Consegna Prevista</label>
                     <input
                       type="date"
-                      value={editForm.event_date}
-                      onChange={(e) => setEditForm({
-                        ...editForm,
-                        event_date: e.target.value
-                      })}
+                      value={editForm.data_consegna_prevista}
+                      onChange={(e) => setEditForm({ ...editForm, data_consegna_prevista: e.target.value })}
                     />
                   </div>
 
                   <div className="form-group">
-                    <label>📌 Note Admin</label>
+                    <label>📌 Note Admin (interne)</label>
                     <textarea
                       rows="5"
-                      value={editForm.notes}
-                      onChange={(e) => setEditForm({
-                        ...editForm,
-                        notes: e.target.value
-                      })}
-                      placeholder="Note interne, promemoria, dettagli tecnici..."
+                      value={editForm.note_admin}
+                      onChange={(e) => setEditForm({ ...editForm, note_admin: e.target.value })}
+                      placeholder="Note private visibili solo agli admin..."
                     />
                   </div>
 
                   <div className="form-actions">
-                    <button type="submit" className="save-btn">
-                      💾 Salva Modifiche
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setIsEditing(false)}
-                      className="cancel-btn"
-                    >
+                    <button type="submit" className="save-btn">💾 Salva</button>
+                    <button type="button" onClick={() => setIsEditing(false)} className="cancel-btn">
                       ❌ Annulla
                     </button>
                   </div>
@@ -388,34 +488,17 @@ const RequestDetailPage = () => {
                     <h4>📝 Richiesta Creata</h4>
                     <p>{formatDate(request.created_at)}</p>
                     <span className="timeline-detail">
-                      Cliente: {request.customer_name}
+                      Cliente: {request.nome_contatto}
                     </span>
                   </div>
                 </div>
 
-                {request.status !== 'pending' && (
+                {request.stato !== 'nuova' && (
                   <div className="timeline-item">
-                    <div className={`timeline-marker ${request.status}`}></div>
+                    <div className={`timeline-marker ${request.stato}`}></div>
                     <div className="timeline-content">
-                      <h4>
-                        {request.status === 'approved' && '✅ Richiesta Approvata'}
-                        {request.status === 'rejected' && '❌ Richiesta Rifiutata'}
-                        {request.status === 'completed' && '🎉 Lavoro Completato'}
-                      </h4>
+                      <h4>{getStatusBadge(request.stato)}</h4>
                       <p>{formatDate(request.updated_at || request.created_at)}</p>
-                    </div>
-                  </div>
-                )}
-
-                {request.status === 'completed' && (
-                  <div className="timeline-item">
-                    <div className="timeline-marker completed"></div>
-                    <div className="timeline-content">
-                      <h4>🎊 Progetto Finalizzato</h4>
-                      <p>{formatDate(request.updated_at)}</p>
-                      <span className="timeline-detail">
-                        Cliente soddisfatto ✓
-                      </span>
                     </div>
                   </div>
                 )}
@@ -429,7 +512,7 @@ const RequestDetailPage = () => {
               <Chat
                 requestId={request.id}
                 recipientId={request.user_id}
-                recipientName={request.customer_name}
+                recipientName={request.nome_contatto}
               />
             </div>
           )}
