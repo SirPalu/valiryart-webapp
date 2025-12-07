@@ -185,68 +185,75 @@ const IncisioniPage = () => {
   };
 
   const confirmSubmit = async () => {
-    setLoading(true);
+  setLoading(true);
 
-    try {
-      const product = PRODUCTS[formData.productType];
-      const selectedSize = product.sizes[formData.sizeIndex];
+  try {
+    const product = PRODUCTS[formData.productType];
+    const selectedSize = product.sizes[formData.sizeIndex];
 
-      const requestData = {
-        categoria: 'incisioni',
-        email_contatto: formData.email,
-        nome_contatto: formData.nome,
-        telefono_contatto: formData.telefono,
-        descrizione: `Incisione su ${product.name} - ${selectedSize.label}`,
-        dati_specifici: {
-          product: formData.productType,
-          productName: product.name,
-          size: selectedSize.label,
-          basePrice: selectedSize.price,
-          colorOption: formData.colorOption,
-          colors: formData.colorOption !== 'none' ? formData.colors.filter(c => c) : [],
-          colorPrice: COLOR_OPTIONS.find(opt => opt.value === formData.colorOption)?.price || 0,
-          totalPrice: calculatedPrice,
-          imageSource: formData.imageSource,
-          designCategory: formData.designCategory,
-          notes: formData.notes
-        }
-      };
-
-      // Se c'è immagine upload, usa FormData
-      if (formData.uploadedImage) {
-        const formDataToSend = new FormData();
-        Object.keys(requestData).forEach(key => {
-          if (key === 'dati_specifici') {
-            formDataToSend.append(key, JSON.stringify(requestData[key]));
-          } else {
-            formDataToSend.append(key, requestData[key]);
-          }
-        });
-        formDataToSend.append('image', formData.uploadedImage);
-        // DEBUG TEMPORANEO — controlla cosa c’è in FormData
-for (let pair of formDataToSend.entries()) {
-  console.log(pair[0] + ':', pair[1]);
-}
-        
-        await requestsAPI.create(formDataToSend);
-      } else {
-        await requestsAPI.create(requestData);
+    const requestData = {
+      categoria: 'incisioni',
+      email_contatto: formData.email,
+      nome_contatto: formData.nome,
+      telefono_contatto: formData.telefono,
+      descrizione: `Incisione su ${product.name} - ${selectedSize.label}`,
+      dati_specifici: {
+        product: formData.productType,
+        productName: product.name,
+        size: selectedSize.label,
+        basePrice: selectedSize.price,
+        colorOption: formData.colorOption,
+        colors: formData.colorOption !== 'none' ? formData.colors.filter(c => c) : [],
+        colorPrice: COLOR_OPTIONS.find(opt => opt.value === formData.colorOption)?.price || 0,
+        totalPrice: calculatedPrice,
+        imageSource: formData.imageSource,
+        designCategory: formData.designCategory,
+        notes: formData.notes
       }
+    };
 
-      toast.success('Richiesta inviata con successo!');
+    // Se c'è immagine upload, usa FormData
+    if (formData.uploadedImage) {
+      const formDataToSend = new FormData();
       
-      if (isAuthenticated) {
-        navigate('/user/requests');
-      } else {
-        navigate('/');
+      // ✅ Aggiungi tutti i campi
+      Object.keys(requestData).forEach(key => {
+        if (key === 'dati_specifici') {
+          formDataToSend.append(key, JSON.stringify(requestData[key]));
+        } else if (requestData[key]) { // ← Verifica che il valore non sia undefined/null
+          formDataToSend.append(key, requestData[key]);
+        }
+      });
+      
+      // ✅ CORREZIONE: Usa 'files' invece di 'image'
+      formDataToSend.append('files', formData.uploadedImage);
+      
+      // ✅ DEBUG: Verifica FormData (rimuovi dopo test)
+      console.log('📦 FormData contents:');
+      for (let pair of formDataToSend.entries()) {
+        console.log(pair[0] + ':', pair[1] instanceof File ? `[File: ${pair[1].name}]` : pair[1]);
       }
-    } catch (error) {
-      console.error('Submit error:', error);
-      toast.error('Errore nell\'invio della richiesta');
-    } finally {
-      setLoading(false);
+      
+      await requestsAPI.create(formDataToSend);
+    } else {
+      await requestsAPI.create(requestData);
     }
-  };
+
+    toast.success('Richiesta inviata con successo!');
+    
+    if (isAuthenticated) {
+      navigate('/user/requests');
+    } else {
+      navigate('/');
+    }
+  } catch (error) {
+    console.error('❌ Submit error:', error);
+    console.error('❌ Error response:', error.response?.data);
+    toast.error(error.response?.data?.message || 'Errore nell\'invio della richiesta');
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (showSummary) {
     return <OrderSummary 

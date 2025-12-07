@@ -7,8 +7,20 @@ const emailService = require('../services/email.service');
 // ============================================
 const createRequest = async (req, res) => {
   try {
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('📥 INCOMING REQUEST DEBUG');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('🔹 Body keys:', Object.keys(req.body));
+    console.log('🔹 Body values:', req.body);
+    console.log('🔹 Files:', req.files);
+    console.log('🔹 File count:', req.files?.length || 0);
+    console.log('🔹 Content-Type:', req.headers['content-type']);
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+    // Validazione input
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('❌ Validation errors:', errors.array());
       return res.status(400).json({
         success: false,
         errors: errors.array()
@@ -27,11 +39,16 @@ const createRequest = async (req, res) => {
       indirizzo_consegna
     } = req.body;
 
+    console.log('✅ Validation passed, starting transaction...');
+
     // User ID se autenticato, altrimenti NULL per guest
     const userId = req.user ? req.user.id : null;
+    console.log('👤 User ID:', userId);
 
     // ✅ Usa transaction per salvare richiesta + attachments insieme
     const result = await transaction(async (client) => {
+      console.log('🔄 Inside transaction - inserting request...');
+      
       // Inserisci richiesta
       const requestResult = await client.query(
         `INSERT INTO requests (
@@ -55,11 +72,21 @@ const createRequest = async (req, res) => {
       );
 
       const request = requestResult.rows[0];
+      console.log('✅ Request inserted with ID:', request.id);
 
       // ✅ Salva file allegati se presenti
       if (req.files && req.files.length > 0) {
+        console.log(`📎 Processing ${req.files.length} files...`);
+        
         for (let i = 0; i < req.files.length; i++) {
           const file = req.files[i];
+          console.log(`  📄 File ${i + 1}:`, {
+            filename: file.filename,
+            originalname: file.originalname,
+            size: file.size,
+            path: file.path
+          });
+          
           await client.query(
             `INSERT INTO request_attachments (
               request_id, filename, original_filename, file_path, 
@@ -76,18 +103,36 @@ const createRequest = async (req, res) => {
               i
             ]
           );
+          console.log(`  ✅ File ${i + 1} saved to DB`);
         }
+      } else {
+        console.log('ℹ️  No files to process');
       }
 
+      console.log('✅ Transaction completed successfully');
       return request;
     });
 
+    console.log('📧 Sending confirmation emails...');
+
     // ✅ INVIO EMAIL: Conferma al cliente
-    await emailService.sendConfirmationEmail(result);
+    try {
+      await emailService.sendConfirmationEmail(result);
+      console.log('✅ Confirmation email sent');
+    } catch (emailError) {
+      console.error('⚠️  Confirmation email failed:', emailError);
+    }
 
     // ✅ INVIO EMAIL: Notifica a Valeria
-    await emailService.sendNewRequestAdminEmail(result, req.user);
+    try {
+      await emailService.sendNewRequestAdminEmail(result, req.user);
+      console.log('✅ Admin notification email sent');
+    } catch (emailError) {
+      console.error('⚠️  Admin email failed:', emailError);
+    }
 
+    console.log('💾 Saving notification logs...');
+    
     // ✅ SALVA LOG NOTIFICHE
     await query(
       `INSERT INTO notifications (request_id, destinatario_email, tipo, oggetto, corpo, inviata)
@@ -105,13 +150,22 @@ const createRequest = async (req, res) => {
       ]
     );
 
+    console.log('🎉 Request creation completed successfully!');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+
     res.status(201).json({
       success: true,
       message: 'Richiesta inviata con successo! Riceverai una conferma via email.',
       data: { request: result }
     });
   } catch (error) {
-    console.error('Create request error:', error);
+    console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.error('❌ CREATE REQUEST ERROR');
+    console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.error('Error:', error);
+    console.error('Stack:', error.stack);
+    console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+    
     res.status(500).json({
       success: false,
       message: 'Errore nell\'invio della richiesta'
