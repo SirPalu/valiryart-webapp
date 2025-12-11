@@ -4,10 +4,16 @@ const { query } = require('../config/database');
 // Verifica token JWT
 const verifyToken = async (req, res, next) => {
   try {
+    // ✅ DEBUG LOG
+    console.log('🔐 verifyToken chiamato per:', req.originalUrl);
+    
     // Prendi token dall'header
     const authHeader = req.headers.authorization;
     
+    console.log('🔑 Authorization Header:', authHeader ? 'PRESENTE' : 'ASSENTE');
+    
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.log('❌ Token mancante o formato errato');
       return res.status(401).json({
         success: false,
         message: 'Token mancante o non valido'
@@ -15,9 +21,11 @@ const verifyToken = async (req, res, next) => {
     }
 
     const token = authHeader.split(' ')[1];
+    console.log('🎫 Token estratto:', token.substring(0, 20) + '...');
 
     // Verifica token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log('✅ Token decodificato, userId:', decoded.userId);
 
     // Recupera utente dal database
     const result = await query(
@@ -26,6 +34,7 @@ const verifyToken = async (req, res, next) => {
     );
 
     if (result.rows.length === 0) {
+      console.log('❌ Utente non trovato nel DB');
       return res.status(401).json({
         success: false,
         message: 'Utente non trovato'
@@ -33,9 +42,11 @@ const verifyToken = async (req, res, next) => {
     }
 
     const user = result.rows[0];
+    console.log('👤 Utente trovato:', user.email, 'ruolo:', user.ruolo);
 
     // Verifica utente attivo
     if (!user.attivo) {
+      console.log('❌ Utente non attivo');
       return res.status(403).json({
         success: false,
         message: 'Account disabilitato'
@@ -44,8 +55,11 @@ const verifyToken = async (req, res, next) => {
 
     // Aggiungi user all'oggetto request
     req.user = user;
+    console.log('✅ Autenticazione completata per:', user.email);
     next();
   } catch (error) {
+    console.error('❌ Auth middleware error:', error.message);
+    
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({
         success: false,
@@ -60,7 +74,6 @@ const verifyToken = async (req, res, next) => {
       });
     }
 
-    console.error('Auth middleware error:', error);
     return res.status(500).json({
       success: false,
       message: 'Errore di autenticazione'
@@ -70,20 +83,27 @@ const verifyToken = async (req, res, next) => {
 
 // Verifica ruolo admin
 const requireAdmin = (req, res, next) => {
+  console.log('🔒 requireAdmin chiamato');
+  
   if (!req.user) {
+    console.log('❌ req.user non presente');
     return res.status(401).json({
       success: false,
       message: 'Autenticazione richiesta'
     });
   }
 
+  console.log('👤 Verifica ruolo admin per:', req.user.email, 'ruolo:', req.user.ruolo);
+
   if (req.user.ruolo !== 'admin') {
+    console.log('❌ Utente non è admin');
     return res.status(403).json({
       success: false,
       message: 'Accesso negato: permessi amministratore richiesti'
     });
   }
 
+  console.log('✅ Utente è admin, accesso consentito');
   next();
 };
 

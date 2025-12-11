@@ -8,6 +8,7 @@ const path = require('path');
 
 const app = express();
 app.set('trust proxy', 1);
+
 // ============================================
 // SECURITY MIDDLEWARE
 // ============================================
@@ -44,13 +45,34 @@ console.log('📁 Serving static files from:', path.join(__dirname, '../../uploa
 app.use(compression());
 
 // ============================================
-// LOGGING
+// LOGGING - OTTIMIZZATO
 // ============================================
 if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
+  // In sviluppo, usa morgan solo per errori o in verbose mode
+  if (process.env.VERBOSE_LOGGING === 'true') {
+    app.use(morgan('dev'));
+  } else {
+    // Log solo errori 4xx e 5xx
+    app.use(morgan('dev', {
+      skip: (req, res) => res.statusCode < 400
+    }));
+  }
 } else {
   app.use(morgan('combined'));
 }
+
+// ============================================
+// ✅ CACHE CONTROL HEADERS - PREVIENE PROBLEMI CACHE
+// ============================================
+app.use('/api', (req, res, next) => {
+  res.set({
+    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0',
+    'Surrogate-Control': 'no-store'
+  });
+  next();
+});
 
 // ============================================
 // RATE LIMITING
@@ -89,7 +111,6 @@ app.get('/health', (req, res) => {
 // ============================================
 // API ROUTES
 // ============================================
-// Importeremo le routes qui
 app.use('/api/auth', authLimiter, require('../routes/auth.routes'));
 app.use('/api/users', require('../routes/user.routes'));
 app.use('/api/requests', require('../routes/request.routes'));
@@ -114,7 +135,7 @@ app.use((req, res, next) => {
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-  console.error('❌ Error:', err);
+  console.error('❌ Error:', err.message);
 
   // Errori di validazione
   if (err.name === 'ValidationError') {

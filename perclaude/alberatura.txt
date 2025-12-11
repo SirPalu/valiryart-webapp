@@ -1,0 +1,82 @@
+valiryart-webapp/
+├── docker-compose.yml
+├── backend/
+│   ├── Dockerfile
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── server.js
+│   ├── database/
+│   │   └── init.sql
+│   ├── scripts/
+│   │   └── create-admin.js
+│   ├── src/
+│   │   ├── config/
+│   │   │   ├── app.js
+│   │   │   └── database.js
+│   │   ├── controllers/
+│   │   │   ├── admin.controller.js
+│   │   │   ├── auth.controller.js
+│   │   │   ├── content.controller.js
+│   │   │   ├── design.controller.js
+│   │   │   ├── message.controller.js
+│   │   │   ├── portfolio.controller.js
+│   │   │   └── request.controller.js
+│   │   ├── middlewares/
+│   │   │   ├── auth.middleware.js
+│   │   │   └── upload.middleware.js
+│   │   ├── models/           (vuota)
+│   │   ├── routes/
+│   │   │   ├── admin.routes.js
+│   │   │   ├── auth.routes.js
+│   │   │   ├── content.routes.js
+│   │   │   ├── design.routes.js
+│   │   │   ├── message.routes.js
+│   │   │   ├── portfolio.routes.js
+│   │   │   ├── request.routes.js
+│   │   │   └── user.routes.js
+│   │   ├── services/
+│   │   │   └── email.service.js
+│   │   └── utils/            (vuota)
+│   ├── uploads/
+│   │   ├── designs/
+│   │   ├── portfolio/
+│   │   ├── products/
+│   │   ├── requests/
+│   │   └── temp/
+│   └── node_modules/ (esclusa)
+│
+├── frontend/
+│   ├── Dockerfile
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── public/
+│   │   ├── favicon.ico
+│   │   └── index.html
+│   ├── src/
+│   │   ├── App.js
+│   │   ├── index.css
+│   │   ├── index.js
+│   │   ├── components/
+│   │   │   ├── chat/
+│   │   │   │   ├── Chat.css
+│   │   │   │   ├── Chat.js
+│   │   │   │   └── index.js
+│   │   │   ├── common/
+│   │   │   │   ├── Button.css
+│   │   │   │   ├── Button.js
+│   │   │   │   ├── Card.css
+│   │   │   │   ├── Card.js
+│   │   │   │   ├── Footer.css
+│   │   │   │   ├── Footer.js
+│   │   │   │   ├── Navbar.css
+│   │   │   │   └── Navbar.js
+│   │   │   └── layout/
+│   │   │       ├── AdminLayout.css
+│   │   │       └── AdminLayout.js
+│   │   ├── context/
+│   │   ├── pages/
+│   │   └── services/
+│   └── node_modules/ (esclusa)
+│
+├── nginx/
+├── perclaude/

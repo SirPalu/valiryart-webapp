@@ -14,7 +14,9 @@ const pool = new Pool({
 
 // Event listeners per debug
 pool.on('connect', () => {
-  console.log('✅ Database connected');
+  if (process.env.NODE_ENV === 'development') {
+    console.log('✅ Database connected');
+  }
 });
 
 pool.on('error', (err) => {
@@ -36,13 +38,22 @@ const testConnection = async () => {
   }
 };
 
-// Query helper con error handling
+// ✅ Query helper OTTIMIZZATO - Log solo se lento o in sviluppo verbose
 const query = async (text, params) => {
   const start = Date.now();
   try {
     const res = await pool.query(text, params);
     const duration = Date.now() - start;
-    console.log('📊 Query executed', { text, duration, rows: res.rowCount });
+    
+    // Log solo query lente (>1000ms) o in modalità verbose
+    if (duration > 1000 || process.env.DB_VERBOSE === 'true') {
+      console.log('⚠️  Slow query detected', { 
+        duration: `${duration}ms`, 
+        rows: res.rowCount,
+        query: text.substring(0, 100) + '...'
+      });
+    }
+    
     return res;
   } catch (error) {
     console.error('❌ Query error:', error);

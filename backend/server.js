@@ -4,6 +4,9 @@ const { testConnection } = require('./src/config/database');
 
 const PORT = process.env.PORT || 5000;
 
+// ✅ Variabile per memorizzare l'istanza del server
+let server = null;
+
 // Funzione di startup
 const startServer = async () => {
   try {
@@ -16,8 +19,8 @@ const startServer = async () => {
       process.exit(1);
     }
 
-    // Avvia server
-    app.listen(PORT, () => {
+    // ✅ Salva l'istanza del server nella variabile
+    server = app.listen(PORT, () => {
       console.log('========================================');
       console.log('🚀 ValiryArt Backend Server');
       console.log('========================================');
@@ -34,18 +37,29 @@ const startServer = async () => {
   }
 };
 
-// Gestione shutdown graceful
+// ✅ Gestione shutdown graceful - ora "server" esiste
 process.on('SIGTERM', () => {
   console.log('⚠️  SIGTERM signal received: closing HTTP server');
-  server.close(() => {
-    console.log('✅ HTTP server closed');
+  if (server) {
+    server.close(() => {
+      console.log('✅ HTTP server closed');
+      process.exit(0);
+    });
+  } else {
     process.exit(0);
-  });
+  }
 });
 
 process.on('SIGINT', () => {
   console.log('⚠️  SIGINT signal received: closing HTTP server');
-  process.exit(0);
+  if (server) {
+    server.close(() => {
+      console.log('✅ HTTP server closed');
+      process.exit(0);
+    });
+  } else {
+    process.exit(0);
+  }
 });
 
 // Gestione errori non catturati
