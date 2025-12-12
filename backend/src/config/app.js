@@ -4,28 +4,52 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const compression = require('compression');
 const rateLimit = require('express-rate-limit');
-const path = require('path');
+const { healthCheck } = require('./database');
 
 const app = express();
-app.set('trust proxy', 1);
 
 // ============================================
 // SECURITY MIDDLEWARE
 // ============================================
 app.use(helmet({
-  contentSecurityPolicy: false, // Disabilitiamo per sviluppo, abilitare in produzione
-  crossOriginEmbedderPolicy: false
+  contentSecurityPolicy: false,
+  crossOriginResourcePolicy: { policy: "cross-origin" }
 }));
 
 // ============================================
 // CORS CONFIGURATION
 // ============================================
-const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost',
-  credentials: true,
-  optionsSuccessStatus: 200
-};
-app.use(cors(corsOptions));
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',') 
+  : ['http://localhost:8081', 'http://localhost:3000'];
+
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
+
+// ============================================
+// COMPRESSION
+// ============================================
+app.use(compression());
+
+// ============================================
+// LOGGING (solo in development)
+// ============================================
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+} else {
+  // ✅ In produzione: log minimalista
+  app.use(morgan('combined', {
+    skip: (req, res) => res.statusCode < 400
+  }));
+}
 
 // ============================================
 // BODY PARSERS
@@ -34,147 +58,136 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // ============================================
-// ✅ SERVE STATIC UPLOADS
-// ============================================
-app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
-console.log('📁 Serving static files from:', path.join(__dirname, '../../uploads'));
-
-// ============================================
-// COMPRESSION
-// ============================================
-app.use(compression());
-
-// ============================================
-// LOGGING - OTTIMIZZATO
-// ============================================
-if (process.env.NODE_ENV === 'development') {
-  // In sviluppo, usa morgan solo per errori o in verbose mode
-  if (process.env.VERBOSE_LOGGING === 'true') {
-    app.use(morgan('dev'));
-  } else {
-    // Log solo errori 4xx e 5xx
-    app.use(morgan('dev', {
-      skip: (req, res) => res.statusCode < 400
-    }));
-  }
-} else {
-  app.use(morgan('combined'));
-}
-
-// ============================================
-// ✅ CACHE CONTROL HEADERS - PREVIENE PROBLEMI CACHE
-// ============================================
-app.use('/api', (req, res, next) => {
-  res.set({
-    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-    'Pragma': 'no-cache',
-    'Expires': '0',
-    'Surrogate-Control': 'no-store'
-  });
-  next();
-});
-
-// ============================================
 // RATE LIMITING
 // ============================================
-const limiter = rateLimit({
+
+// ✅ Rate limiter generale (100 richieste per 15 minuti)
+const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minuti
-  max: 100, // Max 100 richieste per IP
-  message: 'Troppe richieste da questo IP, riprova tra 15 minuti',
+  max: 100,
+  message: {
+    success: false,
+    message: 'Troppe richieste da questo IP, riprova tra qualche minuto'
+  },
   standardHeaders: true,
   legacyHeaders: false,
+  // ✅ Skip rate limiting in development
+  skip: (req) => process.env.NODE_ENV === 'development'
 });
 
-// Applica rate limiting solo alle API
-app.use('/api/', limiter);
-
-// Rate limiting più restrittivo per autenticazione
+// ✅ Rate limiter per autenticazione (5 tentativi per 15 minuti)
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5, // Max 5 tentativi di login
-  message: 'Troppi tentativi di login, riprova tra 15 minuti',
-  skipSuccessfulRequests: true
+  max: 5,
+  message: {
+    success: false,
+    message: 'Troppi tentativi di login, riprova tra 15 minuti'
+  },
+  skipSuccessfulRequests: true,
+  skip: (req) => process.env.NODE_ENV === 'development'
 });
 
+// ✅ Rate limiter per richieste (10 per ora)
+const requestLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 ora
+  max: 10,
+  message: {
+    success: false,
+    message: 'Hai raggiunto il limite di richieste orarie, riprova più tardi'
+  },
+  skip: (req) => process.env.NODE_ENV === 'development'
+});
+
+// Applica rate limiting generale
+app.use('/api/', generalLimiter);
+
 // ============================================
-// HEALTH CHECK
+// HEALTH CHECK ENDPOINT
 // ============================================
-app.get('/health', (req, res) => {
-  res.status(200).json({
-    status: 'ok',
+app.get('/health', async (req, res) => {
+  const dbHealth = await healthCheck();
+  
+  res.status(dbHealth.healthy ? 200 : 503).json({
+    status: dbHealth.healthy ? 'healthy' : 'unhealthy',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    environment: process.env.NODE_ENV
+    database: dbHealth
+  });
+});
+
+// ✅ NUOVO: Metrics endpoint (solo in development o con auth)
+app.get('/api/metrics', async (req, res) => {
+  if (process.env.NODE_ENV === 'production') {
+    return res.status(403).json({ message: 'Forbidden' });
+  }
+
+  const dbHealth = await healthCheck();
+  
+  res.json({
+    timestamp: new Date().toISOString(),
+    process: {
+      uptime: process.uptime(),
+      memory: process.memoryUsage(),
+      cpu: process.cpuUsage()
+    },
+    database: dbHealth
   });
 });
 
 // ============================================
-// API ROUTES
+// ROUTES
 // ============================================
-app.use('/api/auth', authLimiter, require('../routes/auth.routes'));
-app.use('/api/users', require('../routes/user.routes'));
-app.use('/api/requests', require('../routes/request.routes'));
-app.use('/api/portfolio', require('../routes/portfolio.routes'));
-app.use('/api/designs', require('../routes/design.routes'));
-app.use('/api/messages', require('../routes/message.routes'));
-app.use('/api/admin', require('../routes/admin.routes'));
-app.use('/api/content', require('../routes/content.routes'));
+const authRoutes = require('../routes/auth.routes');
+const userRoutes = require('../routes/user.routes');
+const requestRoutes = require('../routes/request.routes');
+const messageRoutes = require('../routes/message.routes');
+const portfolioRoutes = require('../routes/portfolio.routes');
+const designRoutes = require('../routes/design.routes');
+const contentRoutes = require('../routes/content.routes');
+const adminRoutes = require('../routes/admin.routes');
+
+// Public routes
+app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/content', contentRoutes);
+
+// Protected routes
+app.use('/api/users', userRoutes);
+app.use('/api/requests', requestLimiter, requestRoutes);
+app.use('/api/messages', messageRoutes);
+app.use('/api/portfolio', portfolioRoutes);
+app.use('/api/designs', designRoutes);
+app.use('/api/admin', adminRoutes);
+
+// Static files (uploads)
+app.use('/uploads', express.static('uploads', {
+  maxAge: '30d',
+  etag: true,
+  lastModified: true
+}));
 
 // ============================================
-// ERROR HANDLING
+// 404 HANDLER
 // ============================================
-
-// 404 Handler
-app.use((req, res, next) => {
+app.use((req, res) => {
   res.status(404).json({
     success: false,
-    message: 'Endpoint non trovato',
-    path: req.originalUrl
+    message: 'Endpoint non trovato'
   });
 });
 
-// Global Error Handler
+// ============================================
+// ERROR HANDLER
+// ============================================
 app.use((err, req, res, next) => {
-  console.error('❌ Error:', err.message);
-
-  // Errori di validazione
-  if (err.name === 'ValidationError') {
-    return res.status(400).json({
-      success: false,
-      message: 'Errore di validazione',
-      errors: err.errors
-    });
-  }
-
-  // Errori JWT
-  if (err.name === 'JsonWebTokenError') {
-    return res.status(401).json({
-      success: false,
-      message: 'Token non valido'
-    });
-  }
-
-  if (err.name === 'TokenExpiredError') {
-    return res.status(401).json({
-      success: false,
-      message: 'Token scaduto'
-    });
-  }
-
-  // Errori database
-  if (err.code && err.code.startsWith('23')) {
-    return res.status(400).json({
-      success: false,
-      message: 'Errore nei dati forniti',
-      detail: process.env.NODE_ENV === 'development' ? err.detail : undefined
-    });
-  }
-
-  // Errore generico
-  res.status(err.statusCode || 500).json({
+  console.error('❌ Error handler:', err.message);
+  
+  // ✅ Non esporre stack trace in produzione
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  
+  res.status(err.status || 500).json({
     success: false,
     message: err.message || 'Errore interno del server',
-    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+    ...(isDevelopment && { stack: err.stack })
   });
 });
 

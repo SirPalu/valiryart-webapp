@@ -1,19 +1,48 @@
 const jwt = require('jsonwebtoken');
 const { query } = require('../config/database');
 
-// Verifica token JWT
+// ✅ CACHE IN-MEMORY per utenti (evita query ripetute)
+const userCache = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minuti
+
+// ✅ Helper per cache
+const getCachedUser = (userId) => {
+  const cached = userCache.get(userId);
+  if (!cached) return null;
+  
+  if (Date.now() - cached.timestamp > CACHE_TTL) {
+    userCache.delete(userId);
+    return null;
+  }
+  
+  return cached.user;
+};
+
+const setCachedUser = (userId, user) => {
+  userCache.set(userId, {
+    user,
+    timestamp: Date.now()
+  });
+};
+
+// ✅ Pulizia cache periodica
+setInterval(() => {
+  const now = Date.now();
+  for (const [userId, data] of userCache.entries()) {
+    if (now - data.timestamp > CACHE_TTL) {
+      userCache.delete(userId);
+    }
+  }
+}, 60000); // Ogni minuto
+
+// ============================================
+// VERIFY TOKEN - OTTIMIZZATO
+// ============================================
 const verifyToken = async (req, res, next) => {
   try {
-    // ✅ DEBUG LOG
-    console.log('🔐 verifyToken chiamato per:', req.originalUrl);
-    
-    // Prendi token dall'header
     const authHeader = req.headers.authorization;
     
-    console.log('🔑 Authorization Header:', authHeader ? 'PRESENTE' : 'ASSENTE');
-    
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      console.log('❌ Token mancante o formato errato');
       return res.status(401).json({
         success: false,
         message: 'Token mancante o non valido'
@@ -21,32 +50,35 @@ const verifyToken = async (req, res, next) => {
     }
 
     const token = authHeader.split(' ')[1];
-    console.log('🎫 Token estratto:', token.substring(0, 20) + '...');
 
-    // Verifica token
+    // ✅ Verifica token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('✅ Token decodificato, userId:', decoded.userId);
+    
+    // ✅ Controlla cache prima di query DB
+    let user = getCachedUser(decoded.userId);
+    
+    if (!user) {
+      // Cache miss - query database
+      const result = await query(
+        'SELECT id, email, nome, cognome, ruolo, attivo FROM users WHERE id = $1',
+        [decoded.userId]
+      );
 
-    // Recupera utente dal database
-    const result = await query(
-      'SELECT id, email, nome, cognome, ruolo, attivo FROM users WHERE id = $1',
-      [decoded.userId]
-    );
+      if (result.rows.length === 0) {
+        return res.status(401).json({
+          success: false,
+          message: 'Utente non trovato'
+        });
+      }
 
-    if (result.rows.length === 0) {
-      console.log('❌ Utente non trovato nel DB');
-      return res.status(401).json({
-        success: false,
-        message: 'Utente non trovato'
-      });
+      user = result.rows[0];
+      
+      // ✅ Salva in cache
+      setCachedUser(decoded.userId, user);
     }
-
-    const user = result.rows[0];
-    console.log('👤 Utente trovato:', user.email, 'ruolo:', user.ruolo);
 
     // Verifica utente attivo
     if (!user.attivo) {
-      console.log('❌ Utente non attivo');
       return res.status(403).json({
         success: false,
         message: 'Account disabilitato'
@@ -55,11 +87,9 @@ const verifyToken = async (req, res, next) => {
 
     // Aggiungi user all'oggetto request
     req.user = user;
-    console.log('✅ Autenticazione completata per:', user.email);
     next();
   } catch (error) {
-    console.error('❌ Auth middleware error:', error.message);
-    
+    // ✅ Log SOLO errori critici (non spam)
     if (error.name === 'TokenExpiredError') {
       return res.status(401).json({
         success: false,
@@ -74,6 +104,7 @@ const verifyToken = async (req, res, next) => {
       });
     }
 
+    console.error('❌ Auth middleware critical error:', error.message);
     return res.status(500).json({
       success: false,
       message: 'Errore di autenticazione'
@@ -81,39 +112,35 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
-// Verifica ruolo admin
+// ============================================
+// REQUIRE ADMIN
+// ============================================
 const requireAdmin = (req, res, next) => {
-  console.log('🔒 requireAdmin chiamato');
-  
   if (!req.user) {
-    console.log('❌ req.user non presente');
     return res.status(401).json({
       success: false,
       message: 'Autenticazione richiesta'
     });
   }
 
-  console.log('👤 Verifica ruolo admin per:', req.user.email, 'ruolo:', req.user.ruolo);
-
   if (req.user.ruolo !== 'admin') {
-    console.log('❌ Utente non è admin');
     return res.status(403).json({
       success: false,
       message: 'Accesso negato: permessi amministratore richiesti'
     });
   }
 
-  console.log('✅ Utente è admin, accesso consentito');
   next();
 };
 
-// Middleware opzionale (può passare anche senza token)
+// ============================================
+// OPTIONAL AUTH
+// ============================================
 const optionalAuth = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      // Nessun token, continua senza user
       req.user = null;
       return next();
     }
@@ -121,26 +148,33 @@ const optionalAuth = async (req, res, next) => {
     const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    const result = await query(
-      'SELECT id, email, nome, cognome, ruolo, attivo FROM users WHERE id = $1',
-      [decoded.userId]
-    );
+    // ✅ Usa cache
+    let user = getCachedUser(decoded.userId);
+    
+    if (!user) {
+      const result = await query(
+        'SELECT id, email, nome, cognome, ruolo, attivo FROM users WHERE id = $1',
+        [decoded.userId]
+      );
 
-    if (result.rows.length > 0 && result.rows[0].attivo) {
-      req.user = result.rows[0];
-    } else {
-      req.user = null;
+      if (result.rows.length > 0 && result.rows[0].attivo) {
+        user = result.rows[0];
+        setCachedUser(decoded.userId, user);
+      }
     }
 
+    req.user = user && user.attivo ? user : null;
     next();
   } catch (error) {
-    // Errore nel token, continua senza user
+    // ✅ Nessun log per errori token in optional auth
     req.user = null;
     next();
   }
 };
 
-// Verifica che l'utente possa accedere alla risorsa
+// ============================================
+// CHECK RESOURCE OWNERSHIP
+// ============================================
 const checkResourceOwnership = (resourceUserIdField = 'user_id') => {
   return (req, res, next) => {
     // Admin può accedere a tutto
@@ -162,9 +196,17 @@ const checkResourceOwnership = (resourceUserIdField = 'user_id') => {
   };
 };
 
+// ============================================
+// CLEAR CACHE (utility per logout/cambio dati)
+// ============================================
+const clearUserCache = (userId) => {
+  userCache.delete(userId);
+};
+
 module.exports = {
   verifyToken,
   requireAdmin,
   optionalAuth,
-  checkResourceOwnership
+  checkResourceOwnership,
+  clearUserCache
 };

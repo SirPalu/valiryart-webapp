@@ -1,0 +1,85 @@
+🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /auth/me
+api.js:25 ✅ Authorization header added
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /auth/me
+api.js:25 ✅ Authorization header added
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /admin/dashboard
+api.js:25 ✅ Authorization header added
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /requests
+api.js:25 ✅ Authorization header added
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /admin/dashboard
+api.js:25 ✅ Authorization header added
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /requests
+api.js:25 ✅ Authorization header added
+WebSocketClient.js:13 WebSocket connection to 'ws://localhost:3000/ws' failed: 
+WebSocketClient @ WebSocketClient.js:13Comprendi l'errore
+WebSocketClient.js:13 WebSocket connection to 'ws://localhost:3000/ws' failed: 
+WebSocketClient @ WebSocketClient.js:13Comprendi l'errore
+WebSocketClient.js:13 WebSocket connection to 'ws://localhost:3000/ws' failed: 
+WebSocketClient @ WebSocketClient.js:13Comprendi l'errore
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /auth/logout
+api.js:25 ✅ Authorization header added
+2client:74 [GSI_LOGGER]: Provided button width is invalid: 100%
+_.F @ client:74Comprendi l'avviso
+WebSocketClient.js:13 WebSocket connection to 'ws://localhost:3000/ws' failed: 
+WebSocketClient @ WebSocketClient.js:13Comprendi l'errore
+api.js:20 🔑 Token from localStorage: MISSING
+api.js:21 📍 Request URL: /auth/login
+api.js:27 ⚠️ NO TOKEN FOUND!
+(anonime) @ api.js:27Comprendi l'avviso
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /requests/my-requests
+api.js:25 ✅ Authorization header added
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /requests/my-requests
+api.js:25 ✅ Authorization header added
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /requests/b379ebcb-f3d6-484f-b939-36717ee810d8
+api.js:25 ✅ Authorization header added
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/b379ebcb-f3d6-484f-b939-36717ee810d8
+api.js:25 ✅ Authorization header added
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /requests/b379ebcb-f3d6-484f-b939-36717ee810d8
+api.js:25 ✅ Authorization header added
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/b379ebcb-f3d6-484f-b939-36717ee810d8
+api.js:25 ✅ Authorization header added
+WebSocketClient.js:13 WebSocket connection to 'ws://localhost:3000/ws' failed: 
+WebSocketClient @ WebSocketClient.js:13Comprendi l'errore
+api.js:47 ❌ API Error: Object
+(anonime) @ api.js:47Comprendi l'errore
+AdminDashboard.js:30 Error fetching dashboard data: AxiosErrorcode: "ECONNABORTED"config: {transitional: {…}, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000, …}message: "timeout of 30000ms exceeded"name: "AxiosError"request: XMLHttpRequest {onreadystatechange: null, readyState: 4, timeout: 30000, withCredentials: false, upload: XMLHttpRequestUpload, …}stack: "AxiosError: timeout of 30000ms exceeded\n    at XMLHttpRequest.handleTimeout (http://localhost:8081/static/js/bundle.js:6425:14)\n    at Axios.request (http://localhost:8081/static/js/bundle.js:6862:41)\n    at async Promise.all (index 1)\n    at async fetchDashboardData (http://localhost:8081/static/js/bundle.js:61945:39)"[[Prototype]]: Error
+fetchDashboardData @ AdminDashboard.js:30Comprendi l'errore
+api.js:47 ❌ API Error: Objectmessage: undefinedstatus: undefinedurl: "/admin/dashboard"[[Prototype]]: Object
+(anonime) @ api.js:47Comprendi l'errore
+AdminDashboard.js:30 Error fetching dashboard data: AxiosErrorcode: "ECONNABORTED"config: {transitional: {…}, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000, …}message: "timeout of 30000ms exceeded"name: "AxiosError"request: XMLHttpRequest {onreadystatechange: null, readyState: 4, timeout: 30000, withCredentials: false, upload: XMLHttpRequestUpload, …}stack: "AxiosError: timeout of 30000ms exceeded\n    at XMLHttpRequest.handleTimeout (http://localhost:8081/static/js/bundle.js:6425:14)\n    at Axios.request (http://localhost:8081/static/js/bundle.js:6862:41)\n    at async Promise.all (index 0)\n    at async fetchDashboardData (http://localhost:8081/static/js/bundle.js:61945:39)"[[Prototype]]: Error
+fetchDashboardData @ AdminDashboard.js:30Comprendi l'errore
+WebSocketClient.js:13 WebSocket connection to 'ws://localhost:3000/ws' failed: 
+WebSocketClient @ WebSocketClient.js:13Comprendi l'errore
+api.js:47 ❌ API Error: Objectmessage: undefinedstatus: undefinedurl: "/requests/my-requests"[[Prototype]]: Object
+(anonime) @ api.js:47Comprendi l'errore
+UserDashboard.js:37 Error fetching dashboard data: AxiosErrorcode: "ECONNABORTED"config: {transitional: {…}, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000, …}message: "timeout of 30000ms exceeded"name: "AxiosError"request: XMLHttpRequest {onreadystatechange: null, readyState: 4, timeout: 30000, withCredentials: false, upload: XMLHttpRequestUpload, …}stack: "AxiosError: timeout of 30000ms exceeded\n    at XMLHttpRequest.handleTimeout (http://localhost:8081/static/js/bundle.js:6425:14)\n    at Axios.request (http://localhost:8081/static/js/bundle.js:6862:41)\n    at async fetchDashboardData (http://localhost:8081/static/js/bundle.js:76116:24)"[[Prototype]]: Error
+fetchDashboardData @ UserDashboard.js:37Comprendi l'errore
+api.js:47 ❌ API Error: Objectmessage: undefinedstatus: undefinedurl: "/messages/b379ebcb-f3d6-484f-b939-36717ee810d8"[[Prototype]]: Object
+(anonime) @ api.js:47Comprendi l'errore
+RequestDetailPage.js:43 Error fetching request detail: AxiosErrorcode: "ECONNABORTED"config: {transitional: {…}, adapter: Array(3), transformRequest: Array(1), transformResponse: Array(1), timeout: 30000, …}message: "timeout of 30000ms exceeded"name: "AxiosError"request: XMLHttpRequest {onreadystatechange: null, readyState: 4, timeout: 30000, withCredentials: false, upload: XMLHttpRequestUpload, …}stack: "AxiosError: timeout of 30000ms exceeded\n    at XMLHttpRequest.handleTimeout (http://localhost:8081/static/js/bundle.js:6425:14)\n    at Axios.request (http://localhost:8081/static/js/bundle.js:6862:41)\n    at async Promise.all (index 1)\n    at async fetchRequestDetail (http://localhost:8081/static/js/bundle.js:75287:41)"[[Prototype]]: Error
+fetchRequestDetail @ RequestDetailPage.js:43Comprendi l'errore
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /requests/my-requests
+api.js:25 ✅ Authorization header added
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /requests/my-requests
+api.js:25 ✅ Authorization header added
+
+
+mentre sul be una sfilza di errori che si ripete uno al minuto (penso la chat) :
+
+GET /api/messages/4ee55cbc-8166-410f-8bc3-2cb8c298b408 304 7.487 ms - -
+GET /api/messages/4ee55cbc-8166-410f-8bc3-2cb8c298b408 304 5.697 ms - -
