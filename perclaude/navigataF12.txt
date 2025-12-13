@@ -1,0 +1,320 @@
+Download the React DevTools for a better development experience: https://reactjs.org/link/react-devtools
+deprecations.ts:9 ⚠️ React Router Future Flag Warning: React Router will begin wrapping state updates in `React.startTransition` in v7. You can use the `v7_startTransition` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_starttransition.
+warnOnce @ deprecations.ts:9Comprendi l'avviso
+deprecations.ts:9 ⚠️ React Router Future Flag Warning: Relative route resolution within Splat routes is changing in v7. You can use the `v7_relativeSplatPath` future flag to opt-in early. For more information, see https://reactrouter.com/v6/upgrading/future#v7_relativesplatpath.
+warnOnce @ deprecations.ts:9Comprendi l'avviso
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /auth/me
+api.js:25 ✅ Authorization header added
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /auth/me
+api.js:25 ✅ Authorization header added
+WebSocketClient.js:13 WebSocket connection to 'ws://localhost:3000/ws' failed: 
+WebSocketClient @ WebSocketClient.js:13Comprendi l'errore
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /auth/logout
+api.js:25 ✅ Authorization header added
+WebSocketClient.js:13 WebSocket connection to 'ws://localhost:3000/ws' failed: 
+WebSocketClient @ WebSocketClient.js:13Comprendi l'errore
+2client:74 [GSI_LOGGER]: Provided button width is invalid: 100%
+_.F @ client:74Comprendi l'avviso
+WebSocketClient.js:13 WebSocket connection to 'ws://localhost:3000/ws' failed: 
+WebSocketClient @ WebSocketClient.js:13Comprendi l'errore
+api.js:20 🔑 Token from localStorage: MISSING
+api.js:21 📍 Request URL: /auth/login
+api.js:27 ⚠️ NO TOKEN FOUND!
+(anonime) @ api.js:27Comprendi l'avviso
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /admin/dashboard
+api.js:25 ✅ Authorization header added
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /requests
+api.js:25 ✅ Authorization header added
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /admin/dashboard
+api.js:25 ✅ Authorization header added
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /requests
+api.js:25 ✅ Authorization header added
+WebSocketClient.js:13 WebSocket connection to 'ws://localhost:3000/ws' failed: 
+WebSocketClient @ WebSocketClient.js:13Comprendi l'errore
+WebSocketClient.js:13 WebSocket connection to 'ws://localhost:3000/ws' failed: 
+WebSocketClient @ WebSocketClient.js:13Comprendi l'errore
+2RequestDetailPage.js:30 🔍 Fetching request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /admin/requests/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /admin/requests/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+RequestDetailPage.js:33 ✅ Response: Object
+RequestDetailPage.js:33 ✅ Response: Object
+2Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:30 ✅ Messages loaded: Object
+WebSocketClient.js:13 WebSocket connection to 'ws://localhost:3000/ws' failed: 
+WebSocketClient @ WebSocketClient.js:13Comprendi l'errore
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+WebSocketClient.js:13 WebSocket connection to 'ws://localhost:3000/ws' failed: 
+WebSocketClient @ WebSocketClient.js:13Comprendi l'errore
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+WebSocketClient.js:13 WebSocket connection to 'ws://localhost:3000/ws' failed: 
+WebSocketClient @ WebSocketClient.js:13Comprendi l'errore
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+WebSocketClient.js:13 WebSocket connection to 'ws://localhost:3000/ws' failed: 
+WebSocketClient @ WebSocketClient.js:13Comprendi l'errore
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+WebSocketClient.js:13 WebSocket connection to 'ws://localhost:3000/ws' failed: 
+WebSocketClient @ WebSocketClient.js:13Comprendi l'errore
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: Object
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: {success: true, data: {…}}
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: {success: true, data: {…}}
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: {success: true, data: {…}}
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: {success: true, data: {…}}
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: {success: true, data: {…}}
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: {success: true, data: {…}}
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: {success: true, data: {…}}
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: {success: true, data: {…}}
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: {success: true, data: {…}}
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: {success: true, data: {…}}
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: {success: true, data: {…}}
+Chat.js:26 📬 Fetching messages for request: 473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:20 🔑 Token from localStorage: EXISTS
+api.js:21 📍 Request URL: /messages/473bdd1c-c9bc-4c13-b5a6-9034a40821c7
+api.js:25 ✅ Authorization header added
+Chat.js:30 ✅ Messages loaded: {success: true, data: {…}}

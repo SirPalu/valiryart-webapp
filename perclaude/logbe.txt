@@ -1,0 +1,65 @@
+Valeria@LAPTOP-FF9OVH5K MINGW64 /c/Fabrizio/valiryart-webapp (master)
+$ docker-compose logs valiryart-backend --tail=100
+time="2025-12-13T15:17:05+01:00" level=warning msg="C:\\Fabrizio\\valiryart-webapp\\docker-compose.yml: the attribute `version` is obsolete, it will be ignored, please remove it to avoid potential confusion"
+valiryart-backend  | > nodemon server.js
+valiryart-backend  |
+valiryart-backend  | [nodemon] 3.1.11
+valiryart-backend  | [nodemon] to restart at any time, enter `rs`
+valiryart-backend  | [nodemon] watching path(s): *.*
+valiryart-backend  | [nodemon] watching extensions: js,mjs,cjs,json
+valiryart-backend  | [nodemon] starting `node server.js`
+valiryart-backend  | ✅ Admin routes loaded successfully
+valiryart-backend  | 🔄 Testing database connection...
+valiryart-backend  | ✅ Database connection test successful
+valiryart-backend  | 📅 Server time: 2025-12-12T15:26:32.867Z
+valiryart-backend  | 🗄️  PostgreSQL: PostgreSQL 15.14 on x86_64-pc-linux-musl
+valiryart-backend  | ========================================
+valiryart-backend  | 🚀 ValiryArt Backend Server
+valiryart-backend  | ========================================
+valiryart-backend  | ✅ Server running on port 5000
+valiryart-backend  | 📍 Environment: development
+valiryart-backend  | 🗄️  Database: Connected
+valiryart-backend  | 🌐 API: http://localhost:5000/api
+valiryart-backend  | ❤️  Health: http://localhost:5000/health
+valiryart-backend  | ========================================
+valiryart-backend  | ✅ SMTP server ready to send emails
+valiryart-backend  |
+valiryart-backend  | ⚠️  SIGTERM signal received: starting graceful shutdown...
+valiryart-backend  | ✅ HTTP server closed
+valiryart-backend  | ⚠️  Shutdown already in progress...
+valiryart-backend  | ⚠️  Shutdown already in progress...
+valiryart-backend  |
+valiryart-backend  | > valiryart-backend@1.0.0 dev
+valiryart-backend  | > nodemon server.js
+valiryart-backend  |
+valiryart-backend  | [nodemon] 3.1.11
+valiryart-backend  | [nodemon] to restart at any time, enter `rs`
+valiryart-backend  | [nodemon] watching path(s): *.*
+valiryart-backend  | [nodemon] watching extensions: js,mjs,cjs,json
+valiryart-backend  | [nodemon] starting `node server.js`
+valiryart-backend  | ✅ Admin routes loaded successfully
+valiryart-backend  | 🔄 Testing database connection...
+valiryart-backend  | ✅ Database connection test successful
+valiryart-backend  | 📅 Server time: 2025-12-13T14:07:15.736Z
+valiryart-backend  | 🗄️  PostgreSQL: PostgreSQL 15.14 on x86_64-pc-linux-musl
+valiryart-backend  | ========================================
+valiryart-backend  | 🚀 ValiryArt Backend Server
+valiryart-backend  | ========================================
+valiryart-backend  | ✅ Server running on port 5000
+valiryart-backend  | 📍 Environment: development
+valiryart-backend  | 🗄️  Database: Connected
+valiryart-backend  | 🌐 API: http://localhost:5000/api
+valiryart-backend  | ❤️  Health: http://localhost:5000/health
+valiryart-backend  | ========================================
+valiryart-backend  | ✅ SMTP server ready to send emails
+valiryart-backend  | GET /api/auth/me 200 63.231 ms - 342
+valiryart-backend  | GET /api/auth/me 304 5.578 ms - -
+valiryart-backend  | POST /api/auth/logout 200 1.807 ms - 59
+valiryart-backend  | POST /api/auth/login 200 193.126 ms - 444
+valiryart-backend  | 📊 Pool Stats: { total: 2, idle: 0, waiting: 0 }
+valiryart-backend  | GET /api/admin/dashboard 200 91.030 ms - 467
+valiryart-backend  | GET /api/requests?limit=10 200 78.005 ms - -
+valiryart-backend  | GET /api/requests?limit=10 304 11.575 ms - -
+valiryart-backend  | GET /api/admin/dashboard 304 17.658 ms - -
+
+
