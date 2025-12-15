@@ -1,8 +1,11 @@
-// frontend/src/services/api.js
+// frontend/src/services/api.js - OTTIMIZZATO SENZA LOG SPAM
 
 import axios from 'axios';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8081/api';
+
+// ✅ DEBUG MODE - disabilita in produzione
+const DEBUG_MODE = process.env.NODE_ENV === 'development' && false; // Cambia a true solo per debug
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -17,20 +20,19 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('valiryart_token');
     
-    console.log('🔑 Token from localStorage:', token ? 'EXISTS' : 'MISSING');
-    console.log('📍 Request URL:', config.url);
+    // ✅ Log solo se DEBUG attivo
+    if (DEBUG_MODE) {
+      console.log('🔑 Token:', token ? 'EXISTS' : 'MISSING');
+      console.log('📍 URL:', config.url);
+    }
     
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
-      console.log('✅ Authorization header added');
-    } else {
-      console.warn('⚠️ NO TOKEN FOUND!');
     }
 
-    // ✅ IMPORTANTE: Non sovrascrivere Content-Type se è già impostato (per FormData)
+    // Non sovrascrivere Content-Type per FormData
     if (config.data instanceof FormData) {
       delete config.headers['Content-Type'];
-      console.log('📎 FormData detected - Content-Type removed (browser will set it)');
     }
     
     return config;
@@ -44,23 +46,23 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error('❌ API Error:', {
-      status: error.response?.status,
-      url: error.config?.url,
-      message: error.response?.data?.message
-    });
-    
+    // ✅ Log solo errori critici
     if (error.response?.status === 401) {
-      console.warn('🚨 401 Unauthorized - Clearing auth data');
+      console.warn('🚨 401 Unauthorized - Clearing auth');
       localStorage.removeItem('valiryart_token');
       localStorage.removeItem('valiryart_user');
       window.location.href = '/login';
+    } else if (DEBUG_MODE) {
+      console.error('❌ API Error:', {
+        status: error.response?.status,
+        url: error.config?.url,
+        message: error.response?.data?.message
+      });
     }
+    
     return Promise.reject(error);
   }
 );
-
-// ... resto del codice rimane uguale
 
 // ============================================
 // AUTH API
@@ -91,8 +93,6 @@ export const adminAPI = {
   }),
   getAllUsers: (filters) => api.get('/admin/users', { params: filters }),
   updateUserStatus: (userId, attivo) => api.put(`/admin/users/${userId}/status`, { attivo }),
-  
-  // 🆕 AGGIUNTI - Per le richieste admin
   getRequestById: (id) => api.get(`/admin/requests/${id}`),
   getRequestMessages: (requestId) => api.get(`/admin/requests/${requestId}/messages`),
   sendMessage: (requestId, data) => api.post(`/admin/requests/${requestId}/messages`, data),
@@ -121,6 +121,7 @@ export const requestsAPI = {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
 };
+
 // ============================================
 // MESSAGES API
 // ============================================

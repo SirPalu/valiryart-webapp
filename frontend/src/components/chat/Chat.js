@@ -1,4 +1,4 @@
-// frontend/src/components/chat/Chat.js
+// frontend/src/components/chat/Chat.js - OPZIONE A: POLLING OTTIMIZZATO
 import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { messagesAPI } from '../../services/api';
@@ -14,23 +14,33 @@ const Chat = ({ requestId, recipientId, recipientName }) => {
   const [error, setError] = useState(null);
   const messagesEndRef = useRef(null);
   const pollIntervalRef = useRef(null);
+  const lastFetchRef = useRef(null); // ✅ Timestamp ultima fetch
+  const isTabVisibleRef = useRef(true); // ✅ Track tab visibility
 
-  // Scroll automatico a ultimo messaggio
+  // ✅ CONFIGURAZIONE POLLING OTTIMIZZATO
+  const POLL_INTERVAL = 60000; // 60 secondi (da 5s a 60s = 12x meno richieste!)
+  const POLL_INTERVAL_BACKGROUND = 300000; // 5 minuti quando tab nascosta
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // ✅ Carica messaggi usando API service
-  const fetchMessages = async () => {
+  // ✅ FETCH OTTIMIZZATA con timestamp
+  const fetchMessages = async (forceRefresh = false) => {
     try {
-      console.log('📬 Fetching messages for request:', requestId);
-      
+      // ✅ Skip fetch se tab nascosta e ultima fetch recente
+      if (!isTabVisibleRef.current && lastFetchRef.current) {
+        const timeSinceLastFetch = Date.now() - lastFetchRef.current;
+        if (timeSinceLastFetch < POLL_INTERVAL_BACKGROUND && !forceRefresh) {
+          return; // Skip fetch
+        }
+      }
+
       const response = await messagesAPI.getMessages(requestId);
-      
-      console.log('✅ Messages loaded:', response.data);
       
       setMessages(response.data.data.messages || []);
       setError(null);
+      lastFetchRef.current = Date.now(); // ✅ Salva timestamp
     } catch (err) {
       console.error('❌ Fetch messages error:', err);
       setError('Impossibile caricare i messaggi');
@@ -39,14 +49,45 @@ const Chat = ({ requestId, recipientId, recipientName }) => {
     }
   };
 
-  // Polling ogni 5 secondi (adatto per chat non real-time)
+  // ✅ VISIBILITY CHANGE - Stop polling quando tab nascosta
   useEffect(() => {
-    fetchMessages();
+    const handleVisibilityChange = () => {
+      isTabVisibleRef.current = !document.hidden;
+      
+      if (!document.hidden) {
+        // Tab tornata visibile - fetch immediata
+        fetchMessages(true);
+        
+        // Restart polling con intervallo normale
+        if (pollIntervalRef.current) {
+          clearInterval(pollIntervalRef.current);
+        }
+        pollIntervalRef.current = setInterval(fetchMessages, POLL_INTERVAL);
+      } else {
+        // Tab nascosta - rallenta polling
+        if (pollIntervalRef.current) {
+          clearInterval(pollIntervalRef.current);
+        }
+        pollIntervalRef.current = setInterval(fetchMessages, POLL_INTERVAL_BACKGROUND);
+      }
+    };
 
-    // Avvia polling
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [requestId]);
+
+  // ✅ POLLING SETUP
+  useEffect(() => {
+    // Fetch iniziale
+    fetchMessages(true);
+
+    // Avvia polling (60 secondi invece di 5!)
     pollIntervalRef.current = setInterval(() => {
       fetchMessages();
-    }, 5000);
+    }, POLL_INTERVAL);
 
     // Cleanup
     return () => {
@@ -61,7 +102,7 @@ const Chat = ({ requestId, recipientId, recipientName }) => {
     scrollToBottom();
   }, [messages]);
 
-  // ✅ Invia messaggio usando API service
+  // ✅ INVIA MESSAGGIO + FETCH IMMEDIATA
   const handleSendMessage = async (e) => {
     e.preventDefault();
     
@@ -74,19 +115,18 @@ const Chat = ({ requestId, recipientId, recipientName }) => {
     setError(null);
 
     try {
-      console.log('📤 Sending message:', newMessage);
-      
       const response = await messagesAPI.sendMessage(requestId, {
         messaggio: newMessage.trim()
       });
       
-      console.log('✅ Message sent:', response.data);
-      
-      // Aggiungi messaggio immediatamente (optimistic update)
+      // Optimistic update
       setMessages(prev => [...prev, response.data.data.message]);
       setNewMessage('');
       scrollToBottom();
       toast.success('Messaggio inviato!');
+      
+      // ✅ Fetch immediata dopo invio per sincronizzare
+      setTimeout(() => fetchMessages(true), 500);
     } catch (err) {
       console.error('❌ Send message error:', err);
       setError('Impossibile inviare il messaggio');
@@ -96,7 +136,6 @@ const Chat = ({ requestId, recipientId, recipientName }) => {
     }
   };
 
-  // Formatta data
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -141,14 +180,14 @@ const Chat = ({ requestId, recipientId, recipientName }) => {
             <h3>{recipientName || 'Chat'}</h3>
             <span className="online-status">
               <span className="status-dot"></span>
-              Online
+              {isTabVisibleRef.current ? 'Online' : 'Away'}
             </span>
           </div>
         </div>
         <div className="chat-actions">
           <button 
             className="refresh-btn" 
-            onClick={fetchMessages}
+            onClick={() => fetchMessages(true)}
             title="Aggiorna messaggi"
           >
             🔄
@@ -166,7 +205,6 @@ const Chat = ({ requestId, recipientId, recipientName }) => {
           </div>
         ) : (
           messages.map((msg) => {
-            // Determina se è un messaggio dell'admin o dell'utente
             const isAdmin = user?.ruolo === 'admin';
             const isMyMessage = isAdmin 
               ? msg.sender_type === 'admin' 
