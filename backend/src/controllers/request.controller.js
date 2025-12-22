@@ -115,23 +115,24 @@ const createRequest = async (req, res) => {
 
     console.log('📧 Sending confirmation emails...');
 
-    // ✅ INVIO EMAIL: Conferma al cliente
-    try {
-      await emailService.sendConfirmationEmail(result);
-      console.log('✅ Confirmation email sent');
-    } catch (emailError) {
-      console.error('⚠️  Confirmation email failed:', emailError);
-    }
+// ✅ Conta allegati
+const attachmentsCount = (req.files && req.files.length) || 0;
 
-    // ✅ INVIO EMAIL: Notifica a Valeria
-    try {
-      await emailService.sendNewRequestAdminEmail(result, req.user);
-      console.log('✅ Admin notification email sent');
-    } catch (emailError) {
-      console.error('⚠️  Admin email failed:', emailError);
-    }
+// ✅ INVIO EMAIL: Conferma al cliente
+try {
+  await emailService.sendConfirmationEmail(result, attachmentsCount);
+  console.log('✅ Confirmation email sent');
+} catch (emailError) {
+  console.error('⚠️  Confirmation email failed:', emailError);
+}
 
-    console.log('💾 Saving notification logs...');
+// ✅ INVIO EMAIL: Notifica a Valeria
+try {
+  await emailService.sendNewRequestAdminEmail(result, req.user, attachmentsCount);
+  console.log('✅ Admin notification email sent');
+} catch (emailError) {
+  console.error('⚠️  Admin email failed:', emailError);
+}
     
     // ✅ SALVA LOG NOTIFICHE
     await query(

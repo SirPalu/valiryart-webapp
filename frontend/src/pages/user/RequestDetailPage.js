@@ -1,4 +1,4 @@
-// frontend/src/pages/user/RequestDetailPage.js
+// frontend/src/pages/user/RequestDetailPage.js - CON ALLEGATI
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
@@ -17,6 +17,7 @@ const RequestDetailPage = () => {
 
   const [request, setRequest] = useState(null);
   const [messages, setMessages] = useState([]);
+  const [attachments, setAttachments] = useState([]); // ✅ NUOVO
   const [loading, setLoading] = useState(true);
   const [sendingMessage, setSendingMessage] = useState(false);
   const [newMessage, setNewMessage] = useState('');
@@ -37,8 +38,10 @@ const RequestDetailPage = () => {
         messagesAPI.getMessages(id)
       ]);
 
-      setRequest(requestRes.data.data.request);
+      const requestData = requestRes.data.data;
+      setRequest(requestData.request);
       setMessages(messagesRes.data.data.messages);
+      setAttachments(requestData.attachments || []); // ✅ NUOVO
     } catch (error) {
       console.error('Error fetching request detail:', error);
       toast.error('Impossibile caricare la richiesta');
@@ -174,6 +177,53 @@ const RequestDetailPage = () => {
             <p className="description-text">{request.descrizione}</p>
           </Card>
 
+          {/* ✅ NUOVA SEZIONE: ALLEGATI */}
+          {attachments.length > 0 && (
+            <Card className="info-card">
+              <h2>📎 File Allegati ({attachments.length})</h2>
+              <div className="attachments-grid">
+                {attachments.map((attachment, index) => (
+                  <div key={attachment.id || index} className="attachment-card">
+                    {attachment.mime_type?.startsWith('image/') ? (
+                      <a 
+                        href={`${process.env.REACT_APP_API_URL.replace('/api', '')}${attachment.file_path}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <img 
+                          src={`${process.env.REACT_APP_API_URL.replace('/api', '')}${attachment.file_path}`}
+                          alt={attachment.original_filename}
+                          className="attachment-image"
+                        />
+                      </a>
+                    ) : (
+                      <div className="attachment-file-icon">
+                        <span className="file-icon">📄</span>
+                      </div>
+                    )}
+                    <div className="attachment-info">
+                      <p className="attachment-name" title={attachment.original_filename}>
+                        {attachment.original_filename}
+                      </p>
+                      <div className="attachment-meta">
+                        <span className="attachment-size">
+                          {(attachment.file_size / 1024).toFixed(1)} KB
+                        </span>
+                        <a 
+                          href={`${process.env.REACT_APP_API_URL.replace('/api', '')}${attachment.file_path}`}
+                          download={attachment.original_filename}
+                          className="download-link"
+                        >
+                          📥 Scarica
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          )}
+
           {/* Dettagli Tecnici */}
           {request.dati_specifici && (
             <Card className="info-card">
@@ -265,7 +315,6 @@ const RequestDetailPage = () => {
               <span className="messages-count">{messages.length} messaggi</span>
             </div>
 
-            {/* Messages Thread */}
             <div className="messages-container">
               {messages.length === 0 ? (
                 <div className="no-messages">
@@ -306,7 +355,6 @@ const RequestDetailPage = () => {
               )}
             </div>
 
-            {/* Message Form */}
             <form onSubmit={handleSendMessage} className="message-form">
               <textarea
                 value={newMessage}

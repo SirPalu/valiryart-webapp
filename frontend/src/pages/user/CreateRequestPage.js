@@ -1,4 +1,4 @@
-// frontend/src/pages/user/CreateRequestPage.js
+// frontend/src/pages/user/CreateRequestPage.js - OTTIMIZZATO
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -13,9 +13,9 @@ const CreateRequestPage = () => {
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [createdRequest, setCreatedRequest] = useState(null);
   
-  // Form data
   const [formData, setFormData] = useState({
     categoria: '',
     nome_contatto: user?.nome || '',
@@ -25,21 +25,17 @@ const CreateRequestPage = () => {
     data_evento: '',
     citta: user?.citta || '',
     indirizzo_consegna: user?.indirizzo || '',
-    
-    // Dati specifici per categoria
     dati_specifici: {}
   });
 
   const [files, setFiles] = useState([]);
   const [filePreviews, setFilePreviews] = useState([]);
 
-  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Handle dati specifici change
   const handleDatiSpecificiChange = (key, value) => {
     setFormData(prev => ({
       ...prev,
@@ -50,7 +46,6 @@ const CreateRequestPage = () => {
     }));
   };
 
-  // Handle file upload
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
     
@@ -59,33 +54,40 @@ const CreateRequestPage = () => {
       return;
     }
 
+    // Verifica dimensioni
+    const oversized = selectedFiles.filter(f => f.size > 10 * 1024 * 1024);
+    if (oversized.length > 0) {
+      toast.error(`File troppo grandi: ${oversized.map(f => f.name).join(', ')} (max 10MB)`);
+      return;
+    }
+
     setFiles(prev => [...prev, ...selectedFiles]);
 
-    // Create previews
     selectedFiles.forEach(file => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setFilePreviews(prev => [...prev, {
           name: file.name,
           url: reader.result,
-          type: file.type
+          type: file.type,
+          size: file.size
         }]);
       };
       reader.readAsDataURL(file);
     });
+
+    toast.success(`${selectedFiles.length} file aggiunt${selectedFiles.length > 1 ? 'i' : 'o'}`);
   };
 
-  // Remove file
   const removeFile = (index) => {
     setFiles(prev => prev.filter((_, i) => i !== index));
     setFilePreviews(prev => prev.filter((_, i) => i !== index));
+    toast.success('File rimosso');
   };
 
-  // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation
     if (!formData.categoria) {
       toast.error('Seleziona una categoria');
       return;
@@ -98,10 +100,8 @@ const CreateRequestPage = () => {
     try {
       setLoading(true);
 
-      // Create FormData for multipart upload
       const submitData = new FormData();
       
-      // Append form fields
       Object.keys(formData).forEach(key => {
         if (key === 'dati_specifici') {
           submitData.append(key, JSON.stringify(formData[key]));
@@ -110,12 +110,11 @@ const CreateRequestPage = () => {
         }
       });
 
-      // Append files
       files.forEach(file => {
         submitData.append('files', file);
       });
 
-      console.log('📤 Submitting request with files:', files.length);
+      console.log('📤 Submitting request with', files.length, 'files');
 
       const response = await api.post('/requests', submitData, {
         headers: {
@@ -125,13 +124,13 @@ const CreateRequestPage = () => {
 
       console.log('✅ Request created:', response.data);
 
-      toast.success('Richiesta inviata con successo!');
+      const request = response.data.data.request;
+      setCreatedRequest(request);
+      setSubmitSuccess(true);
+
+      toast.success('🎉 Richiesta inviata con successo!');
       
-      if (isAuthenticated) {
-        navigate('/user/requests');
-      } else {
-        navigate('/');
-      }
+      // ✅ NON redirect immediato - mostra conferma
     } catch (error) {
       console.error('❌ Submit error:', error);
       toast.error(error.response?.data?.message || 'Errore nell\'invio della richiesta');
@@ -140,7 +139,106 @@ const CreateRequestPage = () => {
     }
   };
 
-  // Render category-specific fields
+  // ✅ CONFERMA UPLOAD CON RIEPILOGO
+  if (submitSuccess && createdRequest) {
+    return (
+      <div className="create-request-page">
+        <Card className="success-card">
+          <div className="success-content">
+            <div className="success-icon">✅</div>
+            <h1>Richiesta Inviata con Successo!</h1>
+            <p className="success-subtitle">
+              Abbiamo ricevuto la tua richiesta e ti abbiamo inviato una conferma via email
+            </p>
+
+            <div className="request-summary">
+              <div className="summary-item">
+                <span className="summary-label">ID Richiesta:</span>
+                <span className="summary-value">#{createdRequest.id.substring(0, 8).toUpperCase()}</span>
+              </div>
+              <div className="summary-item">
+                <span className="summary-label">Categoria:</span>
+                <span className="summary-value">{formData.categoria}</span>
+              </div>
+              {files.length > 0 && (
+                <div className="summary-item">
+                  <span className="summary-label">File Caricati:</span>
+                  <span className="summary-value">📎 {files.length} file</span>
+                </div>
+              )}
+            </div>
+
+            {files.length > 0 && (
+              <div className="uploaded-files-preview">
+                <h3>File Allegati</h3>
+                <div className="files-grid-small">
+                  {filePreviews.map((preview, index) => (
+                    <div key={index} className="file-preview-small">
+                      {preview.type.startsWith('image/') ? (
+                        <img src={preview.url} alt={preview.name} />
+                      ) : (
+                        <div className="file-icon-small">📄</div>
+                      )}
+                      <span className="file-name-small">{preview.name}</span>
+                      <span className="file-size-small">
+                        {(preview.size / 1024).toFixed(1)} KB
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="success-actions">
+              {isAuthenticated ? (
+                <>
+                  <Button 
+                    variant="primary" 
+                    size="lg"
+                    onClick={() => navigate(`/user/requests/${createdRequest.id}`)}
+                  >
+                    📋 Visualizza Richiesta
+                  </Button>
+                  <Button 
+                    variant="ghost"
+                    onClick={() => navigate('/user/requests')}
+                  >
+                    Tutte le Richieste →
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button 
+                    variant="primary" 
+                    size="lg"
+                    onClick={() => navigate('/')}
+                  >
+                    🏠 Torna alla Home
+                  </Button>
+                  <Button 
+                    variant="ghost"
+                    onClick={() => navigate('/richiesta')}
+                  >
+                    Nuova Richiesta →
+                  </Button>
+                </>
+              )}
+            </div>
+
+            <div className="info-box-success">
+              <p>
+                💬 <strong>Cosa succede ora?</strong><br/>
+                Valeria riceverà la tua richiesta e ti contatterà entro 24-48 ore.
+                Puoi monitorare lo stato della richiesta e chattare con Valeria dalla tua area personale.
+              </p>
+            </div>
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  // ✅ FORM (resto del codice uguale)
   const renderCategoryFields = () => {
     switch (formData.categoria) {
       case 'incisioni':
@@ -373,7 +471,6 @@ const CreateRequestPage = () => {
           </div>
         </Card>
 
-        {/* Step 2: Dettagli Categoria */}
         {formData.categoria && (
           <Card className="form-section">
             <h2>2️⃣ Dettagli Specifici</h2>
@@ -381,7 +478,6 @@ const CreateRequestPage = () => {
           </Card>
         )}
 
-        {/* Step 3: Descrizione Generale */}
         <Card className="form-section">
           <h2>3️⃣ Descrizione Generale</h2>
           <div className="form-group">
@@ -397,11 +493,10 @@ const CreateRequestPage = () => {
           </div>
         </Card>
 
-        {/* Step 4: Upload Immagini */}
         <Card className="form-section">
           <h2>4️⃣ Carica Immagini di Riferimento</h2>
           <p className="help-text">
-            Carica foto di ispirazione o esempi di quello che hai in mente (max 5 file, 10MB ciascuno)
+            📷 Carica foto di ispirazione o esempi (max 5 file, 10MB ciascuno)
           </p>
 
           <div className="file-upload-area">
@@ -412,9 +507,13 @@ const CreateRequestPage = () => {
               accept="image/*"
               onChange={handleFileChange}
               style={{ display: 'none' }}
+              disabled={files.length >= 5}
             />
-            <label htmlFor="file-upload" className="file-upload-button">
-              📷 Scegli Immagini
+            <label 
+              htmlFor="file-upload" 
+              className={`file-upload-button ${files.length >= 5 ? 'disabled' : ''}`}
+            >
+              📷 Scegli Immagini {files.length > 0 && `(${files.length}/5)`}
             </label>
           </div>
 
@@ -428,6 +527,7 @@ const CreateRequestPage = () => {
                     <div className="file-icon">📄</div>
                   )}
                   <span className="file-name">{preview.name}</span>
+                  <span className="file-size">{(preview.size / 1024).toFixed(1)} KB</span>
                   <button
                     type="button"
                     onClick={() => removeFile(index)}
@@ -441,7 +541,6 @@ const CreateRequestPage = () => {
           )}
         </Card>
 
-        {/* Step 5: Info Contatto */}
         <Card className="form-section">
           <h2>5️⃣ Informazioni di Contatto</h2>
           <div className="form-row">
@@ -513,7 +612,6 @@ const CreateRequestPage = () => {
           </div>
         </Card>
 
-        {/* Submit */}
         <div className="form-actions">
           <Button
             type="button"
