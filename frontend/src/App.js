@@ -16,6 +16,7 @@ import EventiPage from './pages/public/EventiPage';
 import ChiSiamoPage from './pages/public/ChiSiamoPage';
 import ComeFunzionaPage from './pages/public/ComeFunzionaPage';
 import PortfolioDetailPage from './pages/public/PortfolioDetailPage';
+import GalleryPage from './pages/public/GalleryPage';
 
 // Auth Pages
 import LoginPage from './pages/public/LoginPage';
@@ -81,6 +82,7 @@ const AppRoutes = () => {
         <Route path="eventi" element={<EventiPage />} />
         <Route path="chi-siamo" element={<ChiSiamoPage />} />
         <Route path="come-funziona" element={<ComeFunzionaPage />} />
+        <Route path="galleria" element={<GalleryPage />} />
         <Route path="portfolio/:id" element={<PortfolioDetailPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />

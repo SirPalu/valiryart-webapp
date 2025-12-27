@@ -40,6 +40,7 @@ const Navbar = () => {
           <li><Link to="/incisioni" className="nav-link">Incisioni</Link></li>
           <li><Link to="/torte" className="nav-link">Torte</Link></li>
           <li><Link to="/eventi" className="nav-link">Eventi</Link></li>
+          <li><Link to="/galleria" className="nav-link">Galleria</Link></li>
           <li><Link to="/chi-siamo" className="nav-link">Chi Sono</Link></li>
           <li><Link to="/come-funziona" className="nav-link">Come Funziona</Link></li>
         </ul>
@@ -114,6 +115,7 @@ const Navbar = () => {
           <li><Link to="/incisioni" onClick={closeMobileMenu}>Incisioni</Link></li>
           <li><Link to="/torte" onClick={closeMobileMenu}>Torte</Link></li>
           <li><Link to="/eventi" onClick={closeMobileMenu}>Eventi</Link></li>
+          <li><Link to="/galleria" onClick={closeMobileMenu}>Galleria</Link></li>
           <li><Link to="/chi-siamo" onClick={closeMobileMenu}>Chi Sono</Link></li>
           <li><Link to="/come-funziona" onClick={closeMobileMenu}>Come Funziona</Link></li>
         </ul>
