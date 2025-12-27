@@ -50,8 +50,8 @@ const register = async (req, res) => {
 
     // Inserisci utente
     const result = await query(
-      `INSERT INTO users (email, password_hash, nome, cognome, telefono, ruolo)
-       VALUES ($1, $2, $3, $4, $5, 'user')
+      `INSERT INTO users (email, password_hash, nome, cognome, telefono, ruolo, attivo)
+       VALUES ($1, $2, $3, $4, $5, 'user', true)
        RETURNING id, email, nome, cognome, telefono, ruolo, created_at`,
       [email, passwordHash, nome, cognome, telefono]
     );
@@ -176,7 +176,7 @@ const login = async (req, res) => {
 };
 
 // ============================================
-// GOOGLE OAUTH
+// GOOGLE OAUTH - ✅ FIXED
 // ============================================
 const googleAuth = async (req, res) => {
   try {
@@ -200,24 +200,26 @@ const googleAuth = async (req, res) => {
     let user;
 
     if (result.rows.length === 0) {
-      // Nuovo utente - registra
+      // ✅ FIXED: Nuovo utente - registra CON attivo=true
       result = await query(
-        `INSERT INTO users (email, google_id, nome, cognome, google_avatar_url, ruolo, email_verified)
-         VALUES ($1, $2, $3, $4, $5, 'user', true)
-         RETURNING id, email, nome, cognome, telefono, ruolo, google_avatar_url`,
+        `INSERT INTO users (email, google_id, nome, cognome, google_avatar_url, ruolo, email_verified, attivo)
+         VALUES ($1, $2, $3, $4, $5, 'user', true, true)
+         RETURNING id, email, nome, cognome, telefono, ruolo, google_avatar_url, attivo`,
         [email, googleId, given_name, family_name, picture]
       );
       user = result.rows[0];
+      console.log('✅ New Google user created:', { email, attivo: user.attivo });
     } else {
       user = result.rows[0];
 
-      // Aggiorna google_id se mancante
+      // Aggiorna google_id se mancante E assicurati che sia attivo
       if (!user.google_id) {
         await query(
-          'UPDATE users SET google_id = $1, google_avatar_url = $2, email_verified = true WHERE id = $3',
+          'UPDATE users SET google_id = $1, google_avatar_url = $2, email_verified = true, attivo = true WHERE id = $3',
           [googleId, picture, user.id]
         );
         user.google_avatar_url = picture;
+        user.attivo = true; // ✅ Assicurati localmente
       }
 
       // Aggiorna last_login
@@ -227,8 +229,9 @@ const googleAuth = async (req, res) => {
       );
     }
 
-    // Verifica account attivo
+    // ✅ FIXED: Verifica account attivo DOPO averlo impostato
     if (!user.attivo) {
+      console.warn('⚠️  Google user disabled:', { email, userId: user.id });
       return res.status(403).json({
         success: false,
         message: 'Account disabilitato'
@@ -237,6 +240,8 @@ const googleAuth = async (req, res) => {
 
     // Genera token
     const token = generateToken(user.id);
+
+    console.log('✅ Google auth successful:', { email, ruolo: user.ruolo });
 
     res.json({
       success: true,
@@ -255,7 +260,7 @@ const googleAuth = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Google auth error:', error);
+    console.error('❌ Google auth error:', error);
     res.status(500).json({
       success: false,
       message: 'Errore durante autenticazione Google'

@@ -105,16 +105,16 @@ const RegisterPage = () => {
             <p className="auth-subtitle">Crea il tuo account ValiryArt</p>
           </div>
 
-          {/* Google Register */}
+          {/* ✅ FIXED: Google Register senza width="100%" */}
           <div className="google-login-wrapper">
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
               onError={handleGoogleError}
               theme="filled_black"
               size="large"
-              width="100%"
               text="signup_with"
               locale="it"
+              useOneTap={false}
             />
             {errors.google && (
               <p className="error-message">{errors.google}</p>
