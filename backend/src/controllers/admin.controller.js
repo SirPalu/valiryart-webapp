@@ -330,6 +330,206 @@ const updateUserStatus = async (req, res) => {
 };
 
 // ============================================
+// GET REQUEST BY ID (admin) - ✅ CON ALLEGATI
+// ============================================
+const getRequestById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Recupera richiesta
+    const requestResult = await query(
+      `SELECT r.*, 
+              u.nome as user_nome, 
+              u.cognome as user_cognome, 
+              u.email as user_email
+       FROM requests r
+       LEFT JOIN users u ON r.user_id = u.id
+       WHERE r.id = $1`,
+      [id]
+    );
+
+    if (requestResult.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Richiesta non trovata'
+      });
+    }
+
+    // ✅ NUOVO: Recupera allegati
+    const attachmentsResult = await query(
+      `SELECT id, filename, original_filename, file_path, file_size, mime_type, descrizione
+       FROM request_attachments
+       WHERE request_id = $1
+       ORDER BY ordine, created_at`,
+      [id]
+    );
+
+    res.json({
+      success: true,
+      data: {
+        request: requestResult.rows[0],
+        attachments: attachmentsResult.rows // ✅ NUOVO
+      }
+    });
+  } catch (error) {
+    console.error('Get request by ID error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore nel recupero della richiesta'
+    });
+  }
+};
+
+// ============================================
+// GET REQUEST MESSAGES (admin)
+// ============================================
+const getRequestMessages = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+
+    const result = await query(
+      `SELECT m.*, 
+              u.nome as sender_nome,
+              u.cognome as sender_cognome
+       FROM messages m
+       LEFT JOIN users u ON m.sender_id = u.id
+       WHERE m.request_id = $1
+       ORDER BY m.created_at ASC`,
+      [requestId]
+    );
+
+    res.json({
+      success: true,
+      data: { messages: result.rows }
+    });
+  } catch (error) {
+    console.error('Get request messages error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore nel recupero dei messaggi'
+    });
+  }
+};
+
+// ============================================
+// SEND MESSAGE (admin)
+// ============================================
+const sendMessage = async (req, res) => {
+  try {
+    const { requestId } = req.params;
+    const { messaggio } = req.body;
+    const adminId = req.user.id;
+
+    if (!messaggio || !messaggio.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Messaggio obbligatorio'
+      });
+    }
+
+    const result = await query(
+      `INSERT INTO messages (request_id, sender_id, sender_type, messaggio, read_by_user)
+       VALUES ($1, $2, 'admin', $3, false)
+       RETURNING *`,
+      [requestId, adminId, messaggio.trim()]
+    );
+
+    res.status(201).json({
+      success: true,
+      message: 'Messaggio inviato',
+      data: { message: result.rows[0] }
+    });
+  } catch (error) {
+    console.error('Send message error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore nell\'invio del messaggio'
+    });
+  }
+};
+
+// ============================================
+// UPDATE REQUEST STATUS (admin)
+// ============================================
+const updateRequestStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+
+    // Costruisci query dinamica
+    const fields = [];
+    const values = [];
+    let paramIndex = 1;
+
+    if (updates.stato !== undefined) {
+      fields.push(`stato = $${paramIndex}`);
+      values.push(updates.stato);
+      paramIndex++;
+    }
+
+    if (updates.preventivo_importo !== undefined) {
+      fields.push(`preventivo_importo = $${paramIndex}`);
+      values.push(updates.preventivo_importo);
+      paramIndex++;
+    }
+
+    if (updates.preventivo_note !== undefined) {
+      fields.push(`preventivo_note = $${paramIndex}`);
+      values.push(updates.preventivo_note);
+      paramIndex++;
+    }
+
+    if (updates.note_admin !== undefined) {
+      fields.push(`note_admin = $${paramIndex}`);
+      values.push(updates.note_admin);
+      paramIndex++;
+    }
+
+    if (updates.data_consegna_prevista !== undefined) {
+      fields.push(`data_consegna_prevista = $${paramIndex}`);
+      values.push(updates.data_consegna_prevista);
+      paramIndex++;
+    }
+
+    if (fields.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Nessun campo da aggiornare'
+      });
+    }
+
+    values.push(id);
+    const queryText = `
+      UPDATE requests 
+      SET ${fields.join(', ')}, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $${paramIndex}
+      RETURNING *
+    `;
+
+    const result = await query(queryText, values);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Richiesta non trovata'
+      });
+    }
+
+    res.json({
+      success: true,
+      message: 'Richiesta aggiornata',
+      data: { request: result.rows[0] }
+    });
+  } catch (error) {
+    console.error('Update request status error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore nell\'aggiornamento della richiesta'
+    });
+  }
+};
+
+// ============================================
 // HELPER: Convert to CSV
 // ============================================
 const convertToCSV = (data) => {
@@ -352,5 +552,9 @@ module.exports = {
   getTopCustomers,
   exportRequests,
   getAllUsers,
-  updateUserStatus
+  updateUserStatus,
+  getRequestById, // ✅ AGGIUNTO
+  getRequestMessages, // ✅ AGGIUNTO
+  sendMessage, // ✅ AGGIUNTO
+  updateRequestStatus // ✅ AGGIUNTO
 };

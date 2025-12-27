@@ -1,4 +1,4 @@
-// frontend/src/pages/admin/RequestDetailPage.js
+// frontend/src/pages/admin/RequestDetailPage.js - ✅ CON ALLEGATI
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { adminAPI } from '../../services/api';
@@ -10,6 +10,7 @@ const RequestDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [request, setRequest] = useState(null);
+  const [attachments, setAttachments] = useState([]); // ✅ NUOVO
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('details');
@@ -32,8 +33,11 @@ const RequestDetailPage = () => {
       const response = await adminAPI.getRequestById(id);
       console.log('✅ Response:', response.data);
       
-      const requestData = response.data.data.request;
+      const { request: requestData, attachments: attachmentsData } = response.data.data; // ✅ AGGIORNATO
+      
       setRequest(requestData);
+      setAttachments(attachmentsData || []); // ✅ NUOVO
+      
       setEditForm({
         preventivo_importo: requestData.preventivo_importo || '',
         data_consegna_prevista: requestData.data_consegna_prevista ? requestData.data_consegna_prevista.split('T')[0] : '',
@@ -246,7 +250,7 @@ const RequestDetailPage = () => {
             </div>
             <div className="info-item">
               <label>Utente Registrato</label>
-              <p>{request.user_id ? `Sì (ID: ${request.user_id})` : 'No (Guest)'}</p>
+              <p>{request.user_id ? `Sì (ID: ${request.user_id.substring(0, 8)})` : 'No (Guest)'}</p>
             </div>
           </div>
         </div>
@@ -293,35 +297,12 @@ const RequestDetailPage = () => {
                 </div>
               </div>
 
-              {/* Dati Specifici per Categoria */}
-              {datiSpecifici && (
+              {/* ✅ NUOVA SEZIONE: FILE ALLEGATI */}
+              {attachments.length > 0 && (
                 <div className="section">
-                  <h3>🔧 Dettagli Specifici - {getCategoriaLabel(request.categoria)}</h3>
-                  <div className="details-grid-full">
-                    {Object.entries(datiSpecifici).map(([key, value]) => {
-                      if (!value || (Array.isArray(value) && value.length === 0)) return null;
-                      
-                      return (
-                        <div key={key} className="detail-card-full">
-                          <div className="detail-label-full">
-                            {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:
-                          </div>
-                          <div className="detail-value-full">
-                            {Array.isArray(value) ? value.join(', ') : String(value)}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* Immagini Caricate */}
-              {request.attachments && request.attachments.length > 0 && (
-                <div className="section">
-                  <h3>🖼️ Immagini / File Allegati</h3>
+                  <h3>🖼️ File Allegati ({attachments.length})</h3>
                   <div className="attachments-grid">
-                    {request.attachments.map((attachment, index) => (
+                    {attachments.map((attachment, index) => (
                       <div key={attachment.id || index} className="attachment-card">
                         {attachment.mime_type?.startsWith('image/') ? (
                           <img 
@@ -351,6 +332,29 @@ const RequestDetailPage = () => {
                         </a>
                       </div>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Dati Specifici per Categoria */}
+              {datiSpecifici && (
+                <div className="section">
+                  <h3>🔧 Dettagli Specifici - {getCategoriaLabel(request.categoria)}</h3>
+                  <div className="details-grid-full">
+                    {Object.entries(datiSpecifici).map(([key, value]) => {
+                      if (!value || (Array.isArray(value) && value.length === 0)) return null;
+                      
+                      return (
+                        <div key={key} className="detail-card-full">
+                          <div className="detail-label-full">
+                            {key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:
+                          </div>
+                          <div className="detail-value-full">
+                            {Array.isArray(value) ? value.join(', ') : String(value)}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
