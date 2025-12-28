@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+// frontend/src/pages/public/RegisterPage.js - CON RECAPTCHA
+
+import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
+import ReCAPTCHA from 'react-google-recaptcha';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/common/Button';
 import './AuthPages.css';
@@ -16,7 +19,9 @@ const RegisterPage = () => {
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
+  
+  const recaptchaRef = useRef(null);
   const { register, googleLogin } = useAuth();
   const navigate = useNavigate();
 
@@ -28,6 +33,13 @@ const RegisterPage = () => {
     }));
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const handleRecaptchaChange = (token) => {
+    setRecaptchaToken(token);
+    if (errors.recaptcha) {
+      setErrors(prev => ({ ...prev, recaptcha: '' }));
     }
   };
 
@@ -61,6 +73,11 @@ const RegisterPage = () => {
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = 'Le password non coincidono';
     }
+
+    // ✅ VERIFICA RECAPTCHA
+    if (!recaptchaToken) {
+      newErrors.recaptcha = 'Completa la verifica reCAPTCHA';
+    }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -73,11 +90,23 @@ const RegisterPage = () => {
     
     setLoading(true);
     const { confirmPassword, ...registerData } = formData;
-    const result = await register(registerData);
+    
+    // ✅ INVIA RECAPTCHA TOKEN AL BACKEND
+    const result = await register({
+      ...registerData,
+      recaptchaToken
+    });
+    
     setLoading(false);
     
     if (result.success) {
       navigate('/user');
+    } else {
+      // ✅ Reset reCAPTCHA in caso di errore
+      if (recaptchaRef.current) {
+        recaptchaRef.current.reset();
+      }
+      setRecaptchaToken(null);
     }
   };
 
@@ -105,7 +134,6 @@ const RegisterPage = () => {
             <p className="auth-subtitle">Crea il tuo account ValiryArt</p>
           </div>
 
-          {/* ✅ FIXED: Google Register senza width="100%" */}
           <div className="google-login-wrapper">
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
@@ -125,13 +153,10 @@ const RegisterPage = () => {
             <span>oppure</span>
           </div>
 
-          {/* Form Registrazione */}
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="nome" className="form-label">
-                  Nome *
-                </label>
+                <label htmlFor="nome" className="form-label">Nome *</label>
                 <input
                   type="text"
                   id="nome"
@@ -148,9 +173,7 @@ const RegisterPage = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="cognome" className="form-label">
-                  Cognome *
-                </label>
+                <label htmlFor="cognome" className="form-label">Cognome *</label>
                 <input
                   type="text"
                   id="cognome"
@@ -168,9 +191,7 @@ const RegisterPage = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="email" className="form-label">
-                Email *
-              </label>
+              <label htmlFor="email" className="form-label">Email *</label>
               <input
                 type="email"
                 id="email"
@@ -187,9 +208,7 @@ const RegisterPage = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="telefono" className="form-label">
-                Telefono
-              </label>
+              <label htmlFor="telefono" className="form-label">Telefono</label>
               <input
                 type="tel"
                 id="telefono"
@@ -206,9 +225,7 @@ const RegisterPage = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="password" className="form-label">
-                Password *
-              </label>
+              <label htmlFor="password" className="form-label">Password *</label>
               <input
                 type="password"
                 id="password"
@@ -244,13 +261,28 @@ const RegisterPage = () => {
               )}
             </div>
 
+            {/* ✅ RECAPTCHA */}
+            <div className="form-group" style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                onChange={handleRecaptchaChange}
+                theme="dark"
+              />
+            </div>
+            {errors.recaptcha && (
+              <span className="error-message" style={{ textAlign: 'center', display: 'block' }}>
+                {errors.recaptcha}
+              </span>
+            )}
+
             <Button
               type="submit"
               variant="primary"
               size="lg"
               fullWidth
               loading={loading}
-              disabled={loading}
+              disabled={loading || !recaptchaToken}
             >
               Registrati
             </Button>

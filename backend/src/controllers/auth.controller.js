@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const { query, transaction } = require('../config/database');
 const { OAuth2Client } = require('google-auth-library');
-
+const { verifyRecaptcha } = require('../utils/recaptcha.util');
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // Helper: genera JWT token
@@ -16,10 +16,32 @@ const generateToken = (userId, expiresIn = process.env.JWT_EXPIRES_IN) => {
 };
 
 // ============================================
-// REGISTRAZIONE
+// REGISTRAZIONE - CON RECAPTCHA
 // ============================================
 const register = async (req, res) => {
   try {
+    // ✅ VERIFICA RECAPTCHA
+    const recaptchaToken = req.body.recaptchaToken;
+
+    if (!recaptchaToken) {
+      return res.status(400).json({
+        success: false,
+        message: 'Completa la verifica reCAPTCHA'
+      });
+    }
+
+    const recaptchaResult = await verifyRecaptcha(recaptchaToken, req.ip);
+
+    if (!recaptchaResult.success) {
+      return res.status(400).json({
+        success: false,
+        message: 'Verifica reCAPTCHA fallita. Riprova.',
+        errorCodes: recaptchaResult.errorCodes
+      });
+    }
+
+    // ✅ RECAPTCHA OK - CONTINUA CON REGISTRAZIONE NORMALE
+
     // Validazione input
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -61,8 +83,6 @@ const register = async (req, res) => {
     // Genera token
     const token = generateToken(user.id);
 
-    // TODO: Invia email di verifica (implementare dopo)
-
     res.status(201).json({
       success: true,
       message: 'Registrazione completata con successo',
@@ -102,7 +122,6 @@ const login = async (req, res) => {
 
     const { email, password } = req.body;
 
-    // Trova utente
     const result = await query(
       'SELECT * FROM users WHERE email = $1',
       [email]
@@ -117,7 +136,6 @@ const login = async (req, res) => {
 
     const user = result.rows[0];
 
-    // Verifica account attivo
     if (!user.attivo) {
       return res.status(403).json({
         success: false,
@@ -125,7 +143,6 @@ const login = async (req, res) => {
       });
     }
 
-    // Verifica password (solo se non è OAuth)
     if (!user.password_hash) {
       return res.status(400).json({
         success: false,
@@ -141,13 +158,11 @@ const login = async (req, res) => {
       });
     }
 
-    // Aggiorna last_login
     await query(
       'UPDATE users SET last_login = CURRENT_TIMESTAMP WHERE id = $1',
       [user.id]
     );
 
-    // Genera token
     const token = generateToken(user.id);
 
     res.json({

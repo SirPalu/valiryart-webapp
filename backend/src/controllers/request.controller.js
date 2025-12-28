@@ -1,21 +1,49 @@
+const { verifyRecaptcha } = require('../utils/recaptcha.util');
 const { validationResult } = require('express-validator');
 const { query, transaction } = require('../config/database');
 const emailService = require('../services/email.service');
 
 // ============================================
-// CREATE REQUEST (anche guest)
+// CREATE REQUEST - CON RECAPTCHA (anche guest)
 // ============================================
 const createRequest = async (req, res) => {
   try {
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     console.log('📥 INCOMING REQUEST DEBUG');
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
+    // ✅ VERIFICA RECAPTCHA (SOLO PER UTENTI NON AUTENTICATI)
+    const isGuest = !req.user;
+    
+    if (isGuest) {
+      const recaptchaToken = req.body.recaptchaToken;
+      
+      if (!recaptchaToken) {
+        return res.status(400).json({
+          success: false,
+          message: 'Completa la verifica reCAPTCHA'
+        });
+      }
+
+      const recaptchaResult = await verifyRecaptcha(recaptchaToken, req.ip);
+      
+      if (!recaptchaResult.success) {
+        return res.status(400).json({
+          success: false,
+          message: 'Verifica reCAPTCHA fallita. Riprova.',
+          errorCodes: recaptchaResult.errorCodes
+        });
+      }
+
+      console.log('✅ Guest reCAPTCHA verified');
+    } else {
+      console.log('✅ Authenticated user - skipping reCAPTCHA');
+    }
+
+    // ✅ RECAPTCHA OK - CONTINUA CON LOGICA NORMALE
+    
     console.log('🔹 Body keys:', Object.keys(req.body));
-    console.log('🔹 Body values:', req.body);
-    console.log('🔹 Files:', req.files);
-    console.log('🔹 File count:', req.files?.length || 0);
-    console.log('🔹 Content-Type:', req.headers['content-type']);
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log('🔹 Files:', req.files?.length || 0);
 
     // Validazione input
     const errors = validationResult(req);
@@ -41,15 +69,13 @@ const createRequest = async (req, res) => {
 
     console.log('✅ Validation passed, starting transaction...');
 
-    // User ID se autenticato, altrimenti NULL per guest
     const userId = req.user ? req.user.id : null;
     console.log('👤 User ID:', userId);
 
-    // ✅ Usa transaction per salvare richiesta + attachments insieme
+    // ✅ IL RESTO RIMANE UGUALE
     const result = await transaction(async (client) => {
       console.log('🔄 Inside transaction - inserting request...');
       
-      // Inserisci richiesta
       const requestResult = await client.query(
         `INSERT INTO requests (
           user_id, categoria, email_contatto, nome_contatto, telefono_contatto,
@@ -74,18 +100,12 @@ const createRequest = async (req, res) => {
       const request = requestResult.rows[0];
       console.log('✅ Request inserted with ID:', request.id);
 
-      // ✅ Salva file allegati se presenti
       if (req.files && req.files.length > 0) {
         console.log(`📎 Processing ${req.files.length} files...`);
         
         for (let i = 0; i < req.files.length; i++) {
           const file = req.files[i];
-          console.log(`  📄 File ${i + 1}:`, {
-            filename: file.filename,
-            originalname: file.originalname,
-            size: file.size,
-            path: file.path
-          });
+          console.log(`  📄 File ${i + 1}:`, file.filename);
           
           await client.query(
             `INSERT INTO request_attachments (
@@ -103,38 +123,30 @@ const createRequest = async (req, res) => {
               i
             ]
           );
-          console.log(`  ✅ File ${i + 1} saved to DB`);
         }
-      } else {
-        console.log('ℹ️  No files to process');
       }
 
-      console.log('✅ Transaction completed successfully');
       return request;
     });
 
     console.log('📧 Sending confirmation emails...');
 
-// ✅ Conta allegati
-const attachmentsCount = (req.files && req.files.length) || 0;
+    const attachmentsCount = (req.files && req.files.length) || 0;
 
-// ✅ INVIO EMAIL: Conferma al cliente
-try {
-  await emailService.sendConfirmationEmail(result, attachmentsCount);
-  console.log('✅ Confirmation email sent');
-} catch (emailError) {
-  console.error('⚠️  Confirmation email failed:', emailError);
-}
+    try {
+      await emailService.sendConfirmationEmail(result, attachmentsCount);
+      console.log('✅ Confirmation email sent');
+    } catch (emailError) {
+      console.error('⚠️  Confirmation email failed:', emailError);
+    }
 
-// ✅ INVIO EMAIL: Notifica a Valeria
-try {
-  await emailService.sendNewRequestAdminEmail(result, req.user, attachmentsCount);
-  console.log('✅ Admin notification email sent');
-} catch (emailError) {
-  console.error('⚠️  Admin email failed:', emailError);
-}
+    try {
+      await emailService.sendNewRequestAdminEmail(result, req.user, attachmentsCount);
+      console.log('✅ Admin notification email sent');
+    } catch (emailError) {
+      console.error('⚠️  Admin email failed:', emailError);
+    }
     
-    // ✅ SALVA LOG NOTIFICHE
     await query(
       `INSERT INTO notifications (request_id, destinatario_email, tipo, oggetto, corpo, inviata)
        VALUES 
@@ -151,8 +163,7 @@ try {
       ]
     );
 
-    console.log('🎉 Request creation completed successfully!');
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+    console.log('🎉 Request creation completed successfully!\n');
 
     res.status(201).json({
       success: true,
@@ -160,12 +171,7 @@ try {
       data: { request: result }
     });
   } catch (error) {
-    console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.error('❌ CREATE REQUEST ERROR');
-    console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.error('Error:', error);
-    console.error('Stack:', error.stack);
-    console.error('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
+    console.error('❌ CREATE REQUEST ERROR:', error);
     
     res.status(500).json({
       success: false,

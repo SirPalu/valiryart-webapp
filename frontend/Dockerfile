@@ -5,8 +5,9 @@ WORKDIR /app
 # Copia package files
 COPY package*.json ./
 
-# Installa dipendenze
-RUN npm ci --only=production && \
+# ✅ INSTALLA TUTTE LE DIPENDENZE (anche devDependencies)
+# Usiamo --legacy-peer-deps per risolvere conflitti TypeScript
+RUN npm install --legacy-peer-deps && \
     npm cache clean --force
 
 # Copia codice sorgente
@@ -15,5 +16,5 @@ COPY . .
 # Esponi porta
 EXPOSE 3000
 
-# Start app
+# Start app in development mode
 CMD ["npm", "start"]

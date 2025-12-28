@@ -48,7 +48,7 @@
    REQUEST INFO CARD
    ============================================ */
 .request-info-card {
-  background: linear-gradient(135deg, #f8f5f0 0%, #ffffff 100%);
+  background: linear-gradient(135deg, rgba(44, 24, 16, 0.95) 0%, rgba(26, 13, 8, 0.95) 100%);
   border: 2px solid #d4a574;
   border-radius: 12px;
   padding: 2rem;
@@ -155,7 +155,7 @@
    TABS
    ============================================ */
 .tabs-container {
-  background: #ffffff;
+  background: linear-gradient(135deg, rgba(44, 24, 16, 0.95) 0%, rgba(26, 13, 8, 0.95) 100%);
   border: 2px solid #d4a574;
   border-radius: 12px;
   overflow: hidden;
@@ -199,6 +199,7 @@
 .tab-content {
   padding: 2rem;
   min-height: 400px;
+  background: rgba(0, 0, 0, 0.2);
 }
 
 /* ============================================
@@ -242,12 +243,12 @@
 }
 
 .description-text {
-  background: #f8f5f0;
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.9);
   padding: 1.5rem;
   border-left: 4px solid #d4a574;
   border-radius: 8px;
   line-height: 1.7;
-  color: #374151;
   font-size: 1rem;
 }
 
@@ -259,7 +260,7 @@
 }
 
 .detail-card {
-  background: linear-gradient(135deg, #f8f5f0 0%, #ffffff 100%);
+  background: linear-gradient(135deg, rgba(44, 24, 16, 0.6) 0%, rgba(26, 13, 8, 0.7) 100%);
   border: 2px solid #d4a574;
   border-radius: 12px;
   padding: 1.5rem;
@@ -319,7 +320,7 @@
    EDIT FORM
    ============================================ */
 .edit-form {
-  background: #f8f5f0;
+  background: rgba(0, 0, 0, 0.3);
   padding: 2rem;
   border-radius: 12px;
   border: 2px solid #d4a574;
@@ -352,8 +353,8 @@
   border-radius: 8px;
   font-family: 'Montserrat', sans-serif;
   font-size: 0.95rem;
-  background: #ffffff;
-  color: #2c3e1f;
+  background: rgba(0, 0, 0, 0.3);
+  color: #FAE9C7;
   transition: all 0.2s ease;
 }
 
@@ -465,7 +466,7 @@
 }
 
 .timeline-content {
-  background: #ffffff;
+  background: rgba(44, 24, 16, 0.8);
   border: 2px solid #d4a574;
   border-radius: 12px;
   padding: 1.5rem;
@@ -474,7 +475,7 @@
 
 .timeline-content h4 {
   font-size: 1.1rem;
-  color: #2c3e1f;
+  color: #FAE9C7;
   margin: 0 0 0.5rem 0;
   font-weight: 600;
 }

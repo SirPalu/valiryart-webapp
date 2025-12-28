@@ -1,8 +1,9 @@
-// frontend/src/pages/user/CreateRequestPage.js - OTTIMIZZATO
+// frontend/src/pages/user/CreateRequestPage.js - CON RECAPTCHA INTEGRATO
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import ReCAPTCHA from 'react-google-recaptcha';
 import Card from '../../components/common/Card';
 import Button from '../../components/common/Button';
 import toast from 'react-hot-toast';
@@ -15,6 +16,10 @@ const CreateRequestPage = () => {
   const [loading, setLoading] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [createdRequest, setCreatedRequest] = useState(null);
+  
+  // ✅ reCAPTCHA states
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
+  const recaptchaRef = useRef(null);
   
   const [formData, setFormData] = useState({
     categoria: '',
@@ -44,6 +49,11 @@ const CreateRequestPage = () => {
         [key]: value
       }
     }));
+  };
+
+  // ✅ reCAPTCHA handler
+  const handleRecaptchaChange = (token) => {
+    setRecaptchaToken(token);
   };
 
   const handleFileChange = (e) => {
@@ -97,6 +107,12 @@ const CreateRequestPage = () => {
       return;
     }
 
+    // ✅ VERIFICA RECAPTCHA (SOLO PER GUEST)
+    if (!isAuthenticated && !recaptchaToken) {
+      toast.error('Completa la verifica reCAPTCHA');
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -109,6 +125,11 @@ const CreateRequestPage = () => {
           submitData.append(key, formData[key]);
         }
       });
+
+      // ✅ AGGIUNGI RECAPTCHA TOKEN (SOLO PER GUEST)
+      if (!isAuthenticated && recaptchaToken) {
+        submitData.append('recaptchaToken', recaptchaToken);
+      }
 
       files.forEach(file => {
         submitData.append('files', file);
@@ -130,10 +151,15 @@ const CreateRequestPage = () => {
 
       toast.success('🎉 Richiesta inviata con successo!');
       
-      // ✅ NON redirect immediato - mostra conferma
     } catch (error) {
       console.error('❌ Submit error:', error);
       toast.error(error.response?.data?.message || 'Errore nell\'invio della richiesta');
+      
+      // ✅ RESET RECAPTCHA IN CASO DI ERRORE
+      if (!isAuthenticated && recaptchaRef.current) {
+        recaptchaRef.current.reset();
+        setRecaptchaToken(null);
+      }
     } finally {
       setLoading(false);
     }
@@ -238,7 +264,7 @@ const CreateRequestPage = () => {
     );
   }
 
-  // ✅ FORM (resto del codice uguale)
+  // ✅ FORM
   const renderCategoryFields = () => {
     switch (formData.categoria) {
       case 'incisioni':
@@ -612,6 +638,24 @@ const CreateRequestPage = () => {
           </div>
         </Card>
 
+        {/* ✅ reCAPTCHA per Guest */}
+        {!isAuthenticated && (
+          <Card className="form-section">
+            <h2>6️⃣ Verifica di Sicurezza</h2>
+            <p className="help-text">
+              🛡️ Completa la verifica per confermare che non sei un robot
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem' }}>
+              <ReCAPTCHA
+                ref={recaptchaRef}
+                sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                onChange={handleRecaptchaChange}
+                theme="dark"
+              />
+            </div>
+          </Card>
+        )}
+
         <div className="form-actions">
           <Button
             type="button"
@@ -625,7 +669,7 @@ const CreateRequestPage = () => {
             variant="primary"
             size="lg"
             loading={loading}
-            disabled={loading || !formData.categoria}
+            disabled={loading || !formData.categoria || (!isAuthenticated && !recaptchaToken)}
           >
             {loading ? 'Invio in corso...' : '📩 Invia Richiesta'}
           </Button>
