@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { requestsAPI } from '../../services/api';
+import ReCAPTCHA from 'react-google-recaptcha';
 import Button from '../../components/common/Button';
 import toast from 'react-hot-toast';
 import './EventiPage.css';
@@ -21,6 +22,9 @@ const ELEMENTI_DECORATIVI = [
 const EventiPage = () => {
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
+
+  // ✅ reCAPTCHA refs
+  const recaptchaRef = useRef(null);
 
   const [formData, setFormData] = useState({
     tipoEvento: '',
@@ -46,9 +50,20 @@ const EventiPage = () => {
     telefono: user?.telefono || ''
   });
 
+  // ✅ reCAPTCHA state
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
+
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
+
+  // ✅ reCAPTCHA handler
+  const handleRecaptchaChange = (token) => {
+    setRecaptchaToken(token);
+    if (errors.recaptcha) {
+      setErrors(prev => ({ ...prev, recaptcha: '' }));
+    }
+  };
 
   const handleChange = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -95,6 +110,11 @@ const EventiPage = () => {
     if (!isAuthenticated) {
       if (!formData.email) newErrors.email = 'Email obbligatoria';
       if (!formData.nome) newErrors.nome = 'Nome obbligatorio';
+      
+      // ✅ VERIFICA RECAPTCHA per guest
+      if (!recaptchaToken) {
+        newErrors.recaptcha = 'Completa la verifica reCAPTCHA';
+      }
     }
 
     setErrors(newErrors);
@@ -146,6 +166,11 @@ const EventiPage = () => {
         }
       };
 
+      // ✅ AGGIUNGI RECAPTCHA TOKEN (solo per guest)
+      if (!isAuthenticated && recaptchaToken) {
+        requestData.recaptchaToken = recaptchaToken;
+      }
+
       await requestsAPI.create(requestData);
 
       toast.success('Richiesta inviata con successo!');
@@ -156,8 +181,14 @@ const EventiPage = () => {
         navigate('/');
       }
     } catch (error) {
-      console.error('Submit error:', error);
-      toast.error('Errore nell\'invio della richiesta');
+      console.error('❌ Submit error:', error);
+      toast.error(error.response?.data?.message || 'Errore nell\'invio della richiesta');
+      
+      // ✅ RESET RECAPTCHA in caso di errore
+      if (!isAuthenticated && recaptchaRef.current) {
+        recaptchaRef.current.reset();
+        setRecaptchaToken(null);
+      }
     } finally {
       setLoading(false);
     }
@@ -505,6 +536,29 @@ const EventiPage = () => {
               </div>
             )}
 
+            {/* ✅ Step 8: reCAPTCHA (solo guest) */}
+            {!isAuthenticated && (
+              <div className="form-step">
+                <h2 className="step-title">8. Verifica di Sicurezza</h2>
+                <p className="step-note">
+                  🛡️ Completa la verifica per confermare che non sei un robot
+                </p>
+                <div className="recaptcha-container">
+                  <ReCAPTCHA
+                    ref={recaptchaRef}
+                    sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                    onChange={handleRecaptchaChange}
+                    theme="dark"
+                  />
+                </div>
+                {errors.recaptcha && (
+                  <span className="error-message" style={{ display: 'block', textAlign: 'center', marginTop: '0.5rem' }}>
+                    {errors.recaptcha}
+                  </span>
+                )}
+              </div>
+            )}
+
             {/* Disclaimer Prezzo */}
             <div className="price-disclaimer">
               <h3>💰 Informazioni sul Preventivo</h3>
@@ -523,6 +577,7 @@ const EventiPage = () => {
                 type="submit"
                 variant="primary"
                 size="lg"
+                disabled={!isAuthenticated && !recaptchaToken}
               >
                 Rivedi e Invia Richiesta
               </Button>

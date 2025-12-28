@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { requestsAPI } from '../../services/api';
+import ReCAPTCHA from 'react-google-recaptcha';
 import Button from '../../components/common/Button';
 import toast from 'react-hot-toast';
 import './IncisioniPage.css';
@@ -63,30 +64,31 @@ const COLOR_OPTIONS = [
   { value: 'full', label: 'Totalmente Colorato', price: 13 }
 ];
 
-const DESIGN_CATEGORIES = [
-  'fantasy', 'film', 'anime', 'floreali', 'geometrico', 'natura', 'altro'
-];
-
 const IncisioniPage = () => {
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
+
+  // ✅ reCAPTCHA refs
+  const recaptchaRef = useRef(null);
 
   // Form State
   const [formData, setFormData] = useState({
     productType: '',
     sizeIndex: 0,
-    imageSource: 'upload', // 'upload' o 'gallery'
+    imageSource: 'upload',
     uploadedImage: null,
     selectedDesign: null,
     designCategory: '',
     colorOption: 'none',
     colors: ['', '', ''],
     notes: '',
-    // Dati contatto (guest)
     email: user?.email || '',
     nome: user?.nome || '',
     telefono: user?.telefono || ''
   });
+
+  // ✅ reCAPTCHA state
+  const [recaptchaToken, setRecaptchaToken] = useState(null);
 
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -109,6 +111,14 @@ const IncisioniPage = () => {
     const colorPrice = COLOR_OPTIONS.find(opt => opt.value === formData.colorOption)?.price || 0;
 
     setCalculatedPrice(basePrice + colorPrice);
+  };
+
+  // ✅ reCAPTCHA handler
+  const handleRecaptchaChange = (token) => {
+    setRecaptchaToken(token);
+    if (errors.recaptcha) {
+      setErrors(prev => ({ ...prev, recaptcha: '' }));
+    }
   };
 
   const handleProductSelect = (productKey) => {
@@ -167,6 +177,11 @@ const IncisioniPage = () => {
       if (!formData.nome) {
         newErrors.nome = 'Nome obbligatorio';
       }
+      
+      // ✅ VERIFICA RECAPTCHA per guest
+      if (!recaptchaToken) {
+        newErrors.recaptcha = 'Completa la verifica reCAPTCHA';
+      }
     }
 
     setErrors(newErrors);
@@ -185,75 +200,82 @@ const IncisioniPage = () => {
   };
 
   const confirmSubmit = async () => {
-  setLoading(true);
+    setLoading(true);
 
-  try {
-    const product = PRODUCTS[formData.productType];
-    const selectedSize = product.sizes[formData.sizeIndex];
+    try {
+      const product = PRODUCTS[formData.productType];
+      const selectedSize = product.sizes[formData.sizeIndex];
 
-    const requestData = {
-      categoria: 'incisioni',
-      email_contatto: formData.email,
-      nome_contatto: formData.nome,
-      telefono_contatto: formData.telefono,
-      descrizione: `Incisione su ${product.name} - ${selectedSize.label}`,
-      dati_specifici: {
-        product: formData.productType,
-        productName: product.name,
-        size: selectedSize.label,
-        basePrice: selectedSize.price,
-        colorOption: formData.colorOption,
-        colors: formData.colorOption !== 'none' ? formData.colors.filter(c => c) : [],
-        colorPrice: COLOR_OPTIONS.find(opt => opt.value === formData.colorOption)?.price || 0,
-        totalPrice: calculatedPrice,
-        imageSource: formData.imageSource,
-        designCategory: formData.designCategory,
-        notes: formData.notes
-      }
-    };
-
-    // Se c'è immagine upload, usa FormData
-    if (formData.uploadedImage) {
-      const formDataToSend = new FormData();
-      
-      // ✅ Aggiungi tutti i campi
-      Object.keys(requestData).forEach(key => {
-        if (key === 'dati_specifici') {
-          formDataToSend.append(key, JSON.stringify(requestData[key]));
-        } else if (requestData[key]) { // ← Verifica che il valore non sia undefined/null
-          formDataToSend.append(key, requestData[key]);
+      const requestData = {
+        categoria: 'incisioni',
+        email_contatto: formData.email,
+        nome_contatto: formData.nome,
+        telefono_contatto: formData.telefono,
+        descrizione: `Incisione su ${product.name} - ${selectedSize.label}`,
+        dati_specifici: {
+          product: formData.productType,
+          productName: product.name,
+          size: selectedSize.label,
+          basePrice: selectedSize.price,
+          colorOption: formData.colorOption,
+          colors: formData.colorOption !== 'none' ? formData.colors.filter(c => c) : [],
+          colorPrice: COLOR_OPTIONS.find(opt => opt.value === formData.colorOption)?.price || 0,
+          totalPrice: calculatedPrice,
+          imageSource: formData.imageSource,
+          designCategory: formData.designCategory,
+          notes: formData.notes
         }
-      });
-      
-      // ✅ CORREZIONE: Usa 'files' invece di 'image'
-      formDataToSend.append('files', formData.uploadedImage);
-      
-      // ✅ DEBUG: Verifica FormData (rimuovi dopo test)
-      console.log('📦 FormData contents:');
-      for (let pair of formDataToSend.entries()) {
-        console.log(pair[0] + ':', pair[1] instanceof File ? `[File: ${pair[1].name}]` : pair[1]);
-      }
-      
-      await requestsAPI.create(formDataToSend);
-    } else {
-      await requestsAPI.create(requestData);
-    }
+      };
 
-    toast.success('Richiesta inviata con successo!');
-    
-    if (isAuthenticated) {
-      navigate('/user/requests');
-    } else {
-      navigate('/');
+      // Se c'è immagine upload, usa FormData
+      if (formData.uploadedImage) {
+        const formDataToSend = new FormData();
+        
+        Object.keys(requestData).forEach(key => {
+          if (key === 'dati_specifici') {
+            formDataToSend.append(key, JSON.stringify(requestData[key]));
+          } else if (requestData[key]) {
+            formDataToSend.append(key, requestData[key]);
+          }
+        });
+        
+        formDataToSend.append('files', formData.uploadedImage);
+        
+        // ✅ AGGIUNGI RECAPTCHA TOKEN (solo per guest)
+        if (!isAuthenticated && recaptchaToken) {
+          formDataToSend.append('recaptchaToken', recaptchaToken);
+        }
+        
+        await requestsAPI.create(formDataToSend);
+      } else {
+        // ✅ AGGIUNGI RECAPTCHA TOKEN (solo per guest)
+        if (!isAuthenticated && recaptchaToken) {
+          requestData.recaptchaToken = recaptchaToken;
+        }
+        
+        await requestsAPI.create(requestData);
+      }
+
+      toast.success('Richiesta inviata con successo!');
+      
+      if (isAuthenticated) {
+        navigate('/user/requests');
+      } else {
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('❌ Submit error:', error);
+      toast.error(error.response?.data?.message || 'Errore nell\'invio della richiesta');
+      
+      // ✅ RESET RECAPTCHA in caso di errore
+      if (!isAuthenticated && recaptchaRef.current) {
+        recaptchaRef.current.reset();
+        setRecaptchaToken(null);
+      }
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error('❌ Submit error:', error);
-    console.error('❌ Error response:', error.response?.data);
-    toast.error(error.response?.data?.message || 'Errore nell\'invio della richiesta');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   if (showSummary) {
     return <OrderSummary 
@@ -382,7 +404,6 @@ const IncisioniPage = () => {
                 ) : (
                   <div className="gallery-selector">
                     <p>🎨 Galleria disegni in arrivo! Per ora carica la tua immagine.</p>
-                    {/* TODO: Implementare galleria quando avremo le immagini */}
                   </div>
                 )}
                 
@@ -489,6 +510,29 @@ const IncisioniPage = () => {
               </div>
             )}
 
+            {/* ✅ Step 7: reCAPTCHA (solo guest) */}
+            {!isAuthenticated && formData.productType && (
+              <div className="form-step">
+                <h2 className="step-title">7. Verifica di Sicurezza</h2>
+                <p className="step-note">
+                  🛡️ Completa la verifica per confermare che non sei un robot
+                </p>
+                <div className="recaptcha-container">
+                  <ReCAPTCHA
+                    ref={recaptchaRef}
+                    sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                    onChange={handleRecaptchaChange}
+                    theme="dark"
+                  />
+                </div>
+                {errors.recaptcha && (
+                  <span className="error-message" style={{ display: 'block', textAlign: 'center', marginTop: '0.5rem' }}>
+                    {errors.recaptcha}
+                  </span>
+                )}
+              </div>
+            )}
+
             {/* Prezzo Totale */}
             {calculatedPrice > 0 && (
               <div className="price-summary">
@@ -520,7 +564,7 @@ const IncisioniPage = () => {
                 type="submit"
                 variant="primary"
                 size="lg"
-                disabled={!formData.productType}
+                disabled={!formData.productType || (!isAuthenticated && !recaptchaToken)}
               >
                 Rivedi Riepilogo e Invia
               </Button>

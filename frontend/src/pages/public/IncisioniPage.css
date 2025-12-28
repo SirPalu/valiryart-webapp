@@ -465,6 +465,28 @@
   flex-wrap: wrap;
 }
 
+/* reCAPTCHA Container */
+.recaptcha-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  border: 2px solid rgba(250, 233, 199, 0.2);
+  margin: 1.5rem 0;
+}
+
+.g-recaptcha,
+.g-recaptcha > div,
+.g-recaptcha iframe {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 999 !important;
+}
+
+
 /* Responsive */
 @media (max-width: 768px) {
   .products-grid {
@@ -494,5 +516,10 @@
   
   .summary-actions button {
     width: 100%;
+  }
+
+  .g-recaptcha {
+  transform: scale(0.85);
+  transform-origin: center;
   }
 }
