@@ -37,6 +37,7 @@ valiryart-webapp/
       services/
         email.service.js
       utils/
+        recaptcha.util.js
     uploads/
       designs/
       portfolio/
@@ -54,6 +55,10 @@ valiryart-webapp/
         5dec6f2d-ab90-4231-ac45-a148afe38f06-1766853694016.png
         77c64b25-0a35-4661-96fa-2d4932421bbc-1766855400494.png
         7d012d01-7085-4ebf-8cbe-7a473d8e8a92-1765452519844.jpg
+        bd0b938a-ae0b-43af-9048-fb4cb5503a0f-1766935564595.jpg
+        c9575074-70f5-45df-bcb3-4e0ecdad53a9-1766929732572.jpg
+        cb96f782-cbe7-4387-ab50-cbebce12efc4-1766929693853.jpg
+        e0c52e41-ea1a-42e7-b3a4-e5fc69cf8257-1766936004797.jpg
       temp/
   docker-compose.yml
   frontend/
@@ -209,6 +214,7 @@ valiryart-webapp/
           CreateRequestPage.js
           MyRequestsPage.css
           MyRequestsPage.js
+          ProfilePage.css
           ProfilePage.js
           RequestDetailPage.css
           RequestDetailPage.js

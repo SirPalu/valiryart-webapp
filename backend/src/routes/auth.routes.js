@@ -5,104 +5,78 @@ const authController = require('../controllers/auth.controller');
 const { verifyToken } = require('../middlewares/auth.middleware');
 
 // ============================================
-// REGISTRAZIONE
+// VALIDAZIONI
 // ============================================
-router.post('/register',
-  [
-    body('email').isEmail().normalizeEmail().withMessage('Email non valida'),
-    body('password').isLength({ min: 8 }).withMessage('Password minimo 8 caratteri'),
-    body('nome').notEmpty().trim().withMessage('Nome obbligatorio'),
-    body('cognome').notEmpty().trim().withMessage('Cognome obbligatorio'),
-    body('telefono').optional().isMobilePhone('it-IT').withMessage('Numero telefono non valido')
-  ],
-  authController.register
-);
+
+const registerValidation = [
+  body('email').isEmail().withMessage('Email non valida'),
+  body('password')
+    .isLength({ min: 8 }).withMessage('Password minimo 8 caratteri')
+    .matches(/[A-Z]/).withMessage('Password deve contenere almeno una maiuscola')
+    .matches(/[0-9]/).withMessage('Password deve contenere almeno un numero'),
+  body('nome').notEmpty().withMessage('Nome obbligatorio'),
+  body('cognome').notEmpty().withMessage('Cognome obbligatorio')
+];
+
+const loginValidation = [
+  body('email').isEmail().withMessage('Email non valida'),
+  body('password').notEmpty().withMessage('Password obbligatoria')
+];
+
+const changePasswordValidation = [
+  body('currentPassword').notEmpty().withMessage('Password corrente obbligatoria'),
+  body('newPassword')
+    .isLength({ min: 8 }).withMessage('Nuova password minimo 8 caratteri')
+    .matches(/[A-Z]/).withMessage('Password deve contenere almeno una maiuscola')
+    .matches(/[0-9]/).withMessage('Password deve contenere almeno un numero')
+];
+
+const updateProfileValidation = [
+  body('nome').optional().notEmpty().withMessage('Nome non può essere vuoto'),
+  body('cognome').optional().notEmpty().withMessage('Cognome non può essere vuoto'),
+  body('telefono').optional().matches(/^[0-9+\s()-]+$/).withMessage('Numero di telefono non valido')
+];
 
 // ============================================
-// LOGIN
+// ROUTES PUBBLICHE
 // ============================================
-router.post('/login',
-  [
-    body('email').isEmail().normalizeEmail().withMessage('Email non valida'),
-    body('password').notEmpty().withMessage('Password obbligatoria')
-  ],
-  authController.login
-);
 
-// ============================================
-// GOOGLE OAUTH
-// ============================================
-router.post('/google',
-  [
-    body('credential').notEmpty().withMessage('Google credential mancante')
-  ],
-  authController.googleAuth
-);
+// Registrazione con reCAPTCHA
+router.post('/register', registerValidation, authController.register);
 
-// ============================================
-// LOGOUT
-// ============================================
-router.post('/logout', verifyToken, authController.logout);
+// Login
+router.post('/login', loginValidation, authController.login);
 
-// ============================================
-// REFRESH TOKEN
-// ============================================
-router.post('/refresh',
-  [
-    body('refreshToken').notEmpty().withMessage('Refresh token mancante')
-  ],
-  authController.refreshToken
-);
+// Google OAuth
+router.post('/google', authController.googleAuth);
 
-// ============================================
-// VERIFICA EMAIL
-// ============================================
+// Forgot/Reset Password
+router.post('/forgot-password', authController.forgotPassword);
+router.post('/reset-password', authController.resetPassword);
+
+// Email verification
 router.get('/verify-email/:token', authController.verifyEmail);
 
 // ============================================
-// RESET PASSWORD
+// ROUTES PROTETTE (richiedono autenticazione)
 // ============================================
-router.post('/forgot-password',
-  [
-    body('email').isEmail().normalizeEmail().withMessage('Email non valida')
-  ],
-  authController.forgotPassword
-);
 
-router.post('/reset-password',
-  [
-    body('token').notEmpty().withMessage('Token mancante'),
-    body('password').isLength({ min: 8 }).withMessage('Password minimo 8 caratteri')
-  ],
-  authController.resetPassword
-);
+// Logout
+router.post('/logout', verifyToken, authController.logout);
 
-// ============================================
-// PROFILO UTENTE CORRENTE
-// ============================================
+// Get current user
 router.get('/me', verifyToken, authController.getCurrentUser);
 
-// ============================================
-// AGGIORNA PROFILO
-// ============================================
-router.put('/me', verifyToken,
-  [
-    body('nome').optional().trim().notEmpty().withMessage('Nome non valido'),
-    body('cognome').optional().trim().notEmpty().withMessage('Cognome non valido'),
-    body('telefono').optional().isMobilePhone('it-IT').withMessage('Numero telefono non valido')
-  ],
-  authController.updateProfile
-);
+// Update profile
+router.patch('/profile', verifyToken, updateProfileValidation, authController.updateProfile);
 
-// ============================================
-// CAMBIA PASSWORD
-// ============================================
-router.put('/change-password', verifyToken,
-  [
-    body('currentPassword').notEmpty().withMessage('Password corrente obbligatoria'),
-    body('newPassword').isLength({ min: 8 }).withMessage('Nuova password minimo 8 caratteri')
-  ],
-  authController.changePassword
-);
+// Change password
+router.patch('/password', verifyToken, changePasswordValidation, authController.changePassword);
+
+// ✅ DELETE ACCOUNT
+router.delete('/account', verifyToken, authController.deleteAccount);
+
+// Refresh token
+router.post('/refresh', authController.refreshToken);
 
 module.exports = router;

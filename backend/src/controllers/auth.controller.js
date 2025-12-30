@@ -191,7 +191,7 @@ const login = async (req, res) => {
 };
 
 // ============================================
-// GOOGLE OAUTH - ✅ FIXED
+// GOOGLE OAUTH
 // ============================================
 const googleAuth = async (req, res) => {
   try {
@@ -215,7 +215,7 @@ const googleAuth = async (req, res) => {
     let user;
 
     if (result.rows.length === 0) {
-      // ✅ FIXED: Nuovo utente - registra CON attivo=true
+      // Nuovo utente - registra CON attivo=true
       result = await query(
         `INSERT INTO users (email, google_id, nome, cognome, google_avatar_url, ruolo, email_verified, attivo)
          VALUES ($1, $2, $3, $4, $5, 'user', true, true)
@@ -234,7 +234,7 @@ const googleAuth = async (req, res) => {
           [googleId, picture, user.id]
         );
         user.google_avatar_url = picture;
-        user.attivo = true; // ✅ Assicurati localmente
+        user.attivo = true;
       }
 
       // Aggiorna last_login
@@ -244,7 +244,7 @@ const googleAuth = async (req, res) => {
       );
     }
 
-    // ✅ FIXED: Verifica account attivo DOPO averlo impostato
+    // Verifica account attivo
     if (!user.attivo) {
       console.warn('⚠️  Google user disabled:', { email, userId: user.id });
       return res.status(403).json({
@@ -439,7 +439,7 @@ const getCurrentUser = async (req, res) => {
   try {
     const result = await query(
       `SELECT id, email, nome, cognome, telefono, indirizzo, citta, cap, provincia,
-              google_avatar_url, ruolo, email_verified, created_at
+              google_avatar_url, google_id, ruolo, email_verified, created_at
        FROM users WHERE id = $1`,
       [req.user.id]
     );
@@ -516,11 +516,14 @@ const changePassword = async (req, res) => {
 
     // Recupera password attuale
     const result = await query(
-      'SELECT password_hash FROM users WHERE id = $1',
+      'SELECT password_hash, google_id FROM users WHERE id = $1',
       [req.user.id]
     );
 
-    if (!result.rows[0].password_hash) {
+    const user = result.rows[0];
+
+    // Verifica se utente Google OAuth
+    if (!user.password_hash || user.google_id) {
       return res.status(400).json({
         success: false,
         message: 'Account creato con Google. Impossibile cambiare password.'
@@ -528,7 +531,7 @@ const changePassword = async (req, res) => {
     }
 
     // Verifica password corrente
-    const isValid = await bcrypt.compare(currentPassword, result.rows[0].password_hash);
+    const isValid = await bcrypt.compare(currentPassword, user.password_hash);
     if (!isValid) {
       return res.status(401).json({
         success: false,
@@ -559,6 +562,63 @@ const changePassword = async (req, res) => {
   }
 };
 
+// ============================================
+// DELETE ACCOUNT
+// ============================================
+const deleteAccount = async (req, res) => {
+  try {
+    const { password, confirmText } = req.body;
+
+    // Verifica testo conferma
+    if (confirmText !== 'DELETE') {
+      return res.status(400).json({
+        success: false,
+        message: 'Conferma non valida. Scrivi DELETE per confermare.'
+      });
+    }
+
+    // Recupera utente
+    const result = await query(
+      'SELECT password_hash, google_id FROM users WHERE id = $1',
+      [req.user.id]
+    );
+
+    const user = result.rows[0];
+
+    // Se utente ha password (non Google OAuth), verifica password
+    if (user.password_hash && !user.google_id) {
+      if (!password) {
+        return res.status(400).json({
+          success: false,
+          message: 'Password richiesta per confermare eliminazione'
+        });
+      }
+
+      const isValid = await bcrypt.compare(password, user.password_hash);
+      if (!isValid) {
+        return res.status(401).json({
+          success: false,
+          message: 'Password non corretta'
+        });
+      }
+    }
+
+    // Elimina account (CASCADE eliminerà anche le richieste associate se configurato)
+    await query('DELETE FROM users WHERE id = $1', [req.user.id]);
+
+    res.json({
+      success: true,
+      message: 'Account eliminato con successo'
+    });
+  } catch (error) {
+    console.error('Delete account error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore nell\'eliminazione dell\'account'
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -570,5 +630,6 @@ module.exports = {
   resetPassword,
   getCurrentUser,
   updateProfile,
-  changePassword
+  changePassword,
+  deleteAccount
 };
