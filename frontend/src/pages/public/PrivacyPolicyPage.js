@@ -1,8 +1,4 @@
 import React from 'react';
-const PortfolioDetailPage = () => {
-  return <div style={{padding: '4rem 2rem', textAlign: 'center'}}><h1>Dettaglio Opera</h1><p>Pagina in costruzione...</p></div>;
-};
-export default PortfolioDetailPage;import React from 'react';
 import './PrivacyPolicyPage.css';
 
 const PrivacyPolicyPage = () => {
@@ -85,7 +81,7 @@ const PrivacyPolicyPage = () => {
                 <div className="purpose-col">Sicurezza e prevenzione frodi</div>
                 <div className="purpose-col">Legittimo interesse (Art. 6.1.f GDPR)</div>
               </div>
-            </ul>
+            </div>
           </section>
 
           {/* Conservazione */}

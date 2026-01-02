@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Button from './Button';
 import './Navbar.css';
@@ -8,6 +8,7 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { isAuthenticated, logout, isAdmin } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation(); // ✅ Hook per rilevare URL corrente
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -23,6 +24,14 @@ const Navbar = () => {
     setMobileMenuOpen(false);
   };
 
+  // ✅ Funzione per verificare se il link è attivo
+  const isActive = (path) => {
+    if (path === '/') {
+      return location.pathname === '/'; // Home deve essere esatto
+    }
+    return location.pathname.startsWith(path); // Altri possono avere sotto-pagine
+  };
+
   return (
     <nav className="valiryart-navbar">
       <div className="navbar-container">
@@ -36,13 +45,13 @@ const Navbar = () => {
 
         {/* Desktop Navigation */}
         <ul className="navbar-menu desktop-menu">
-          <li><Link to="/" className="nav-link">Home</Link></li>
-          <li><Link to="/incisioni" className="nav-link">Incisioni</Link></li>
-          <li><Link to="/torte" className="nav-link">Torte</Link></li>
-          <li><Link to="/eventi" className="nav-link">Eventi</Link></li>
-          <li><Link to="/galleria" className="nav-link">Galleria</Link></li>
-          <li><Link to="/chi-siamo" className="nav-link">Chi Sono</Link></li>
-          <li><Link to="/come-funziona" className="nav-link">Come Funziona</Link></li>
+          <li><Link to="/" className={`nav-link ${isActive('/') ? 'active' : ''}`}>Home</Link></li>
+          <li><Link to="/incisioni" className={`nav-link ${isActive('/incisioni') ? 'active' : ''}`}>Incisioni</Link></li>
+          <li><Link to="/torte" className={`nav-link ${isActive('/torte') ? 'active' : ''}`}>Torte</Link></li>
+          <li><Link to="/eventi" className={`nav-link ${isActive('/eventi') ? 'active' : ''}`}>Eventi</Link></li>
+          <li><Link to="/galleria" className={`nav-link ${isActive('/galleria') ? 'active' : ''}`}>Galleria</Link></li>
+          <li><Link to="/chi-siamo" className={`nav-link ${isActive('/chi-siamo') ? 'active' : ''}`}>Chi Sono</Link></li>
+          <li><Link to="/come-funziona" className={`nav-link ${isActive('/come-funziona') ? 'active' : ''}`}>Come Funziona</Link></li>
         </ul>
 
         {/* Desktop Auth Buttons */}
@@ -111,13 +120,13 @@ const Navbar = () => {
       {/* Mobile Menu */}
       <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
         <ul className="mobile-nav-links">
-          <li><Link to="/" onClick={closeMobileMenu}>Home</Link></li>
-          <li><Link to="/incisioni" onClick={closeMobileMenu}>Incisioni</Link></li>
-          <li><Link to="/torte" onClick={closeMobileMenu}>Torte</Link></li>
-          <li><Link to="/eventi" onClick={closeMobileMenu}>Eventi</Link></li>
-          <li><Link to="/galleria" onClick={closeMobileMenu}>Galleria</Link></li>
-          <li><Link to="/chi-siamo" onClick={closeMobileMenu}>Chi Sono</Link></li>
-          <li><Link to="/come-funziona" onClick={closeMobileMenu}>Come Funziona</Link></li>
+          <li><Link to="/" onClick={closeMobileMenu} className={isActive('/') ? 'active' : ''}>Home</Link></li>
+          <li><Link to="/incisioni" onClick={closeMobileMenu} className={isActive('/incisioni') ? 'active' : ''}>Incisioni</Link></li>
+          <li><Link to="/torte" onClick={closeMobileMenu} className={isActive('/torte') ? 'active' : ''}>Torte</Link></li>
+          <li><Link to="/eventi" onClick={closeMobileMenu} className={isActive('/eventi') ? 'active' : ''}>Eventi</Link></li>
+          <li><Link to="/galleria" onClick={closeMobileMenu} className={isActive('/galleria') ? 'active' : ''}>Galleria</Link></li>
+          <li><Link to="/chi-siamo" onClick={closeMobileMenu} className={isActive('/chi-siamo') ? 'active' : ''}>Chi Sono</Link></li>
+          <li><Link to="/come-funziona" onClick={closeMobileMenu} className={isActive('/come-funziona') ? 'active' : ''}>Come Funziona</Link></li>
         </ul>
 
         <div className="mobile-auth-actions">

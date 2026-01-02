@@ -102,6 +102,16 @@
   width: 100%;
 }
 
+/* ✅ STATO ATTIVO - Sottolineatura permanente */
+.nav-link.active {
+  color: #FAE9C7;
+  font-weight: 600;
+}
+
+.nav-link.active::after {
+  width: 100%;
+}
+
 /* ============================================
    ACTIONS
    ============================================ */
@@ -202,6 +212,15 @@
 
 .mobile-nav-links a:hover {
   color: #FFFFFF;
+  padding-left: 1rem;
+  border-bottom-color: rgba(250, 233, 199, 0.3);
+}
+
+/* ✅ STATO ATTIVO MOBILE */
+.mobile-nav-links a.active {
+  color: #FFFFFF;
+  background: rgba(250, 233, 199, 0.1);
+  border-left: 3px solid #FAE9C7;
   padding-left: 1rem;
   border-bottom-color: rgba(250, 233, 199, 0.3);
 }

@@ -229,7 +229,7 @@ const ComeFunzionaPage = () => {
           <div className="contact-alternative">
             <p>Hai domande? Contattami direttamente:</p>
             <a 
-              href="https://wa.me/393123456789" 
+              href="https://wa.me/393513720244" 
               target="_blank" 
               rel="noopener noreferrer"
               className="btn-whatsapp"

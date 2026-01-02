@@ -17,6 +17,8 @@ import ChiSiamoPage from './pages/public/ChiSiamoPage';
 import ComeFunzionaPage from './pages/public/ComeFunzionaPage';
 import PortfolioDetailPage from './pages/public/PortfolioDetailPage';
 import GalleryPage from './pages/public/GalleryPage';
+import PrivacyPolicyPage from './pages/public/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/public/TermsOfServicePage';
 
 // Auth Pages
 import LoginPage from './pages/public/LoginPage';
@@ -83,6 +85,8 @@ const AppRoutes = () => {
         <Route path="chi-siamo" element={<ChiSiamoPage />} />
         <Route path="come-funziona" element={<ComeFunzionaPage />} />
         <Route path="galleria" element={<GalleryPage />} />
+        <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
+        <Route path="termini-servizio" element={<TermsOfServicePage />} />
         <Route path="portfolio/:id" element={<PortfolioDetailPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />

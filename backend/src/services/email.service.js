@@ -88,7 +88,7 @@ const getEmailTemplate = (content) => {
     </div>
     <div class="footer">
       <p>© ${new Date().getFullYear()} ValiryArt - Tutti i diritti riservati</p>
-      <p><a href="https://wa.me/393123456789">WhatsApp</a> | <a href="https://instagram.com/valiryart">Instagram</a> | <a href="mailto:valiryart93@gmail.com">Email</a></p>
+      <p><a href="https://wa.me/393513720244">WhatsApp</a> | <a href="https://instagram.com/valiryart">Instagram</a> | <a href="mailto:valiryart93@gmail.com">Email</a></p>
       <p style="font-size: 10px; margin-top: 15px;">Hai ricevuto questa email perché hai inviato una richiesta su ValiryArt.<br>Se non riconosci questa richiesta, ignora questa email.</p>
     </div>
   </div>
@@ -191,7 +191,7 @@ const sendConfirmationEmail = async (requestData) => {
     <p>Ti risponderò entro <strong>24-48 ore</strong>. Se hai fretta o domande, non esitare a contattarmi direttamente su WhatsApp!</p>
 
     <div style="text-align: center;">
-      <a href="https://wa.me/393123456789" class="button">💬 Contattami su WhatsApp</a>
+      <a href="https://wa.me/393513720244" class="button">💬 Contattami su WhatsApp</a>
     </div>
 
     <p style="margin-top: 30px;">A presto,<br><strong style="color: #FAE9C7;">Valeria</strong><br><em style="font-size: 14px; color: rgba(255,255,255,0.7);">ValiryArt - Creazioni Artigianali</em></p>

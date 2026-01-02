@@ -290,17 +290,18 @@ const IncisioniPage = () => {
 
   return (
     <div className="incisioni-page">
-      {/* Hero con info artigianale */}
+      {/* Hero con link galleria */}
       <section className="incisioni-hero">
         <div className="container">
-          <h1>Incisioni su Legno</h1>
+          <h1>🔥 Incisioni su Legno</h1>
           <p className="hero-subtitle">Opere Personalizzate Realizzate a Mano con Pirografo</p>
-          <div className="artisan-badge">
-            <span className="badge-icon">🔥</span>
-            <div className="badge-text">
-              <strong>100% Artigianale</strong>
-              <p>Ogni incisione è realizzata a mano libera, non usiamo stampanti laser. Questo rende ogni pezzo unico e valorizza le naturali venature del legno.</p>
-            </div>
+          <div className="hero-notice">
+            <p>
+              💡 <strong>Cerchi ispirazione?</strong> Guarda la nostra{' '}
+              <a href="/galleria" target="_blank" rel="noopener noreferrer">
+                galleria di incisioni realizzate →
+              </a>
+            </p>
           </div>
         </div>
       </section>

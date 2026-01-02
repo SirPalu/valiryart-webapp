@@ -217,7 +217,7 @@ const EventiPage = () => {
           <div className="hero-notice">
             <p>
               💡 <strong>Cerchi ispirazione?</strong> Guarda la nostra{' '}
-              <a href="/" target="_blank" rel="noopener noreferrer">
+              <a href="/galleria" target="_blank" rel="noopener noreferrer">
                 galleria di allestimenti realizzati →
               </a>
             </p>

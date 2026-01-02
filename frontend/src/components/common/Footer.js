@@ -48,7 +48,7 @@ const Footer = () => {
           <ul className="footer-contacts">
             <li>
               <a 
-                href="https://wa.me/393123456789" 
+                href="https://wa.me/393513720244" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="footer-contact-link"
@@ -70,7 +70,7 @@ const Footer = () => {
             </li>
             <li>
               <a 
-                href="mailto:info@valiryart.it"
+                href="mailto:valiryart93@gmail.com"
                 className="footer-contact-link"
               >
                 <span className="icon">📧</span>

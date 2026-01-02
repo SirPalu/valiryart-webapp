@@ -414,7 +414,7 @@ CREATE TABLE settings (
 
 -- Inserimento settings base
 INSERT INTO settings (chiave, valore, tipo, descrizione) VALUES
-('email_notifiche', 'info@valiryart.it', 'string', 'Email admin per notifiche'),
+('email_notifiche', 'valiryart93@gmail.com', 'string', 'Email admin per notifiche'),
 ('whatsapp_numero', '+39xxxxxxxxxx', 'string', 'Numero WhatsApp per contatti'),
 ('instagram_username', 'valiryart', 'string', 'Username Instagram'),
 ('spedizione_base_costo', '10.00', 'number', 'Costo base spedizione nazionale'),

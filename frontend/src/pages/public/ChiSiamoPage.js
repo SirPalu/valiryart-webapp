@@ -132,7 +132,7 @@ const ChiSiamoPage = () => {
               Invia una Richiesta
             </a>
             <a 
-              href="https://wa.me/393123456789" 
+              href="https://wa.me/397893513720244" 
               target="_blank" 
               rel="noopener noreferrer"
               className="btn-cta secondary"
