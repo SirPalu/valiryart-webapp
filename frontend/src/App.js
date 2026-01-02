@@ -8,6 +8,9 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import MainLayout from './components/layout/MainLayout';
 import AdminLayout from './components/layout/AdminLayout';
 
+// Common
+import ScrollToTop from './components/common/ScrollToTop';
+
 // Public Pages
 import HomePage from './pages/public/HomePage';
 import IncisioniPage from './pages/public/IncisioniPage';
@@ -161,6 +164,7 @@ function App() {
     <GoogleOAuthProvider clientId={googleClientId}>
       <AuthProvider>
         <Router>
+          <ScrollToTop />
           <div className="App">
             <AppRoutes />
             <Toaster

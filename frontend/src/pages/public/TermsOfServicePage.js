@@ -1,5 +1,5 @@
 import React from 'react';
-import './PrivacyPolicyPage.css'; // Usa gli stessi stili
+import './TermsOfServicePage.css';
 
 const TermsOfServicePage = () => {
   return (
