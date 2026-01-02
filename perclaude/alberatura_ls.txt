@@ -144,6 +144,8 @@ valiryart-webapp/
           Torte_8.jpg
           Torte_9.jpg
       index.html
+      logo.png
+      minilogo.png
     src/
       App.js
       components/
@@ -160,6 +162,7 @@ valiryart-webapp/
           Footer.js
           Navbar.css
           Navbar.js
+          ScrollToTop.js
         gallery/
           Lightbox.css
           Lightbox.js
@@ -206,7 +209,11 @@ valiryart-webapp/
           IncisioniPage.js
           LoginPage.js
           PortfolioDetailPage.js
+          PrivacyPolicyPage.css
+          PrivacyPolicyPage.js
           RegisterPage.js
+          TermsOfServicePage.css
+          TermsOfServicePage.js
           TortePage.css
           TortePage.js
         user/

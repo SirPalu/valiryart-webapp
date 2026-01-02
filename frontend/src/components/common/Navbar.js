@@ -37,6 +37,11 @@ const Navbar = () => {
       <div className="navbar-container">
         {/* Logo */}
         <Link to="/" className="navbar-logo" onClick={closeMobileMenu}>
+          <img 
+            src="/minilogo.png" 
+            alt="ValiryArt Logo" 
+            className="navbar-logo-image"
+          />
           <div className="logo-text">
             <span className="logo-valiryart">ValiryArt</span>
             <span className="logo-tagline">Creazioni Artigianali</span>
