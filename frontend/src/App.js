@@ -38,11 +38,7 @@ import CreateRequestPage from './pages/user/CreateRequestPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminRequestsPage from './pages/admin/AdminRequestsPage';
 import AdminRequestDetailPage from './pages/admin/RequestDetailPage';
-import AdminPortfolioPage from './pages/admin/AdminPortfolioPage';
-import AdminDesignsPage from './pages/admin/AdminDesignsPage';
 import AdminUsersPage from './pages/admin/AdminUsersPage';
-import AdminContentPage from './pages/admin/AdminContentPage';
-import AdminSettingsPage from './pages/admin/AdminSettingsPage';
 
 // Loading component
 const LoadingScreen = () => (
@@ -133,20 +129,8 @@ const AppRoutes = () => {
         <Route path="requests" element={<AdminRequestsPage />} />
         <Route path="requests/:id" element={<AdminRequestDetailPage />} />
         
-        {/* Portfolio */}
-        <Route path="portfolio" element={<AdminPortfolioPage />} />
-        
-        {/* Galleria Disegni */}
-        <Route path="designs" element={<AdminDesignsPage />} />
-        
         {/* Utenti */}
         <Route path="users" element={<AdminUsersPage />} />
-        
-        {/* Contenuti */}
-        <Route path="content" element={<AdminContentPage />} />
-        
-        {/* Impostazioni */}
-        <Route path="settings" element={<AdminSettingsPage />} />
       </Route>
 
       {/* ============================================

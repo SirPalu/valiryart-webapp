@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Button from '../common/Button';
 import './AdminLayout.css';
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { logout, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
+  };
+
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
   };
 
   const handleLogout = async () => {
@@ -18,10 +24,44 @@ const AdminLayout = () => {
     navigate('/');
   };
 
+  // Helper per controllare se il link è attivo
+  const isActiveLink = (path) => {
+    if (path === '/admin' || path === '/admin/dashboard') {
+      return location.pathname === '/admin' || location.pathname === '/admin/dashboard';
+    }
+    return location.pathname.startsWith(path);
+  };
+
+  // ✅ MENU PULITO - Solo Dashboard, Richieste, Utenti
+  const menuItems = [
+    {
+      path: '/admin',
+      icon: '📊',
+      label: 'Dashboard',
+      exact: true
+    },
+    {
+      path: '/admin/requests',
+      icon: '📋',
+      label: 'Richieste'
+    },
+    {
+      path: '/admin/users',
+      icon: '👥',
+      label: 'Utenti'
+    }
+  ];
+
+  // Get page title based on current path
+  const getPageTitle = () => {
+    const currentItem = menuItems.find(item => isActiveLink(item.path));
+    return currentItem ? currentItem.label : 'Dashboard Amministrativa';
+  };
+
   return (
     <div className="admin-layout">
-      {/* Sidebar */}
-      <aside className={`admin-sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
+      {/* Sidebar Desktop */}
+      <aside className={`admin-sidebar ${sidebarOpen ? 'open' : 'closed'} ${mobileMenuOpen ? 'mobile-open' : ''}`}>
         <div className="sidebar-header">
           <h2 className="sidebar-logo">ValiryArt Admin</h2>
           <button className="sidebar-toggle" onClick={toggleSidebar}>
@@ -30,34 +70,17 @@ const AdminLayout = () => {
         </div>
 
         <nav className="sidebar-nav">
-          <Link to="/admin" className="sidebar-link">
-            <span className="link-icon">📊</span>
-            {sidebarOpen && <span>Dashboard</span>}
-          </Link>
-          <Link to="/admin/requests" className="sidebar-link">
-            <span className="link-icon">📋</span>
-            {sidebarOpen && <span>Richieste</span>}
-          </Link>
-          <Link to="/admin/portfolio" className="sidebar-link">
-            <span className="link-icon">🖼️</span>
-            {sidebarOpen && <span>Portfolio</span>}
-          </Link>
-          <Link to="/admin/designs" className="sidebar-link">
-            <span className="link-icon">🎨</span>
-            {sidebarOpen && <span>Galleria Disegni</span>}
-          </Link>
-          <Link to="/admin/users" className="sidebar-link">
-            <span className="link-icon">👥</span>
-            {sidebarOpen && <span>Utenti</span>}
-          </Link>
-          <Link to="/admin/content" className="sidebar-link">
-            <span className="link-icon">📄</span>
-            {sidebarOpen && <span>Contenuti</span>}
-          </Link>
-          <Link to="/admin/settings" className="sidebar-link">
-            <span className="link-icon">⚙️</span>
-            {sidebarOpen && <span>Impostazioni</span>}
-          </Link>
+          {menuItems.map((item) => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`sidebar-link ${isActiveLink(item.path) ? 'active' : ''}`}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span className="link-icon">{item.icon}</span>
+              {sidebarOpen && <span>{item.label}</span>}
+            </Link>
+          ))}
         </nav>
 
         <div className="sidebar-footer">
@@ -65,7 +88,10 @@ const AdminLayout = () => {
             variant="ghost" 
             size="sm" 
             fullWidth
-            onClick={() => navigate('/')}
+            onClick={() => {
+              navigate('/');
+              setMobileMenuOpen(false);
+            }}
           >
             {sidebarOpen ? '🏠 Vai al Sito' : '🏠'}
           </Button>
@@ -80,15 +106,26 @@ const AdminLayout = () => {
         </div>
       </aside>
 
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div 
+          className="mobile-menu-overlay" 
+          onClick={() => setMobileMenuOpen(false)}
+        ></div>
+      )}
+
       {/* Main Content */}
       <div className={`admin-main ${sidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         {/* Top Bar */}
         <header className="admin-topbar">
           <div className="topbar-left">
-            <button className="mobile-menu-toggle" onClick={toggleSidebar}>
+            <button 
+              className="mobile-menu-toggle" 
+              onClick={toggleMobileMenu}
+            >
               ☰
             </button>
-            <h1 className="page-title">Dashboard Amministrativa</h1>
+            <h1 className="page-title">{getPageTitle()}</h1>
           </div>
           <div className="topbar-right">
             <span className="admin-user">

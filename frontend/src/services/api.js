@@ -96,7 +96,7 @@ export const adminAPI = {
     responseType: 'blob' 
   }),
   getAllUsers: (filters) => api.get('/admin/users', { params: filters }),
-  updateUserStatus: (userId, attivo) => api.put(`/admin/users/${userId}/status`, { attivo }),
+  updateUserStatus: (userId, data) => api.put(`/admin/users/${userId}/status`, data),
   getRequestById: (id) => api.get(`/admin/requests/${id}`),
   getRequestMessages: (requestId) => api.get(`/admin/requests/${requestId}/messages`),
   sendMessage: (requestId, data) => api.post(`/admin/requests/${requestId}/messages`, data),

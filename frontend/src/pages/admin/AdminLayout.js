@@ -32,7 +32,7 @@ const AdminLayout = () => {
     return location.pathname.startsWith(path);
   };
 
-  // Menu items configuration
+  // ✅ MENU PULITO - Solo Dashboard, Richieste, Utenti
   const menuItems = [
     {
       path: '/admin',
@@ -46,29 +46,9 @@ const AdminLayout = () => {
       label: 'Richieste'
     },
     {
-      path: '/admin/portfolio',
-      icon: '🖼️',
-      label: 'Portfolio'
-    },
-    {
-      path: '/admin/designs',
-      icon: '🎨',
-      label: 'Galleria Disegni'
-    },
-    {
       path: '/admin/users',
       icon: '👥',
       label: 'Utenti'
-    },
-    {
-      path: '/admin/content',
-      icon: '📄',
-      label: 'Contenuti'
-    },
-    {
-      path: '/admin/settings',
-      icon: '⚙️',
-      label: 'Impostazioni'
     }
   ];
 
