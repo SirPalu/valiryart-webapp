@@ -59,7 +59,7 @@ const Footer = () => {
             </li>
             <li>
               <a 
-                href="https://instagram.com/valiryart" 
+                href="https://www.instagram.com/v4lyri4rt/?igsh=MTYxNXVxMWplcWJhbw%3D%3D#" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="footer-contact-link"

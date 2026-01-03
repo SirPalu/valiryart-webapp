@@ -88,7 +88,7 @@ const getEmailTemplate = (content) => {
     </div>
     <div class="footer">
       <p>© ${new Date().getFullYear()} ValiryArt - Tutti i diritti riservati</p>
-      <p><a href="https://wa.me/393513720244">WhatsApp</a> | <a href="https://instagram.com/valiryart">Instagram</a> | <a href="mailto:valiryart93@gmail.com">Email</a></p>
+      <p><a href="https://wa.me/393513720244">WhatsApp</a> | <a href="https://www.instagram.com/v4lyri4rt/?igsh=MTYxNXVxMWplcWJhbw%3D%3D#">Instagram</a> | <a href="mailto:valiryart93@gmail.com">Email</a></p>
       <p style="font-size: 10px; margin-top: 15px;">Hai ricevuto questa email perché hai inviato una richiesta su ValiryArt.<br>Se non riconosci questa richiesta, ignora questa email.</p>
     </div>
   </div>
@@ -321,6 +321,65 @@ const sendNewMessageEmail = async (requestData, senderName, messageText, isForAd
   });
 };
 
+const sendWelcomeEmail = async (userData, verificationToken) => {
+  const verificationLink = `${process.env.FRONTEND_URL || 'http://localhost:8081'}/verify-email/${verificationToken}`;
+
+  const content = `
+    <h2>🎉 Benvenuto su ValiryArt!</h2>
+    <p>Ciao <strong>${userData.nome}</strong>,</p>
+    <p>Grazie per esserti registrato su ValiryArt! Siamo felici di averti con noi.</p>
+    
+    <div class="info-box">
+      <strong>✉️ Verifica la tua email</strong><br>
+      Per completare la registrazione e accedere a tutte le funzionalità, ti chiediamo di verificare il tuo indirizzo email cliccando sul pulsante qui sotto.
+    </div>
+
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="${verificationLink}" class="button">✅ Verifica Email</a>
+    </div>
+
+    <p style="font-size: 14px; color: rgba(255,255,255,0.7);">
+      <strong>Nota:</strong> Questo link è valido per <strong>1 ora</strong>. Se non riesci a cliccare il pulsante, copia e incolla questo indirizzo nel browser:<br>
+      <a href="${verificationLink}" style="color: #FAE9C7; word-break: break-all;">${verificationLink}</a>
+    </p>
+
+    <div class="divider"></div>
+
+    <h3>🎨 Cosa Puoi Fare su ValiryArt</h3>
+    <div class="info-box" style="background: rgba(26, 77, 2, 0.15);">
+      <strong>🪵 Incisioni su Legno</strong><br>
+      Richiedi opere personalizzate realizzate a mano con pirografo<br><br>
+      
+      <strong>🎂 Torte Decorative</strong><br>
+      Ordina torte scenografiche per eventi speciali<br><br>
+      
+      <strong>🎉 Allestimento Eventi</strong><br>
+      Decori personalizzati per le tue celebrazioni<br><br>
+      
+      <strong>💬 Chat Diretta</strong><br>
+      Comunica direttamente con Valeria per ogni tua richiesta
+    </div>
+
+    <p style="margin-top: 30px;">Non vedo l'ora di creare qualcosa di speciale per te!</p>
+    <p style="margin-top: 20px;">Con affetto,<br><strong style="color: #FAE9C7;">Valeria</strong><br><em style="font-size: 14px; color: rgba(255,255,255,0.7);">ValiryArt - Creazioni Artigianali</em></p>
+
+    <div class="divider"></div>
+
+    <p style="font-size: 12px; color: rgba(255,255,255,0.6); text-align: center; margin-top: 20px;">
+      Se non ti sei registrato su ValiryArt, ignora questa email.<br>
+      Nessuno potrà accedere al tuo account senza la verifica.
+    </p>
+  `;
+
+  return safeSendEmail({
+    from: `"ValiryArt" <${process.env.SMTP_USER}>`,
+    to: userData.email,
+    subject: '🎉 Benvenuto su ValiryArt - Verifica la tua Email',
+    html: getEmailTemplate(content),
+  });
+};
+
+
 // ✅ GRACEFUL SHUTDOWN
 const closeTransporter = () => {
   return new Promise((resolve) => {
@@ -336,6 +395,7 @@ module.exports = {
   sendNewRequestAdminEmail,
   sendStatusChangeEmail,
   sendNewMessageEmail,
+  sendWelcomeEmail,
   transporter,
   closeTransporter
 };

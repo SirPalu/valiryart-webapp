@@ -146,6 +146,286 @@ valiryart-webapp/
       index.html
       logo.png
       minilogo.png
+      sceltadisegni/
+        Animali/
+          Animali_1.jpg
+          Animali_10.jpg
+          Animali_11.jpg
+          Animali_12.jpg
+          Animali_13.jpg
+          Animali_14.jpg
+          Animali_15.jpg
+          Animali_16.jpg
+          Animali_17.jpg
+          Animali_18.jpg
+          Animali_19.jpg
+          Animali_2.jpg
+          Animali_20.jpg
+          Animali_21.jpg
+          Animali_22.jpg
+          Animali_23.jpg
+          Animali_24.jpg
+          Animali_25.jpg
+          Animali_26.jpg
+          Animali_27.jpg
+          Animali_28.jpg
+          Animali_29.jpg
+          Animali_3.jpg
+          Animali_30.jpg
+          Animali_31.jpg
+          Animali_32.jpg
+          Animali_33.jpg
+          Animali_34.jpg
+          Animali_35.jpg
+          Animali_36.jpg
+          Animali_37.jpg
+          Animali_38.jpg
+          Animali_39.jpg
+          Animali_4.jpg
+          Animali_40.jpg
+          Animali_41.jpg
+          Animali_42.jpg
+          Animali_43.jpg
+          Animali_44.jpg
+          Animali_45.jpg
+          Animali_46.jpg
+          Animali_47.jpg
+          Animali_48.jpg
+          Animali_49.jpg
+          Animali_5.jpg
+          Animali_50.jpg
+          Animali_51.jpg
+          Animali_52.jpg
+          Animali_53.jpg
+          Animali_54.jpg
+          Animali_55.jpg
+          Animali_56.jpg
+          Animali_57.jpg
+          Animali_58.jpg
+          Animali_59.jpg
+          Animali_6.jpg
+          Animali_60.jpg
+          Animali_61.jpg
+          Animali_62.jpg
+          Animali_63.jpg
+          Animali_64.jpg
+          Animali_65.jpg
+          Animali_66.jpg
+          Animali_67.jpg
+          Animali_68.jpg
+          Animali_69.jpg
+          Animali_7.jpg
+          Animali_70.jpg
+          Animali_71.jpg
+          Animali_72.jpg
+          Animali_73.jpg
+          Animali_74.jpg
+          Animali_75.jpg
+          Animali_76.jpg
+          Animali_77.jpg
+          Animali_78.jpg
+          Animali_79.jpg
+          Animali_8.jpg
+          Animali_80.jpg
+          Animali_81.jpg
+          Animali_82.jpg
+          Animali_83.jpg
+          Animali_84.jpg
+          Animali_85.jpg
+          Animali_86.jpg
+          Animali_9.jpg
+        Anime/
+          Anime_1.jpg
+          Anime_10.jpg
+          Anime_11.jpg
+          Anime_12.jpg
+          Anime_13.jpg
+          Anime_14.jpg
+          Anime_15.jpg
+          Anime_16.jpg
+          Anime_17.jpg
+          Anime_18.jpg
+          Anime_19.jpg
+          Anime_2.jpg
+          Anime_20.jpg
+          Anime_21.jpg
+          Anime_22.jpg
+          Anime_23.jpg
+          Anime_24.jpg
+          Anime_25.jpg
+          Anime_26.jpg
+          Anime_27.jpg
+          Anime_28.jpg
+          Anime_29.jpg
+          Anime_3.jpg
+          Anime_30.jpg
+          Anime_31.jpg
+          Anime_32.jpg
+          Anime_35.jpg
+          Anime_36.jpg
+          Anime_37.jpg
+          Anime_38.jpg
+          Anime_39.jpg
+          Anime_4.jpg
+          Anime_40.jpg
+          Anime_41.jpg
+          Anime_42.jpg
+          Anime_43.jpg
+          Anime_44.jpg
+          Anime_5.jpg
+          Anime_6.jpg
+          Anime_7.jpg
+          Anime_8.jpg
+          Anime_9.jpg
+        Disney/
+          Disney_1.jpg
+          Disney_10.jpg
+          Disney_11.jpg
+          Disney_12.jpg
+          Disney_13.jpg
+          Disney_14.jpg
+          Disney_15.jpg
+          Disney_16.jpg
+          Disney_17.jpg
+          Disney_18.jpg
+          Disney_19.png
+          Disney_2.jpg
+          Disney_20.jpg
+          Disney_21.jpg
+          Disney_22.jpg
+          Disney_23.jpg
+          Disney_24.jpg
+          Disney_3.jpg
+          Disney_4.jpg
+          Disney_5.jpg
+          Disney_6.jpg
+          Disney_7.jpg
+          Disney_8.jpg
+          Disney_9.jpg
+        Fantasy/
+          Fantasy_1.jpg
+          Fantasy_10.jpg
+          Fantasy_11.jpg
+          Fantasy_12.jpg
+          Fantasy_13.jpg
+          Fantasy_14.jpg
+          Fantasy_15.jpg
+          Fantasy_16.jpg
+          Fantasy_17.jpg
+          Fantasy_18.jpg
+          Fantasy_19.jpg
+          Fantasy_2.jpg
+          Fantasy_20.jpg
+          Fantasy_21.jpg
+          Fantasy_22.jpg
+          Fantasy_23.jpg
+          Fantasy_24.jpg
+          Fantasy_25.jpg
+          Fantasy_26.jpg
+          Fantasy_27.jpg
+          Fantasy_3.jpg
+          Fantasy_31.jpg
+          Fantasy_32.jpg
+          Fantasy_33.jpg
+          Fantasy_34.jpg
+          Fantasy_35.jpg
+          Fantasy_36.jpg
+          Fantasy_37.jpg
+          Fantasy_38.jpg
+          Fantasy_39.jpg
+          Fantasy_4.jpg
+          Fantasy_40.jpg
+          Fantasy_41.jpg
+          Fantasy_42.jpg
+          Fantasy_43.jpg
+          Fantasy_44.jpg
+          Fantasy_45.jpg
+          Fantasy_5.jpg
+          Fantasy_6.jpg
+          Fantasy_7.jpg
+          Fantasy_8.jpg
+          Fantasy_9.jpg
+        Film/
+          Film_1.jpg
+          Film_10.jpg
+          Film_11.jpg
+          Film_12.jpg
+          Film_13.jpg
+          Film_14.jpg
+          Film_15.jpg
+          Film_16.jpg
+          Film_17.jpg
+          Film_18.jpg
+          Film_19.jpg
+          Film_2.jpg
+          Film_20.jpg
+          Film_21.jpg
+          Film_22.jpg
+          Film_23.jpg
+          Film_3.jpg
+          Film_4.jpg
+          Film_5.jpg
+          Film_6.jpg
+          Film_7.jpg
+          Film_8.jpg
+          Film_9.jpg
+        Musica/
+          Musica_1.jpg
+          Musica_10.jpg
+          Musica_11.jpg
+          Musica_12.jpg
+          Musica_13.jpg
+          Musica_14.jpg
+          Musica_15.jpg
+          Musica_16.jpg
+          Musica_17.jpg
+          Musica_18.jpg
+          Musica_2.jpg
+          Musica_3.jpg
+          Musica_4.jpg
+          Musica_5.jpg
+          Musica_6.jpg
+          Musica_7.jpg
+          Musica_8.jpg
+          Musica_9.jpg
+        Varie/
+          Varie_1.jpg
+          Varie_10.jpg
+          Varie_11.jpg
+          Varie_12.jpg
+          Varie_13.jpg
+          Varie_14.jpg
+          Varie_15.jpg
+          Varie_16.jpg
+          Varie_17.jpg
+          Varie_18.jpg
+          Varie_19.jpg
+          Varie_2.jpg
+          Varie_20.jpg
+          Varie_21.jpg
+          Varie_22.jpg
+          Varie_23.jpg
+          Varie_24.jpg
+          Varie_3.jpg
+          Varie_4.jpg
+          Varie_5.jpg
+          Varie_6.jpg
+          Varie_7.jpg
+          Varie_8.jpg
+          Varie_9.jpg
+        Videogiochi/
+          Videogiochi_1.jpg
+          Videogiochi_10.jpg
+          Videogiochi_11.jpg
+          Videogiochi_12.jpg
+          Videogiochi_2.jpg
+          Videogiochi_3.jpg
+          Videogiochi_4.jpg
+          Videogiochi_5.jpg
+          Videogiochi_6.jpg
+          Videogiochi_7.jpg
+          Videogiochi_8.jpg
+          Videogiochi_9.jpg
     src/
       App.js
       components/
@@ -164,6 +444,8 @@ valiryart-webapp/
           Navbar.js
           ScrollToTop.js
         gallery/
+          DesignGalleryModal.css
+          DesignGalleryModal.js
           Lightbox.css
           Lightbox.js
           index.js
@@ -180,16 +462,13 @@ valiryart-webapp/
       index.js
       pages/
         admin/
-          AdminContentPage.js
           AdminDashboard.css
           AdminDashboard.js
-          AdminDesignsPage.js
           AdminLayout.css
           AdminLayout.js
-          AdminPortfolioPage.js
           AdminRequestsPage.css
           AdminRequestsPage.js
-          AdminSettingsPage.js
+          AdminUsersPage.css
           AdminUsersPage.js
           RequestDetailPage.css
           RequestDetailPage.js
@@ -216,6 +495,8 @@ valiryart-webapp/
           TermsOfServicePage.js
           TortePage.css
           TortePage.js
+          VerifyEmailPage.css
+          VerifyEmailPage.js
         user/
           CreateRequestPage.css
           CreateRequestPage.js

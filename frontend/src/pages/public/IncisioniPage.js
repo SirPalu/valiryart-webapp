@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { requestsAPI } from '../../services/api';
 import ReCAPTCHA from 'react-google-recaptcha';
 import Button from '../../components/common/Button';
+import DesignGalleryModal from '../../components/gallery/DesignGalleryModal';
 import toast from 'react-hot-toast';
 import './IncisioniPage.css';
 
@@ -71,12 +72,16 @@ const IncisioniPage = () => {
   // ✅ reCAPTCHA refs
   const recaptchaRef = useRef(null);
 
+  // ✅ Design Gallery Modal state
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+
   // Form State
   const [formData, setFormData] = useState({
     productType: '',
     sizeIndex: 0,
     imageSource: 'upload',
     uploadedImage: null,
+    uploadedImagePreview: null, // ✅ NUOVO: Preview URL
     selectedDesign: null,
     designCategory: '',
     colorOption: 'none',
@@ -129,6 +134,7 @@ const IncisioniPage = () => {
     }));
   };
 
+  // ✅ UPLOAD FILE con ANTEPRIMA
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -136,9 +142,30 @@ const IncisioniPage = () => {
         setErrors(prev => ({ ...prev, image: 'File troppo grande (max 10MB)' }));
         return;
       }
-      setFormData(prev => ({ ...prev, uploadedImage: file }));
+
+      // Crea URL di anteprima
+      const previewURL = URL.createObjectURL(file);
+      
+      setFormData(prev => ({ 
+        ...prev, 
+        uploadedImage: file,
+        uploadedImagePreview: previewURL,
+        selectedDesign: null // Reset design selezionato
+      }));
       setErrors(prev => ({ ...prev, image: '' }));
     }
+  };
+
+  // ✅ SELEZIONE DA GALLERIA
+  const handleDesignSelect = (design) => {
+    setFormData(prev => ({
+      ...prev,
+      selectedDesign: design,
+      designCategory: design.category,
+      uploadedImage: null, // Reset upload
+      uploadedImagePreview: null
+    }));
+    setErrors(prev => ({ ...prev, image: '' }));
   };
 
   const handleColorChange = (index, value) => {
@@ -223,6 +250,8 @@ const IncisioniPage = () => {
           totalPrice: calculatedPrice,
           imageSource: formData.imageSource,
           designCategory: formData.designCategory,
+          selectedDesignPath: formData.selectedDesign?.path, // ✅ Salva path del disegno
+          selectedDesignFilename: formData.selectedDesign?.filename,
           notes: formData.notes
         }
       };
@@ -396,15 +425,81 @@ const IncisioniPage = () => {
                       <span>Clicca per caricare o trascina qui</span>
                       <small>Max 10MB - JPG, PNG</small>
                     </label>
-                    {formData.uploadedImage && (
-                      <div className="uploaded-preview">
-                        ✅ {formData.uploadedImage.name}
+                    
+                    {/* ✅ ANTEPRIMA IMMAGINE CARICATA */}
+                    {formData.uploadedImage && formData.uploadedImagePreview && (
+                      <div className="image-preview-container">
+                        <div className="preview-image">
+                          <img src={formData.uploadedImagePreview} alt="Preview" />
+                        </div>
+                        <div className="preview-details">
+                          <p className="preview-filename">✅ {formData.uploadedImage.name}</p>
+                          <p className="preview-size">
+                            {(formData.uploadedImage.size / 1024 / 1024).toFixed(2)} MB
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          className="remove-preview-btn"
+                          onClick={() => setFormData(prev => ({
+                            ...prev,
+                            uploadedImage: null,
+                            uploadedImagePreview: null
+                          }))}
+                        >
+                          🗑️ Rimuovi
+                        </button>
                       </div>
                     )}
                   </div>
                 ) : (
                   <div className="gallery-selector">
-                    <p>🎨 Galleria disegni in arrivo! Per ora carica la tua immagine.</p>
+                    {/* ✅ SELEZIONE DA GALLERIA */}
+                    {formData.selectedDesign ? (
+                      <div className="design-selected-preview">
+                        <div className="selected-design-image">
+                          <img src={formData.selectedDesign.path} alt={formData.selectedDesign.label} />
+                        </div>
+                        <div className="selected-design-info">
+                          <h3>✅ Disegno Selezionato</h3>
+                          <p><strong>Categoria:</strong> {formData.selectedDesign.category}</p>
+                          <p><strong>Nome:</strong> {formData.selectedDesign.filename}</p>
+                        </div>
+                        <div className="selected-design-actions">
+                          <button
+                            type="button"
+                            className="btn-change-design"
+                            onClick={() => setIsGalleryOpen(true)}
+                          >
+                            🔄 Cambia Disegno
+                          </button>
+                          <button
+                            type="button"
+                            className="btn-remove-design"
+                            onClick={() => setFormData(prev => ({
+                              ...prev,
+                              selectedDesign: null,
+                              designCategory: ''
+                            }))}
+                          >
+                            🗑️ Rimuovi
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="open-gallery-prompt">
+                        <p className="gallery-prompt-text">
+                          🎨 Sfoglia la nostra galleria di disegni disponibili
+                        </p>
+                        <button
+                          type="button"
+                          className="btn-open-gallery"
+                          onClick={() => setIsGalleryOpen(true)}
+                        >
+                          📂 Apri Galleria Disegni
+                        </button>
+                      </div>
+                    )}
                   </div>
                 )}
                 
@@ -573,6 +668,13 @@ const IncisioniPage = () => {
           </form>
         </div>
       </section>
+
+      {/* ✅ DESIGN GALLERY MODAL */}
+      <DesignGalleryModal
+        isOpen={isGalleryOpen}
+        onClose={() => setIsGalleryOpen(false)}
+        onSelectDesign={handleDesignSelect}
+      />
     </div>
   );
 };
@@ -595,7 +697,11 @@ const OrderSummary = ({ formData, product, calculatedPrice, onBack, onConfirm, l
           </div>
           <div className="summary-row">
             <strong>Immagine:</strong>
-            <span>{formData.imageSource === 'upload' ? `File: ${formData.uploadedImage.name}` : 'Dalla galleria'}</span>
+            <span>
+              {formData.imageSource === 'upload' 
+                ? `File: ${formData.uploadedImage.name}` 
+                : `Galleria: ${formData.selectedDesign.filename}`}
+            </span>
           </div>
           <div className="summary-row">
             <strong>Colore:</strong>

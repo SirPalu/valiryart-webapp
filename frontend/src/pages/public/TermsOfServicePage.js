@@ -33,7 +33,7 @@ const TermsOfServicePage = () => {
               <p>Prestazioni occasionali ex art. 2222 c.c.</p>
               <p>Email: <a href="mailto:valiryart93@gmail.com">valiryart93@gmail.com</a></p>
               <p>WhatsApp: <a href="https://wa.me/393517543735" target="_blank" rel="noopener noreferrer">+39 351 754 3735</a></p>
-              <p>Instagram: <a href="https://instagram.com/valiryart" target="_blank" rel="noopener noreferrer">@valiryart</a></p>
+              <p>Instagram: <a href="https://www.instagram.com/v4lyri4rt/?igsh=MTYxNXVxMWplcWJhbw%3D%3D#" target="_blank" rel="noopener noreferrer">@valiryart</a></p>
               <p>Sede operativa: Roma, Italia</p>
             </div>
           </section>

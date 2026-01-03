@@ -22,6 +22,7 @@ import PortfolioDetailPage from './pages/public/PortfolioDetailPage';
 import GalleryPage from './pages/public/GalleryPage';
 import PrivacyPolicyPage from './pages/public/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/public/TermsOfServicePage';
+import VerifyEmailPage from './pages/public/VerifyEmailPage';
 
 // Auth Pages
 import LoginPage from './pages/public/LoginPage';
@@ -89,6 +90,7 @@ const AppRoutes = () => {
         <Route path="portfolio/:id" element={<PortfolioDetailPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
+        <Route path="verify-email/:token" element={<VerifyEmailPage />} />
         
         {/* Richiesta pubblica (guest o logged) */}
         <Route path="richiesta" element={<CreateRequestPage />} />

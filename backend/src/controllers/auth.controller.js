@@ -5,6 +5,7 @@ const { query, transaction } = require('../config/database');
 const { OAuth2Client } = require('google-auth-library');
 const { verifyRecaptcha } = require('../utils/recaptcha.util');
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const emailService = require('../services/email.service');
 
 // Helper: genera JWT token
 const generateToken = (userId, expiresIn = process.env.JWT_EXPIRES_IN) => {
@@ -16,7 +17,7 @@ const generateToken = (userId, expiresIn = process.env.JWT_EXPIRES_IN) => {
 };
 
 // ============================================
-// REGISTRAZIONE - CON RECAPTCHA
+// REGISTRAZIONE - CON RECAPTCHA + EMAIL VERIFICA
 // ============================================
 const register = async (req, res) => {
   try {
@@ -40,7 +41,7 @@ const register = async (req, res) => {
       });
     }
 
-    // ✅ RECAPTCHA OK - CONTINUA CON REGISTRAZIONE NORMALE
+    // ✅ RECAPTCHA OK - CONTINUA CON REGISTRAZIONE
 
     // Validazione input
     const errors = validationResult(req);
@@ -52,6 +53,9 @@ const register = async (req, res) => {
     }
 
     const { email, password, nome, cognome, telefono } = req.body;
+
+    // ✅ NORMALIZZA TELEFONO: Stringa vuota → NULL
+    const telefonoValue = telefono && telefono.trim() !== '' ? telefono : null;
 
     // Verifica email già esistente
     const existingUser = await query(
@@ -70,22 +74,40 @@ const register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
-    // Inserisci utente
+    // ✅ INSERISCI UTENTE CON email_verified = false
     const result = await query(
-      `INSERT INTO users (email, password_hash, nome, cognome, telefono, ruolo, attivo)
-       VALUES ($1, $2, $3, $4, $5, 'user', true)
-       RETURNING id, email, nome, cognome, telefono, ruolo, created_at`,
-      [email, passwordHash, nome, cognome, telefono]
+      `INSERT INTO users (email, password_hash, nome, cognome, telefono, ruolo, attivo, email_verified)
+       VALUES ($1, $2, $3, $4, $5, 'user', true, false)
+       RETURNING id, email, nome, cognome, telefono, ruolo, email_verified, created_at`,
+      [email, passwordHash, nome, cognome, telefonoValue]
     );
 
     const user = result.rows[0];
 
-    // Genera token
+    // ✅ GENERA TOKEN JWT PER VERIFICA EMAIL (valido 1 ora)
+    const verificationToken = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    // ✅ INVIA EMAIL DI BENVENUTO CON LINK VERIFICA
+    try {
+      await emailService.sendWelcomeEmail(user, verificationToken);
+      console.log(`✅ Welcome email sent to: ${user.email}`);
+    } catch (emailError) {
+      console.error('⚠️  Failed to send welcome email:', emailError);
+      // Non bloccare registrazione se email fallisce
+    }
+
+    // Genera token di autenticazione
     const token = generateToken(user.id);
+
+    console.log(`✅ User registered: ${user.email} (ID: ${user.id})`);
 
     res.status(201).json({
       success: true,
-      message: 'Registrazione completata con successo',
+      message: 'Registrazione completata! Controlla la tua email per verificare l\'account.',
       data: {
         user: {
           id: user.id,
@@ -93,7 +115,8 @@ const register = async (req, res) => {
           nome: user.nome,
           cognome: user.cognome,
           telefono: user.telefono,
-          ruolo: user.ruolo
+          ruolo: user.ruolo,
+          email_verified: user.email_verified
         },
         token
       }
@@ -284,6 +307,82 @@ const googleAuth = async (req, res) => {
 };
 
 // ============================================
+// VERIFICA EMAIL - VERSIONE MIGLIORATA
+// ============================================
+const verifyEmail = async (req, res) => {
+  try {
+    const { token } = req.params;
+
+    // Verifica token JWT
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.userId;
+
+    // ✅ AGGIORNA email_verified SOLO SE false (evita update inutili)
+    const result = await query(
+      `UPDATE users 
+       SET email_verified = true 
+       WHERE id = $1 AND email_verified = false
+       RETURNING id, email, nome, cognome, email_verified`,
+      [userId]
+    );
+
+    if (result.rows.length === 0) {
+      // Email già verificata o utente non trovato
+      const userCheck = await query(
+        'SELECT id, email_verified FROM users WHERE id = $1',
+        [userId]
+      );
+
+      if (userCheck.rows.length > 0 && userCheck.rows[0].email_verified) {
+        return res.status(200).json({
+          success: true,
+          message: 'Email già verificata in precedenza',
+          alreadyVerified: true
+        });
+      }
+
+      return res.status(404).json({
+        success: false,
+        message: 'Utente non trovato'
+      });
+    }
+
+    const user = result.rows[0];
+    console.log(`✅ Email verified for user: ${user.email} (ID: ${user.id})`);
+
+    res.json({
+      success: true,
+      message: 'Email verificata con successo!',
+      data: { user }
+    });
+  } catch (error) {
+    console.error('Verify email error:', error);
+
+    // ✅ GESTIONE ERRORI SPECIFICA
+    if (error.name === 'TokenExpiredError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Il link di verifica è scaduto. Richiedi un nuovo link.',
+        expired: true
+      });
+    }
+
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(400).json({
+        success: false,
+        message: 'Link di verifica non valido'
+      });
+    }
+
+    res.status(500).json({
+      success: false,
+      message: 'Errore durante la verifica email'
+    });
+  }
+};
+
+
+// ============================================
 // LOGOUT
 // ============================================
 const logout = async (req, res) => {
@@ -329,33 +428,7 @@ const refreshToken = async (req, res) => {
   }
 };
 
-// ============================================
-// VERIFICA EMAIL
-// ============================================
-const verifyEmail = async (req, res) => {
-  try {
-    const { token } = req.params;
 
-    // Verifica token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // Aggiorna stato verifica
-    await query(
-      'UPDATE users SET email_verified = true WHERE id = $1',
-      [decoded.userId]
-    );
-
-    res.json({
-      success: true,
-      message: 'Email verificata con successo'
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: 'Token di verifica non valido o scaduto'
-    });
-  }
-};
 
 // ============================================
 // FORGOT PASSWORD
@@ -625,11 +698,11 @@ module.exports = {
   googleAuth,
   logout,
   refreshToken,
-  verifyEmail,
   forgotPassword,
   resetPassword,
   getCurrentUser,
   updateProfile,
+  verifyEmail,
   changePassword,
   deleteAccount
 };
