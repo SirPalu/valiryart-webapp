@@ -548,3 +548,86 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================
+   AGGIUNGI ALLA FINE DI RequestDetailPage.css (USER)
+   REVIEW CTA CARD
+   ============================================ */
+
+.review-cta-card {
+  background: linear-gradient(135deg, rgba(26, 77, 2, 0.3) 0%, rgba(26, 77, 2, 0.15) 100%) !important;
+  border: 2px solid rgba(26, 77, 2, 0.5) !important;
+  text-align: center;
+  padding: 2.5rem !important;
+  margin-bottom: 2rem;
+  animation: slideInDown 0.5s ease;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.review-cta-card h2 {
+  color: #FAE9C7;
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.review-cta-card p {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.15rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.review-cta-card a {
+  text-decoration: none;
+}
+
+.review-cta-card button {
+  font-size: 1.1rem;
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, #6B8E23, #8FBC8F);
+  border: none;
+  color: #ffffff;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(107, 142, 35, 0.3);
+}
+
+.review-cta-card button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(107, 142, 35, 0.5);
+  background: linear-gradient(135deg, #8FBC8F, #6B8E23);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .review-cta-card {
+    padding: 2rem !important;
+  }
+
+  .review-cta-card h2 {
+    font-size: 1.5rem;
+  }
+
+  .review-cta-card p {
+    font-size: 1rem;
+  }
+
+  .review-cta-card button {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    font-size: 1rem;
+  }
+}

@@ -34,12 +34,14 @@ import MyRequestsPage from './pages/user/MyRequestsPage';
 import RequestDetailPage from './pages/user/RequestDetailPage';
 import ProfilePage from './pages/user/ProfilePage';
 import CreateRequestPage from './pages/user/CreateRequestPage';
+import CreateReviewPage from './pages/user/CreateReviewPage'; // ✅ NUOVO
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminRequestsPage from './pages/admin/AdminRequestsPage';
 import AdminRequestDetailPage from './pages/admin/RequestDetailPage';
 import AdminUsersPage from './pages/admin/AdminUsersPage';
+import AdminReviewsPage from './pages/admin/AdminReviewsPage'; // ✅ NUOVO
 
 // Loading component
 const LoadingScreen = () => (
@@ -111,6 +113,9 @@ const AppRoutes = () => {
         <Route path="requests" element={<MyRequestsPage />} />
         <Route path="requests/:id" element={<RequestDetailPage />} />
         <Route path="profile" element={<ProfilePage />} />
+        
+        {/* ✅ NUOVE ROUTES RECENSIONI */}
+        <Route path="reviews/create" element={<CreateReviewPage />} />
       </Route>
 
       {/* ============================================
@@ -133,6 +138,9 @@ const AppRoutes = () => {
         
         {/* Utenti */}
         <Route path="users" element={<AdminUsersPage />} />
+        
+        {/* ✅ NUOVE ROUTES RECENSIONI ADMIN */}
+        <Route path="reviews" element={<AdminReviewsPage />} />
       </Route>
 
       {/* ============================================

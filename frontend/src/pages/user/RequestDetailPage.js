@@ -1,4 +1,4 @@
-// frontend/src/pages/user/RequestDetailPage.js - CON ALLEGATI
+// frontend/src/pages/user/RequestDetailPage.js - CON BOTTONE RECENSIONE
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
@@ -17,7 +17,7 @@ const RequestDetailPage = () => {
 
   const [request, setRequest] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [attachments, setAttachments] = useState([]); // ✅ NUOVO
+  const [attachments, setAttachments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [sendingMessage, setSendingMessage] = useState(false);
   const [newMessage, setNewMessage] = useState('');
@@ -41,7 +41,7 @@ const RequestDetailPage = () => {
       const requestData = requestRes.data.data;
       setRequest(requestData.request);
       setMessages(messagesRes.data.data.messages);
-      setAttachments(requestData.attachments || []); // ✅ NUOVO
+      setAttachments(requestData.attachments || []);
     } catch (error) {
       console.error('Error fetching request detail:', error);
       toast.error('Impossibile caricare la richiesta');
@@ -168,6 +168,19 @@ const RequestDetailPage = () => {
         </div>
       </div>
 
+      {/* ✅ NUOVA SEZIONE: CALL TO ACTION RECENSIONE */}
+      {request.stato === 'completata' && (
+        <Card className="info-card review-cta-card">
+          <h2>⭐ Ti è piaciuto il lavoro di Valeria?</h2>
+          <p>Condividi la tua esperienza lasciando una recensione!</p>
+          <Link to={`/user/reviews/create?request=${request.id}`}>
+            <Button variant="primary" size="lg">
+              ✍️ Scrivi Recensione
+            </Button>
+          </Link>
+        </Card>
+      )}
+
       <div className="detail-content">
         {/* Left Column - Details */}
         <div className="detail-left">
@@ -177,7 +190,7 @@ const RequestDetailPage = () => {
             <p className="description-text">{request.descrizione}</p>
           </Card>
 
-          {/* ✅ NUOVA SEZIONE: ALLEGATI */}
+          {/* ALLEGATI */}
           {attachments.length > 0 && (
             <Card className="info-card">
               <h2>📎 File Allegati ({attachments.length})</h2>
