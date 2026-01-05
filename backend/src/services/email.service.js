@@ -321,6 +321,7 @@ const sendNewMessageEmail = async (requestData, senderName, messageText, isForAd
   });
 };
 
+// 5. Welcome email con verifica
 const sendWelcomeEmail = async (userData, verificationToken) => {
   const verificationLink = `${process.env.FRONTEND_URL || 'http://localhost:8081'}/verify-email/${verificationToken}`;
 
@@ -379,6 +380,98 @@ const sendWelcomeEmail = async (userData, verificationToken) => {
   });
 };
 
+// ============================================
+// ✨ NUOVE FUNZIONI RECENSIONI ✨
+// ============================================
+
+// 6. Notifica nuova recensione ad admin
+const sendNewReviewAdminEmail = async (reviewData, userData, requestData) => {
+  const ratingStars = '⭐'.repeat(reviewData.rating) + '☆'.repeat(5 - reviewData.rating);
+
+  const content = `
+    <h2>🌟 Nuova Recensione Ricevuta!</h2>
+    
+    <div class="info-box">
+      <strong>📋 Dettagli Recensione</strong><br>
+      <strong>Cliente:</strong> ${userData.nome} ${userData.cognome || ''}<br>
+      <strong>Email:</strong> ${userData.email}<br>
+      <strong>Richiesta:</strong> #${requestData.id?.substring(0, 8).toUpperCase() || 'N/A'}<br>
+      <strong>Categoria:</strong> ${categoriaLabels[requestData.categoria] || requestData.categoria}
+    </div>
+
+    <h3>${ratingStars}</h3>
+    <div class="status-badge">${reviewData.rating}/5 Stelle</div>
+
+    ${reviewData.titolo ? `<h3>📝 "${reviewData.titolo}"</h3>` : ''}
+
+    <div class="info-box" style="background: rgba(250, 233, 199, 0.1);">
+      <strong>💬 Recensione:</strong><br>
+      <p style="margin-top: 10px; font-style: italic;">"${reviewData.testo}"</p>
+    </div>
+
+    ${reviewData.foto_url ? `
+      <div class="info-box">
+        <strong>📸 Foto allegata:</strong><br>
+        <a href="${process.env.FRONTEND_URL || 'http://localhost:8081'}${reviewData.foto_url}" target="_blank" style="color: #FAE9C7;">
+          Visualizza foto →
+        </a>
+      </div>
+    ` : ''}
+
+    <div style="text-align: center; margin-top: 30px;">
+      <a href="${process.env.FRONTEND_URL || 'http://localhost:8081'}/admin/reviews" class="button">🔍 Gestisci Recensioni</a>
+    </div>
+
+    <p style="margin-top: 30px; font-size: 12px; color: rgba(255,255,255,0.7);">
+      Ricordati di approvare e rispondere alla recensione! 💬
+    </p>
+  `;
+
+  return safeSendEmail({
+    from: `"ValiryArt System" <${process.env.SMTP_USER}>`,
+    to: 'valiryart93@gmail.com',
+    subject: `🌟 Nuova Recensione ${reviewData.rating}★ da ${userData.nome}`,
+    html: getEmailTemplate(content),
+  });
+};
+
+// 7. Notifica risposta admin a recensione
+const sendReviewReplyEmail = async (reviewData, userData) => {
+  const ratingStars = '⭐'.repeat(reviewData.rating) + '☆'.repeat(5 - reviewData.rating);
+
+  const content = `
+    <h2>💬 Valeria Ha Risposto alla Tua Recensione!</h2>
+    <p>Ciao <strong>${userData.nome}</strong>,</p>
+    <p>Grazie per aver lasciato la tua recensione! Valeria ha risposto al tuo feedback.</p>
+    
+    <div class="info-box">
+      <strong>📝 La Tua Recensione:</strong><br>
+      ${ratingStars}<br><br>
+      <p style="font-style: italic;">"${reviewData.testo}"</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="info-box" style="background: rgba(26, 77, 2, 0.2);">
+      <strong>💬 Risposta di Valeria:</strong><br><br>
+      <p>${reviewData.risposta_admin}</p>
+    </div>
+
+    <div style="text-align: center; margin-top: 30px;">
+      <a href="${process.env.FRONTEND_URL || 'http://localhost:8081'}/user/reviews" class="button">📋 Visualizza Recensione</a>
+    </div>
+
+    <p style="margin-top: 30px;">Grazie ancora per il tuo supporto!</p>
+    <p style="margin-top: 20px;">Con affetto,<br><strong style="color: #FAE9C7;">Valeria</strong></p>
+  `;
+
+  return safeSendEmail({
+    from: `"ValiryArt" <${process.env.SMTP_USER}>`,
+    to: userData.email,
+    subject: '💬 Valeria Ha Risposto alla Tua Recensione - ValiryArt',
+    html: getEmailTemplate(content),
+  });
+};
 
 // ✅ GRACEFUL SHUTDOWN
 const closeTransporter = () => {
@@ -396,6 +489,8 @@ module.exports = {
   sendStatusChangeEmail,
   sendNewMessageEmail,
   sendWelcomeEmail,
+  sendNewReviewAdminEmail,      // ✅ NUOVO
+  sendReviewReplyEmail,          // ✅ NUOVO
   transporter,
   closeTransporter
 };

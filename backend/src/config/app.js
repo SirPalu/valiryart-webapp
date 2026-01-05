@@ -140,6 +140,7 @@ app.get('/api/metrics', async (req, res) => {
 const authRoutes = require('../routes/auth.routes');
 const userRoutes = require('../routes/user.routes');
 const requestRoutes = require('../routes/request.routes');
+const reviewRoutes = require('../routes/review.routes'); // ✅ NUOVO
 const messageRoutes = require('../routes/message.routes');
 const portfolioRoutes = require('../routes/portfolio.routes');
 const designRoutes = require('../routes/design.routes');
@@ -153,6 +154,7 @@ app.use('/api/content', contentRoutes);
 // Protected routes
 app.use('/api/users', userRoutes);
 app.use('/api/requests', requestLimiter, requestRoutes);
+app.use('/api/reviews', reviewRoutes); // ✅ NUOVO
 app.use('/api/messages', messageRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/designs', designRoutes);

@@ -879,3 +879,150 @@
     text-align: left;
   }
 }
+
+/* ============================================
+   MODAL DATA CONSEGNA
+   ============================================ */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background: linear-gradient(135deg, rgba(44, 24, 16, 0.98) 0%, rgba(26, 13, 8, 0.98) 100%);
+  border: 2px solid #d4a574;
+  border-radius: 16px;
+  padding: 2.5rem;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-content h3 {
+  font-size: 1.75rem;
+  color: #FAE9C7;
+  margin: 0 0 1rem 0;
+  font-weight: 700;
+}
+
+.modal-content p {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 1.5rem 0;
+  line-height: 1.6;
+  font-size: 1.05rem;
+}
+
+.date-input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #d4a574;
+  border-radius: 10px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 1.05rem;
+  background: rgba(0, 0, 0, 0.4);
+  color: #FAE9C7;
+  transition: all 0.3s ease;
+  margin-bottom: 1.5rem;
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: #6b4423;
+  box-shadow: 0 0 0 3px rgba(107, 68, 35, 0.2);
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.modal-actions .cancel-btn,
+.modal-actions .save-btn {
+  padding: 0.875rem 2rem;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.modal-actions .cancel-btn {
+  background: transparent;
+  border: 2px solid #6b4423;
+  color: #6b4423;
+}
+
+.modal-actions .cancel-btn:hover {
+  background: #6b4423;
+  color: #ffffff;
+}
+
+.modal-actions .save-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  border: none;
+}
+
+.modal-actions .save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* ============================================
+   RESPONSIVE MODAL
+   ============================================ */
+
+@media (max-width: 768px) {
+  .modal-content {
+    padding: 2rem;
+    width: 95%;
+  }
+
+  .modal-content h3 {
+    font-size: 1.5rem;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+  }
+
+  .modal-actions .cancel-btn,
+  .modal-actions .save-btn {
+    width: 100%;
+  }
+}

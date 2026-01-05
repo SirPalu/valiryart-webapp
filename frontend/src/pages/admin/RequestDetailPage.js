@@ -1,4 +1,4 @@
-// frontend/src/pages/admin/RequestDetailPage.js - ✅ CON ALLEGATI
+// frontend/src/pages/admin/RequestDetailPage.js - ✅ COMPLETO CON TUTTI GLI STATI
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { adminAPI } from '../../services/api';
@@ -10,11 +10,16 @@ const RequestDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [request, setRequest] = useState(null);
-  const [attachments, setAttachments] = useState([]); // ✅ NUOVO
+  const [attachments, setAttachments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('details');
   const [isEditing, setIsEditing] = useState(false);
+  
+  // ✅ NUOVO: Modal per data consegna
+  const [showDataConsegnaModal, setShowDataConsegnaModal] = useState(false);
+  const [dataConsegna, setDataConsegna] = useState('');
+  
   const [editForm, setEditForm] = useState({
     preventivo_importo: '',
     data_consegna_prevista: '',
@@ -33,10 +38,10 @@ const RequestDetailPage = () => {
       const response = await adminAPI.getRequestById(id);
       console.log('✅ Response:', response.data);
       
-      const { request: requestData, attachments: attachmentsData } = response.data.data; // ✅ AGGIORNATO
+      const { request: requestData, attachments: attachmentsData } = response.data.data;
       
       setRequest(requestData);
-      setAttachments(attachmentsData || []); // ✅ NUOVO
+      setAttachments(attachmentsData || []);
       
       setEditForm({
         preventivo_importo: requestData.preventivo_importo || '',
@@ -62,6 +67,53 @@ const RequestDetailPage = () => {
     } catch (err) {
       console.error('❌ Update error:', err);
       toast.error('Errore nell\'aggiornamento dello stato');
+    }
+  };
+
+  // ✅ NUOVO: Conferma pagamento
+  const handleConfermaPagamento = async () => {
+    if (!window.confirm('Confermare il pagamento ricevuto dal cliente?')) return;
+    
+    try {
+      await adminAPI.confermaPagamento(id);
+      toast.success('💰 Pagamento confermato!');
+      fetchRequestDetail();
+    } catch (err) {
+      console.error('❌ Conferma pagamento error:', err);
+      toast.error(err.response?.data?.message || 'Errore nella conferma del pagamento');
+    }
+  };
+
+  // ✅ NUOVO: Avvia realizzazione con data
+  const handleAvviaRealizzazione = async () => {
+    if (!dataConsegna) {
+      toast.error('Inserisci una data di consegna prevista');
+      return;
+    }
+
+    try {
+      await adminAPI.avviaRealizzazione(id, { data_consegna_prevista: dataConsegna });
+      toast.success('🔨 Realizzazione avviata!');
+      setShowDataConsegnaModal(false);
+      setDataConsegna('');
+      fetchRequestDetail();
+    } catch (err) {
+      console.error('❌ Avvia realizzazione error:', err);
+      toast.error(err.response?.data?.message || 'Errore nell\'avvio della realizzazione');
+    }
+  };
+
+  // ✅ NUOVO: Completa richiesta
+  const handleCompletaRichiesta = async () => {
+    if (!window.confirm('Segnare la richiesta come completata?')) return;
+    
+    try {
+      await adminAPI.completaRichiesta(id);
+      toast.success('🎉 Richiesta completata!');
+      fetchRequestDetail();
+    } catch (err) {
+      console.error('❌ Completa richiesta error:', err);
+      toast.error(err.response?.data?.message || 'Errore nel completamento della richiesta');
     }
   };
 
@@ -130,7 +182,6 @@ const RequestDetailPage = () => {
     return <span className={`status-badge ${config.color}`}>{config.label}</span>;
   };
 
-  // Parse dati specifici
   const getDatiSpecifici = () => {
     if (!request.dati_specifici) return null;
     try {
@@ -176,7 +227,10 @@ const RequestDetailPage = () => {
         <button onClick={() => navigate('/admin/requests')} className="back-btn">
           ← Torna alle richieste
         </button>
+        
+        {/* ✅ PULSANTI STATI COMPLETI */}
         <div className="header-actions">
+          {/* STATO: NUOVA */}
           {request.stato === 'nuova' && (
             <>
               <button
@@ -193,6 +247,8 @@ const RequestDetailPage = () => {
               </button>
             </>
           )}
+
+          {/* STATO: IN VALUTAZIONE */}
           {request.stato === 'in_valutazione' && (
             <button
               onClick={() => updateRequestStatus('preventivo_inviato')}
@@ -201,16 +257,63 @@ const RequestDetailPage = () => {
               💰 Invia Preventivo
             </button>
           )}
+
+          {/* ✅ NUOVO: STATO PREVENTIVO INVIATO */}
+          {request.stato === 'preventivo_inviato' && (
+            <button
+              onClick={handleConfermaPagamento}
+              className="action-btn approve"
+            >
+              ✅ Conferma Pagamento
+            </button>
+          )}
+
+          {/* ✅ NUOVO: STATO ACCETTATA */}
+          {request.stato === 'accettata' && (
+            <button
+              onClick={() => setShowDataConsegnaModal(true)}
+              className="action-btn approve"
+            >
+              🔨 Avvia Realizzazione
+            </button>
+          )}
+
+          {/* ✅ AGGIORNATO: STATO IN LAVORAZIONE */}
           {request.stato === 'in_lavorazione' && (
             <button
-              onClick={() => updateRequestStatus('completata')}
+              onClick={handleCompletaRichiesta}
               className="action-btn complete"
             >
-              🎉 Segna come Completata
+              🎉 Completa
             </button>
           )}
         </div>
       </div>
+
+      {/* ✅ MODALE DATA CONSEGNA */}
+      {showDataConsegnaModal && (
+        <div className="modal-overlay" onClick={() => setShowDataConsegnaModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>📅 Data Consegna Prevista</h3>
+            <p>Inserisci la data prevista per la consegna del lavoro completato:</p>
+            <input
+              type="date"
+              value={dataConsegna}
+              onChange={(e) => setDataConsegna(e.target.value)}
+              min={new Date().toISOString().split('T')[0]}
+              className="date-input"
+            />
+            <div className="modal-actions">
+              <button onClick={() => setShowDataConsegnaModal(false)} className="cancel-btn">
+                Annulla
+              </button>
+              <button onClick={handleAvviaRealizzazione} className="save-btn">
+                Conferma
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Info Card Principale */}
       <div className="request-info-card">
@@ -297,7 +400,7 @@ const RequestDetailPage = () => {
                 </div>
               </div>
 
-              {/* ✅ NUOVA SEZIONE: FILE ALLEGATI */}
+              {/* FILE ALLEGATI */}
               {attachments.length > 0 && (
                 <div className="section">
                   <h3>🖼️ File Allegati ({attachments.length})</h3>

@@ -530,6 +530,194 @@ const updateRequestStatus = async (req, res) => {
 };
 
 // ============================================
+// ✨ NUOVI ENDPOINT FLUSSO STATI ✨
+// ============================================
+
+// INVIO PREVENTIVO (senza data)
+const sendPreventivo = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { preventivo_importo, preventivo_note } = req.body;
+
+    if (!preventivo_importo) {
+      return res.status(400).json({
+        success: false,
+        message: 'Importo preventivo obbligatorio'
+      });
+    }
+
+    const result = await query(
+      `UPDATE requests 
+       SET stato = 'preventivo_inviato',
+           preventivo_importo = $1,
+           preventivo_note = $2,
+           updated_at = CURRENT_TIMESTAMP
+       WHERE id = $3
+       RETURNING *`,
+      [preventivo_importo, preventivo_note, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Richiesta non trovata'
+      });
+    }
+
+    const requestData = result.rows[0];
+
+    // Invia email notifica
+    const emailService = require('../services/email.service');
+    await emailService.sendStatusChangeEmail(requestData, 'in_valutazione', 'preventivo_inviato');
+
+    res.json({
+      success: true,
+      message: 'Preventivo inviato al cliente',
+      data: { request: requestData }
+    });
+  } catch (error) {
+    console.error('Send preventivo error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore nell\'invio del preventivo'
+    });
+  }
+};
+
+// CONFERMA PAGAMENTO
+const confermaPagamento = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await query(
+      `UPDATE requests 
+       SET stato = 'accettata',
+           updated_at = CURRENT_TIMESTAMP
+       WHERE id = $1 AND stato = 'preventivo_inviato'
+       RETURNING *`,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Richiesta non trovata o non in stato "preventivo_inviato"'
+      });
+    }
+
+    const requestData = result.rows[0];
+
+    // Invia email notifica
+    const emailService = require('../services/email.service');
+    await emailService.sendStatusChangeEmail(requestData, 'preventivo_inviato', 'accettata');
+
+    res.json({
+      success: true,
+      message: 'Pagamento confermato',
+      data: { request: requestData }
+    });
+  } catch (error) {
+    console.error('Conferma pagamento error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore nella conferma del pagamento'
+    });
+  }
+};
+
+// AVVIA REALIZZAZIONE (con data prevista)
+const avviaRealizzazione = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { data_consegna_prevista } = req.body;
+
+    if (!data_consegna_prevista) {
+      return res.status(400).json({
+        success: false,
+        message: 'Data consegna prevista obbligatoria'
+      });
+    }
+
+    const result = await query(
+      `UPDATE requests 
+       SET stato = 'in_lavorazione',
+           data_consegna_prevista = $1,
+           updated_at = CURRENT_TIMESTAMP
+       WHERE id = $2 AND stato = 'accettata'
+       RETURNING *`,
+      [data_consegna_prevista, id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Richiesta non trovata o non in stato "accettata"'
+      });
+    }
+
+    const requestData = result.rows[0];
+
+    // Invia email notifica
+    const emailService = require('../services/email.service');
+    await emailService.sendStatusChangeEmail(requestData, 'accettata', 'in_lavorazione');
+
+    res.json({
+      success: true,
+      message: 'Realizzazione avviata',
+      data: { request: requestData }
+    });
+  } catch (error) {
+    console.error('Avvia realizzazione error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore nell\'avvio della realizzazione'
+    });
+  }
+};
+
+// COMPLETA RICHIESTA
+const completaRichiesta = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await query(
+      `UPDATE requests 
+       SET stato = 'completata',
+           completata_at = CURRENT_TIMESTAMP,
+           updated_at = CURRENT_TIMESTAMP
+       WHERE id = $1 AND stato = 'in_lavorazione'
+       RETURNING *`,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Richiesta non trovata o non in stato "in_lavorazione"'
+      });
+    }
+
+    const requestData = result.rows[0];
+
+    // Invia email notifica
+    const emailService = require('../services/email.service');
+    await emailService.sendStatusChangeEmail(requestData, 'in_lavorazione', 'completata');
+
+    res.json({
+      success: true,
+      message: 'Richiesta completata!',
+      data: { request: requestData }
+    });
+  } catch (error) {
+    console.error('Completa richiesta error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Errore nel completamento della richiesta'
+    });
+  }
+};
+
+// ============================================
 // HELPER: Convert to CSV
 // ============================================
 const convertToCSV = (data) => {
@@ -553,8 +741,12 @@ module.exports = {
   exportRequests,
   getAllUsers,
   updateUserStatus,
-  getRequestById, // ✅ AGGIUNTO
-  getRequestMessages, // ✅ AGGIUNTO
-  sendMessage, // ✅ AGGIUNTO
-  updateRequestStatus // ✅ AGGIUNTO
+  getRequestById,
+  getRequestMessages,
+  sendMessage,
+  updateRequestStatus,
+  sendPreventivo,           // ✅ NUOVO
+  confermaPagamento,        // ✅ NUOVO
+  avviaRealizzazione,       // ✅ NUOVO
+  completaRichiesta         // ✅ NUOVO
 };

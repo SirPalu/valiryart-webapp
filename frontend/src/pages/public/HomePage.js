@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getCategoryImages, getImagePath } from '../../data/galleryData';
+import { reviewsAPI } from '../../services/api';
 import './HomePage.css';
 
 const HomePage = () => {
@@ -17,6 +18,10 @@ const HomePage = () => {
     torte: [],
     eventi: []
   });
+
+  // ✅ NUOVO: State per recensioni
+  const [reviews, setReviews] = useState([]);
+  const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
 
   useEffect(() => {
     // Carica immagini per ogni categoria
@@ -46,6 +51,20 @@ const HomePage = () => {
     loadImages();
   }, []);
 
+  // ✅ NUOVO: Carica recensioni
+  useEffect(() => {
+    fetchReviews();
+  }, []);
+
+  const fetchReviews = async () => {
+    try {
+      const response = await reviewsAPI.getPublic({ limit: 10 });
+      setReviews(response.data.data.reviews);
+    } catch (error) {
+      console.error('Fetch reviews error:', error);
+    }
+  };
+
   // Carosello automatico (cambia immagine ogni 4 secondi)
   useEffect(() => {
     const interval = setInterval(() => {
@@ -54,14 +73,14 @@ const HomePage = () => {
         torte: (prev.torte + 1) % (categoryImages.torte.length || 1),
         eventi: (prev.eventi + 1) % (categoryImages.eventi.length || 1)
       }));
-    }, 3000); // ← CAMBIA QUI: millisecondi tra cambio immagine automatico
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [categoryImages]);
 
-  // ✅ Funzioni per navigazione manuale
+  // ✅ Funzioni per navigazione manuale categorie
   const handlePrevImage = (categoryId, e) => {
-    e.preventDefault(); // Previeni il click sul link
+    e.preventDefault();
     e.stopPropagation();
     
     setCarouselIndexes(prev => {
@@ -74,7 +93,7 @@ const HomePage = () => {
   };
 
   const handleNextImage = (categoryId, e) => {
-    e.preventDefault(); // Previeni il click sul link
+    e.preventDefault();
     e.stopPropagation();
     
     setCarouselIndexes(prev => {
@@ -84,6 +103,23 @@ const HomePage = () => {
       
       return { ...prev, [categoryId]: newIndex };
     });
+  };
+
+  // ✅ NUOVO: Funzioni navigazione recensioni
+  const handlePrevReview = () => {
+    setCurrentReviewIndex(prev => 
+      prev === 0 ? reviews.length - 1 : prev - 1
+    );
+  };
+
+  const handleNextReview = () => {
+    setCurrentReviewIndex(prev => 
+      (prev + 1) % reviews.length
+    );
+  };
+
+  const getRatingStars = (rating) => {
+    return '⭐'.repeat(rating) + '☆'.repeat(5 - rating);
   };
 
   // Dati delle card con link
@@ -159,7 +195,7 @@ const HomePage = () => {
                       <p>{category.description}</p>
                     </div>
 
-                    {/* ✅ Frecce navigazione manuale */}
+                    {/* Frecce navigazione manuale */}
                     {category.images.length > 1 && (
                       <>
                         <button 
@@ -204,6 +240,99 @@ const HomePage = () => {
           </div>
         </div>
       </section>
+
+      {/* ✅ NUOVA SEZIONE RECENSIONI */}
+      {reviews.length > 0 && (
+        <section className="reviews-section">
+          <div className="container">
+            <h2 className="section-title">💬 Cosa Dicono i Nostri Clienti</h2>
+            
+            <div className="reviews-stats">
+              <div className="stat-item">
+                <span className="stat-value">⭐ {(reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)}</span>
+                <span className="stat-label">Media Valutazione</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-value">{reviews.length}+</span>
+                <span className="stat-label">Clienti Soddisfatti</span>
+              </div>
+            </div>
+
+            <div className="reviews-carousel">
+              <button 
+                className="carousel-nav prev"
+                onClick={handlePrevReview}
+                aria-label="Recensione precedente"
+              >
+                ‹
+              </button>
+
+              <div className="review-card-main">
+                {reviews[currentReviewIndex] && (
+                  <>
+                    <div className="review-rating-display">
+                      {getRatingStars(reviews[currentReviewIndex].rating)}
+                    </div>
+                    
+                    {reviews[currentReviewIndex].titolo && (
+                      <h3 className="review-title-display">
+                        "{reviews[currentReviewIndex].titolo}"
+                      </h3>
+                    )}
+                    
+                    <p className="review-text-display">
+                      "{reviews[currentReviewIndex].testo}"
+                    </p>
+                    
+                    <div className="review-author">
+                      <strong>{reviews[currentReviewIndex].user_nome} {reviews[currentReviewIndex].user_cognome}</strong>
+                      <span className="review-category">
+                        {reviews[currentReviewIndex].request_categoria}
+                      </span>
+                    </div>
+
+                    {reviews[currentReviewIndex].risposta_admin && (
+                      <div className="admin-reply-display">
+                        <div className="reply-header">
+                          <span className="reply-icon">💬</span>
+                          <strong>Risposta di Valeria:</strong>
+                        </div>
+                        <p>{reviews[currentReviewIndex].risposta_admin}</p>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+
+              <button 
+                className="carousel-nav next"
+                onClick={handleNextReview}
+                aria-label="Recensione successiva"
+              >
+                ›
+              </button>
+            </div>
+
+            <div className="carousel-dots">
+              {reviews.map((_, index) => (
+                <button
+                  key={index}
+                  className={`dot ${index === currentReviewIndex ? 'active' : ''}`}
+                  onClick={() => setCurrentReviewIndex(index)}
+                  aria-label={`Vai alla recensione ${index + 1}`}
+                />
+              ))}
+            </div>
+
+            <div className="reviews-cta">
+              <p>Hai già lavorato con ValiryArt?</p>
+              <Link to="/login" className="cta-link">
+                Lascia la tua recensione →
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 };

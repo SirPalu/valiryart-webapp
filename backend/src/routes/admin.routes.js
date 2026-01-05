@@ -3,6 +3,7 @@ const router = express.Router();
 const adminController = require('../controllers/admin.controller');
 const requestController = require('../controllers/request.controller');
 const messageController = require('../controllers/message.controller');
+const reviewController = require('../controllers/review.controller');
 const { verifyToken, requireAdmin } = require('../middlewares/auth.middleware');
 
 // ============================================
@@ -54,6 +55,22 @@ router.put('/requests/:id/status', requestController.updateRequestStatus);
 router.delete('/requests/:id', requestController.deleteRequest);
 
 // ============================================
+// ✨ FLUSSO STATI AVANZATO ✨
+// ============================================
+
+// Invia preventivo
+router.post('/requests/:id/send-preventivo', adminController.sendPreventivo);
+
+// Conferma pagamento
+router.post('/requests/:id/conferma-pagamento', adminController.confermaPagamento);
+
+// Avvia realizzazione
+router.post('/requests/:id/avvia-realizzazione', adminController.avviaRealizzazione);
+
+// Completa richiesta
+router.post('/requests/:id/completa', adminController.completaRichiesta);
+
+// ============================================
 // MESSAGES
 // ============================================
 
@@ -62,6 +79,22 @@ router.get('/requests/:requestId/messages', messageController.getMessages);
 
 // Send message
 router.post('/requests/:requestId/messages', messageController.sendMessage);
+
+// ============================================
+// ✨ REVIEWS ROUTES ✨
+// ============================================
+
+// Get tutte le recensioni
+router.get('/reviews', reviewController.getAllReviews);
+
+// Rispondi a recensione
+router.post('/reviews/:id/reply', reviewController.replyToReview);
+
+// Approva/disapprova
+router.put('/reviews/:id/approve', reviewController.approveReview);
+
+// Pubblica/nascondi
+router.put('/reviews/:id/publish', reviewController.togglePublish);
 
 console.log('✅ Admin routes loaded successfully');
 

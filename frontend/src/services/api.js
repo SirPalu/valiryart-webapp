@@ -1,4 +1,4 @@
-// frontend/src/services/api.js - OTTIMIZZATO SENZA LOG SPAM
+// frontend/src/services/api.js - COMPLETO CON REVIEWS
 
 import axios from 'axios';
 
@@ -73,11 +73,6 @@ export const authAPI = {
   googleAuth: (credential) => api.post('/auth/google', { credential }),
   logout: () => api.post('/auth/logout'),
   getCurrentUser: () => api.get('/auth/me'),
-  updateProfile: (data) => api.put('/auth/me', data),
-  changePassword: (data) => api.put('/auth/change-password', data),
-  forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
-  resetPassword: (token, password) => api.post('/auth/reset-password', { token, password }),
-  getCurrentUser: () => api.get('/auth/me'),
   updateProfile: (data) => api.patch('/auth/profile', data),
   changePassword: (data) => api.patch('/auth/password', data),
   deleteAccount: (data) => api.delete('/auth/account', { data })
@@ -101,6 +96,11 @@ export const adminAPI = {
   getRequestMessages: (requestId) => api.get(`/admin/requests/${requestId}/messages`),
   sendMessage: (requestId, data) => api.post(`/admin/requests/${requestId}/messages`, data),
   updateRequestStatus: (id, data) => api.put(`/admin/requests/${id}/status`, data),
+  // ✅ NUOVI ENDPOINT STATI
+  sendPreventivo: (id, data) => api.post(`/admin/requests/${id}/send-preventivo`, data),
+  confermaPagamento: (id) => api.post(`/admin/requests/${id}/conferma-pagamento`),
+  avviaRealizzazione: (id, data) => api.post(`/admin/requests/${id}/avvia-realizzazione`, data),
+  completaRichiesta: (id) => api.post(`/admin/requests/${id}/completa`),
 };
 
 // ============================================
@@ -181,6 +181,29 @@ export const contentAPI = {
   deletePage: (slug) => api.delete(`/content/pages/${slug}`),
   getAllSettings: () => api.get('/content/settings'),
   updateSetting: (key, value) => api.put(`/content/settings/${key}`, { valore: value }),
+};
+
+// ============================================
+// ✨ REVIEWS API ✨
+// ============================================
+export const reviewsAPI = {
+  // Public
+  getPublic: (filters) => api.get('/reviews/public', { params: filters }),
+  
+  // User
+  getMyReviews: () => api.get('/reviews/my'),
+  canReview: (requestId) => api.get(`/reviews/can-review/${requestId}`),
+  create: (formData) => api.post('/reviews', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
+  update: (id, data) => api.put(`/reviews/${id}`, data),
+  delete: (id) => api.delete(`/reviews/${id}`),
+  
+  // Admin
+  getAll: (filters) => api.get('/reviews', { params: filters }),
+  reply: (id, data) => api.post(`/reviews/${id}/reply`, data),
+  approve: (id, approvata) => api.put(`/reviews/${id}/approve`, { approvata }),
+  togglePublish: (id, pubblicata) => api.put(`/reviews/${id}/publish`, { pubblicata }),
 };
 
 export default api;
