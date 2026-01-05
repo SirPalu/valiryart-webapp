@@ -434,6 +434,24 @@
   margin-right: auto;
 }
 
+/* ✅ FOTO RECENSIONE */
+.review-photo-display {
+  margin: 1.5rem auto;
+  max-width: 400px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid rgba(250, 233, 199, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.review-photo-display img {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 300px;
+  object-fit: cover;
+}
+
 .review-author {
   display: flex;
   flex-direction: column;

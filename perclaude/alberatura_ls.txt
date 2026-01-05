@@ -2,6 +2,7 @@ valiryart-webapp/
   backend/
     Dockerfile
     database/
+      backend_database_migrations_003_add_reviews_table.sql
       init.sql
     fix-admin-user.js
     package-lock.json
@@ -21,6 +22,7 @@ valiryart-webapp/
         message.controller.js
         portfolio.controller.js
         request.controller.js
+        review.controller.js
       middlewares/
         auth.middleware.js
         upload.middleware.js
@@ -33,6 +35,7 @@ valiryart-webapp/
         message.routes.js
         portfolio.routes.js
         request.routes.js
+        review.routes.js
         user.routes.js
       services/
         email.service.js
@@ -60,6 +63,8 @@ valiryart-webapp/
         cb96f782-cbe7-4387-ab50-cbebce12efc4-1766929693853.jpg
         e0c52e41-ea1a-42e7-b3a4-e5fc69cf8257-1766936004797.jpg
       temp/
+        49888905-7827-4f7d-af0c-60840e29bed8-1767607413034.jpg
+        ed6381c1-626c-4796-be8e-2c48c7b642c6-1767608445691.jpg
   docker-compose.yml
   frontend/
     Dockerfile
@@ -468,6 +473,8 @@ valiryart-webapp/
           AdminLayout.js
           AdminRequestsPage.css
           AdminRequestsPage.js
+          AdminReviewsPage.css
+          AdminReviewsPage.js
           AdminUsersPage.css
           AdminUsersPage.js
           RequestDetailPage.css
@@ -498,8 +505,11 @@ valiryart-webapp/
           VerifyEmailPage.css
           VerifyEmailPage.js
         user/
+          AdminReviewsPage.js
           CreateRequestPage.css
           CreateRequestPage.js
+          CreateReviewPage.css
+          CreateReviewPage.js
           MyRequestsPage.css
           MyRequestsPage.js
           ProfilePage.css

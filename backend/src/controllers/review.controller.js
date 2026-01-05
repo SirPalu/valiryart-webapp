@@ -79,7 +79,7 @@ const createReview = async (req, res) => {
     // ✅ Crea recensione
     const result = await query(
       `INSERT INTO reviews (user_id, request_id, rating, titolo, testo, foto_url, approvata)
-       VALUES ($1, $2, $3, $4, $5, $6, false)
+       VALUES ($1, $2, $3, $4, $5, $6, true)
        RETURNING *`,
       [userId, request_id, rating, titolo, testo, fotoUrl]
     );
@@ -95,7 +95,7 @@ const createReview = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Recensione inviata! Sarà visibile dopo approvazione.',
+      message: 'Recensione pubblicata con successo.',
       data: { review }
     });
   } catch (error) {

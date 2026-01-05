@@ -1,4 +1,4 @@
-// backend/src/routes/review.routes.js
+// backend/src/routes/review.routes.js - ✅ ORDINE CORRETTO
 
 const express = require('express');
 const router = express.Router();
@@ -11,41 +11,35 @@ const { uploadSingle } = require('../middlewares/upload.middleware');
 // ============================================
 router.get('/public', reviewController.getPublicReviews);
 
+// Get tutte le recensioni (ADMIN - deve essere PRIMA di /my)
+router.get('/', verifyToken, requireAdmin, reviewController.getAllReviews);
+
+// Rispondi a recensione (ADMIN)
+router.post('/:id/reply', verifyToken, requireAdmin, reviewController.replyToReview);
+
+// Approva/disapprova recensione (ADMIN)
+router.put('/:id/approve', verifyToken, requireAdmin, reviewController.approveReview);
+
+// Pubblica/nascondi recensione (ADMIN)
+router.put('/:id/publish', verifyToken, requireAdmin, reviewController.togglePublish);
+
 // ============================================
 // USER ROUTES - Autenticazione richiesta
 // ============================================
-router.use(verifyToken);
 
-// Get mie recensioni
-router.get('/my', reviewController.getMyReviews);
+// Get mie recensioni (USER)
+router.get('/my', verifyToken, reviewController.getMyReviews);
 
-// Check se può recensire
-router.get('/can-review/:requestId', reviewController.canReview);
+// Check se può recensire (USER)
+router.get('/can-review/:requestId', verifyToken, reviewController.canReview);
 
-// Create review (con upload foto opzionale)
-router.post('/', uploadSingle('foto'), reviewController.createReview);
+// Create review (USER - con upload foto opzionale)
+router.post('/', verifyToken, uploadSingle('foto'), reviewController.createReview);
 
-// Update propria recensione
-router.put('/:id', reviewController.updateReview);
+// Update propria recensione (USER)
+router.put('/:id', verifyToken, reviewController.updateReview);
 
-// Delete propria recensione
-router.delete('/:id', reviewController.deleteReview);
-
-// ============================================
-// ADMIN ROUTES - Solo amministratori
-// ============================================
-router.use(requireAdmin);
-
-// Get tutte le recensioni (con filtri)
-router.get('/', reviewController.getAllReviews);
-
-// Rispondi a recensione
-router.post('/:id/reply', reviewController.replyToReview);
-
-// Approva/disapprova recensione
-router.put('/:id/approve', reviewController.approveReview);
-
-// Pubblica/nascondi recensione
-router.put('/:id/publish', reviewController.togglePublish);
+// Delete propria recensione (USER)
+router.delete('/:id', verifyToken, reviewController.deleteReview);
 
 module.exports = router;

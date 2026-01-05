@@ -284,6 +284,16 @@ const HomePage = () => {
                       "{reviews[currentReviewIndex].testo}"
                     </p>
                     
+                    {/* ✅ FOTO RECENSIONE */}
+                    {reviews[currentReviewIndex].foto_url && (
+                      <div className="review-photo-display">
+                        <img 
+                          src={`${process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000'}${reviews[currentReviewIndex].foto_url}`}
+                          alt="Foto recensione"
+                        />
+                      </div>
+                    )}
+                    
                     <div className="review-author">
                       <strong>{reviews[currentReviewIndex].user_nome} {reviews[currentReviewIndex].user_cognome}</strong>
                       <span className="review-category">
