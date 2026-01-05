@@ -10,6 +10,7 @@ const ensureUploadDirs = async () => {
     'uploads/requests',
     'uploads/portfolio',
     'uploads/designs',
+    'uploads/reviews',    // ✅ AGGIUNTO
     'uploads/temp'
   ];
 
@@ -36,6 +37,8 @@ const storage = multer.diskStorage({
       folder = 'portfolio';
     } else if (req.baseUrl.includes('designs')) {
       folder = 'designs';
+    } else if (req.baseUrl.includes('reviews')) {    // ✅ AGGIUNTO
+      folder = 'reviews';
     }
     
     cb(null, `uploads/${folder}`);
@@ -117,7 +120,7 @@ const uploadMultiple = (fieldName = 'files', maxCount = 5) => {
             message: 'Uno o più file troppo grandi. Dimensione massima: 10MB per file'
           });
         }
-        if (err.code === 'LIMIT_FILE_COUNT') {
+        if (err.code === 'LIMIT_UNEXPECTED_FILE') {
           return res.status(400).json({
             success: false,
             message: `Troppi file. Massimo ${maxCount} file`

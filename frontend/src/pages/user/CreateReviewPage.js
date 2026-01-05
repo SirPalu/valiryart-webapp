@@ -143,7 +143,7 @@ const CreateReviewPage = () => {
 
       await reviewsAPI.create(data);
       
-      toast.success('Recensione inviata! Sarà visibile dopo approvazione.');
+      toast.success('Recensione inviata! Sarà visibile sulla Home.');
       setTimeout(() => navigate('/user/requests'), 2000);
     } catch (error) {
       console.error('Submit review error:', error);
@@ -306,7 +306,7 @@ const CreateReviewPage = () => {
             {/* Privacy Note */}
             <div className="privacy-note">
               <p>
-                <strong>ℹ️ Nota:</strong> La tua recensione sarà visibile pubblicamente dopo l'approvazione dell'amministratore.
+                <strong>ℹ️ Nota:</strong> La tua recensione sarà visibile  sulla Home.
                 Valeria potrà rispondere alla tua recensione.
               </p>
             </div>
