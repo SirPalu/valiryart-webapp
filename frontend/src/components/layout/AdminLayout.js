@@ -32,7 +32,7 @@ const AdminLayout = () => {
     return location.pathname.startsWith(path);
   };
 
-  // ✅ MENU PULITO - Solo Dashboard, Richieste, Utenti
+  // ✅ MENU AGGIORNATO - Aggiunta voce Recensioni
   const menuItems = [
     {
       path: '/admin',
@@ -49,6 +49,11 @@ const AdminLayout = () => {
       path: '/admin/users',
       icon: '👥',
       label: 'Utenti'
+    },
+    {
+      path: '/admin/reviews',  // ✅ NUOVO
+      icon: '⭐',
+      label: 'Recensioni'
     }
   ];
 

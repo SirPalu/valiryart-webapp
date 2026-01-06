@@ -18,11 +18,19 @@ const ChiSiamoPage = () => {
           <div className="content-grid">
             {/* Immagine Placeholder */}
             <div className="valeria-image">
-              <div className="image-placeholder">
-                <span>📸</span>
-                <p>Foto Valeria</p>
-              </div>
-            </div>
+  <img 
+    src="/fotoprofilo.png" 
+    alt="Valeria - ValiryArt"
+    style={{
+      width: '100%',
+      maxWidth: '350px',
+      aspectRatio: '3/4',
+      objectFit: 'cover',
+      borderRadius: '20px',
+      border: '2px solid rgba(250, 233, 199, 0.3)'
+    }}
+  />
+</div>
 
             {/* Testo Biografia */}
             <div className="valeria-bio">
