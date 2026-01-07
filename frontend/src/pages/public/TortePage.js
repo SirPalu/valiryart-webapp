@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEOHead from '../../components/SEO/SEOHead';
 import { useAuth } from '../../context/AuthContext';
 import { requestsAPI } from '../../services/api';
 import ReCAPTCHA from 'react-google-recaptcha';
@@ -256,6 +257,16 @@ const TortePage = () => {
   }
 
   return (
+    <>
+      {/* SEO Meta Tags */}
+      <SEOHead
+        title="Torte Scenografiche Personalizzate Roma | ValiryArt"
+        description="Torte decorative per compleanni, matrimoni e eventi. Con dolci o solo decorative. Servizio Roma e provincia."
+        keywords="valiryart, torte decorative, torte finte, torte scenografiche, cake design, allestimento eventi, regali artigianali, creazioni su misura"
+        url="https://www.valiryart.com/torte"
+        image="/logo.png"
+        type="website"
+      />
     <div className="torte-page">
       {/* Hero */}
       <section className="torte-hero">
@@ -680,6 +691,7 @@ const TortePage = () => {
         </div>
       </section>
     </div>
+    </>
   );
 };
 

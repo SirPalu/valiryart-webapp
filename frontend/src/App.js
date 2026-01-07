@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { SEOProvider } from './components/SEO/SEOHead';
 
 // Layout
 import MainLayout from './components/layout/MainLayout';
@@ -34,14 +35,14 @@ import MyRequestsPage from './pages/user/MyRequestsPage';
 import RequestDetailPage from './pages/user/RequestDetailPage';
 import ProfilePage from './pages/user/ProfilePage';
 import CreateRequestPage from './pages/user/CreateRequestPage';
-import CreateReviewPage from './pages/user/CreateReviewPage'; // ✅ NUOVO
+import CreateReviewPage from './pages/user/CreateReviewPage';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminRequestsPage from './pages/admin/AdminRequestsPage';
 import AdminRequestDetailPage from './pages/admin/RequestDetailPage';
 import AdminUsersPage from './pages/admin/AdminUsersPage';
-import AdminReviewsPage from './pages/admin/AdminReviewsPage'; // ✅ NUOVO
+import AdminReviewsPage from './pages/admin/AdminReviewsPage';
 
 // Loading component
 const LoadingScreen = () => (
@@ -76,9 +77,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* ============================================
-          PUBLIC ROUTES
-          ============================================ */}
+      {/* PUBLIC ROUTES */}
       <Route path="/" element={<MainLayout />}>
         <Route index element={<HomePage />} />
         <Route path="incisioni" element={<IncisioniPage />} />
@@ -93,14 +92,10 @@ const AppRoutes = () => {
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
         <Route path="verify-email/:token" element={<VerifyEmailPage />} />
-        
-        {/* Richiesta pubblica (guest o logged) */}
         <Route path="richiesta" element={<CreateRequestPage />} />
       </Route>
 
-      {/* ============================================
-          USER ROUTES (Protected)
-          ============================================ */}
+      {/* USER ROUTES (Protected) */}
       <Route
         path="/user"
         element={
@@ -113,14 +108,10 @@ const AppRoutes = () => {
         <Route path="requests" element={<MyRequestsPage />} />
         <Route path="requests/:id" element={<RequestDetailPage />} />
         <Route path="profile" element={<ProfilePage />} />
-        
-        {/* ✅ NUOVE ROUTES RECENSIONI */}
         <Route path="reviews/create" element={<CreateReviewPage />} />
       </Route>
 
-      {/* ============================================
-          ADMIN ROUTES (Protected - Admin Only)
-          ============================================ */}
+      {/* ADMIN ROUTES (Protected - Admin Only) */}
       <Route
         path="/admin"
         element={
@@ -131,21 +122,13 @@ const AppRoutes = () => {
       >
         <Route index element={<AdminDashboard />} />
         <Route path="dashboard" element={<AdminDashboard />} />
-        
-        {/* Richieste */}
         <Route path="requests" element={<AdminRequestsPage />} />
         <Route path="requests/:id" element={<AdminRequestDetailPage />} />
-        
-        {/* Utenti */}
         <Route path="users" element={<AdminUsersPage />} />
-        
-        {/* ✅ NUOVE ROUTES RECENSIONI ADMIN */}
         <Route path="reviews" element={<AdminReviewsPage />} />
       </Route>
 
-      {/* ============================================
-          404 - Not Found
-          ============================================ */}
+      {/* 404 - Not Found */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
@@ -156,37 +139,39 @@ function App() {
 
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
-      <AuthProvider>
-        <Router>
-          <ScrollToTop />
-          <div className="App">
-            <AppRoutes />
-            <Toaster
-              position="top-right"
-              toastOptions={{
-                duration: 4000,
-                style: {
-                  background: '#2C1810',
-                  color: '#D4A574',
-                  border: '1px solid #8B4513',
-                },
-                success: {
-                  iconTheme: {
-                    primary: '#6B8E23',
-                    secondary: '#D4A574',
+      <SEOProvider>
+        <AuthProvider>
+          <Router>
+            <ScrollToTop />
+            <div className="App">
+              <AppRoutes />
+              <Toaster
+                position="top-right"
+                toastOptions={{
+                  duration: 4000,
+                  style: {
+                    background: '#2C1810',
+                    color: '#D4A574',
+                    border: '1px solid #8B4513',
                   },
-                },
-                error: {
-                  iconTheme: {
-                    primary: '#DC2626',
-                    secondary: '#D4A574',
+                  success: {
+                    iconTheme: {
+                      primary: '#6B8E23',
+                      secondary: '#D4A574',
+                    },
                   },
-                },
-              }}
-            />
-          </div>
-        </Router>
-      </AuthProvider>
+                  error: {
+                    iconTheme: {
+                      primary: '#DC2626',
+                      secondary: '#D4A574',
+                    },
+                  },
+                }}
+              />
+            </div>
+          </Router>
+        </AuthProvider>
+      </SEOProvider>
     </GoogleOAuthProvider>
   );
 }

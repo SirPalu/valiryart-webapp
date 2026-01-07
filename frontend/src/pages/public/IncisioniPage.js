@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEOHead from '../../components/SEO/SEOHead';
 import { useAuth } from '../../context/AuthContext';
 import { requestsAPI } from '../../services/api';
 import ReCAPTCHA from 'react-google-recaptcha';
@@ -318,6 +319,16 @@ const IncisioniPage = () => {
   }
 
   return (
+    <>
+      {/* SEO Meta Tags */}
+      <SEOHead
+        title="Incisioni su Legno Personalizzate | ValiryArt"
+        description="Incisioni su legno a mano con pirografo. Personalizza taglieri, portafoto, cofanetti. Spedizioni in tutta Italia."
+        keywords="valiryart, incisioni legno, pirografia, pirografo, torte decorative, torte finte, torte scenografiche, allestimento eventi, regali artigianali, creazioni su misura"
+        url="https://www.valiryart.com/incisioni"
+        image="/logo.png"
+        type="website"
+      />
     <div className="incisioni-page">
       {/* Hero con link galleria */}
       <section className="incisioni-hero">
@@ -676,6 +687,7 @@ const IncisioniPage = () => {
         onSelectDesign={handleDesignSelect}
       />
     </div>
+     </>
   );
 };
 
@@ -739,6 +751,7 @@ const OrderSummary = ({ formData, product, calculatedPrice, onBack, onConfirm, l
         </div>
       </div>
     </div>
+     
   );
 };
 

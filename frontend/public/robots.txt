@@ -1,0 +1,35 @@
+# robots.txt per ValiryArt
+# Aggiornato: 2025-01-06
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /user/
+Disallow: /api/
+Disallow: /uploads/temp/
+
+# Sitemap
+Sitemap: https://www.valiryart.com/sitemap.xml
+
+# Ottimizzazioni crawl
+Crawl-delay: 1
+
+# Google-specific
+User-agent: Googlebot
+Allow: /
+Disallow: /admin/
+Disallow: /user/
+Disallow: /api/
+
+# Google Image Bot
+User-agent: Googlebot-Image
+Allow: /uploads/
+Allow: /gallery/
+Allow: /sceltadisegni/
+
+# Bing
+User-agent: Bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /user/
+Disallow: /api/

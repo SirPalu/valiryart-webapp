@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEOHead from '../../components/SEO/SEOHead';
 import { useAuth } from '../../context/AuthContext';
 import { requestsAPI } from '../../services/api';
 import ReCAPTCHA from 'react-google-recaptcha';
@@ -206,6 +207,16 @@ const EventiPage = () => {
   }
 
   return (
+    <>
+      {/* SEO Meta Tags */}
+      <SEOHead
+        title="Allestimento Eventi Roma | ValiryArt"
+        description="Allestimenti eventi a Roma: archi palloncini, tableau, centrotavola per compleanni, battesimi, matrimoni."
+        keywords="valiryart, torte decorative, torte finte, torte scenografiche, allestimento eventi roma, arco palloncini, regali artigianali, creazioni su misura, decori, decori feste, allestimento feste"
+        url="https://www.valiryart.com/eventi"
+        image="/logo.png"
+        type="website"
+      />
     <div className="eventi-page">
       {/* Hero */}
       <section className="eventi-hero">
@@ -586,6 +597,7 @@ const EventiPage = () => {
         </div>
       </section>
     </div>
+    </>
   );
 };
 

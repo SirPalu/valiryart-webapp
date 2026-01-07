@@ -29,7 +29,7 @@ const TermsOfServicePage = () => {
           <section className="legal-section">
             <h2>2. Prestatore di Servizio</h2>
             <div className="info-box">
-              <p><strong>ValiryArt</strong> (F.R.)</p>
+              <p><strong>ValiryArt</strong></p>
               <p>Prestazioni occasionali ex art. 2222 c.c.</p>
               <p>Email: <a href="mailto:valiryart93@gmail.com">valiryart93@gmail.com</a></p>
               <p>WhatsApp: <a href="https://wa.me/393517543735" target="_blank" rel="noopener noreferrer">+39 351 754 3735</a></p>

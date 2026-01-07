@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import SEOHead from '../../components/SEO/SEOHead';
 import { getCategoryImages, getImagePath } from '../../data/galleryData';
 import { reviewsAPI } from '../../services/api';
 import './HomePage.css';
@@ -151,6 +152,17 @@ const HomePage = () => {
   ];
 
   return (
+    <>
+      {/* SEO Meta Tags */}
+      <SEOHead
+        title="ValiryArt - Creazioni Artigianali Personalizzate"
+        description="Incisioni su legno a mano con pirografo, torte scenografiche e allestimenti eventi a Roma. Ogni opera è unica e pensata su misura per te."
+        keywords="valiryart, incisioni legno, pirografia, pirografo, torte decorative, torte finte, torte scenografiche, allestimento eventi, regali artigianali, creazioni su misura, arco palloncini, allestimento, decori, decori feste"
+        url="https://www.valiryart.com"
+        image="/logo.png"
+        type="website"
+      />
+
     <div className="homepage">
       {/* Hero Section */}
       <section className="hero-section">
@@ -344,6 +356,7 @@ const HomePage = () => {
         </section>
       )}
     </div>
+   </> 
   );
 };
 
